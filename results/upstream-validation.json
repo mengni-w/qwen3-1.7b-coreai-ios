@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "validated_at": "2026-07-19T14:50:47+08:00",
+  "apple_repository": "https://github.com/apple/coreai-models",
+  "apple_main_commit": "04a3fd6cfe9bfae9cf05b1f246cf915d930d1c0a",
+  "previous_patch_base": "917dc99f0cc23ac0905c4de26e18e5a3764703fc",
+  "reference_patch": "patches/qwen3-1.7b-coreai-main.patch",
+  "patch_applies_cleanly": true,
+  "git_diff_check": "pass",
+  "focused_unit_tests": {
+    "collected": 28,
+    "passed": 28,
+    "failed": 0
+  },
+  "related_ios_conversion_collection": {
+    "collected": 42,
+    "collection_errors": 0
+  },
+  "ruff": "pass",
+  "companion_unsigned_build": {
+    "xcode": "27.0 beta (27A5218g)",
+    "destination": "generic iOS device",
+    "coreai_models_swift_revision": "04a3fd6cfe9bfae9cf05b1f246cf915d930d1c0a",
+    "code_signing": false,
+    "result": "pass"
+  },
+  "dry_run": {
+    "exit_code": 0,
+    "model": "Qwen/Qwen3-1.7B",
+    "platform": "iOS",
+    "compression": "qwen3_1_7b_w8_per_tensor",
+    "compute_precision": "float16",
+    "maximum_context_tokens": 4096,
+    "disable_embedding_quantization": false
+  },
+  "relevant_upstream_delta": {
+    "llm_authoring_python_changed_between_bases": false,
+    "note": "Apple main changes between the previous patch base and this validation touched VLM authoring and Swift runtime paths, not the LLM authoring Python used to export this artifact."
+  },
+  "full_export_repeated_on_current_main": false,
+  "full_export_repeat_rationale": "The LLM authoring Python and frozen recipe path were unchanged; the previously completed clean export and AOT evidence remain the artifact evidence. Current-main compatibility is claimed only for patch application, tests, lint, and preset resolution."
+}

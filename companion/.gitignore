@@ -1,0 +1,14 @@
+DerivedData/
+.build/
+xcuserdata/
+*.xcuserstate
+ModelBundle/
+*.aimodel
+*.aimodelc
+*.safetensors
+*.mobileprovision
+*.p12
+*.cer
+*.app
+*.xcarchive
+*.dSYM

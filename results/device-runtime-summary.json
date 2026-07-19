@@ -1,0 +1,82 @@
+{
+  "schema_version": 3,
+  "status": "repeatable_pass",
+  "device": {
+    "class": "iPhone 15 Pro (iPhone16,1)",
+    "architecture": "h16p",
+    "os": "iOS 27",
+    "identifiers_included": false
+  },
+  "configuration": {
+    "model": "Qwen3-1.7B",
+    "transformer_projection_weights": "W8 per-tensor K-means palettization",
+    "tied_embedding": "INT8 per-tensor quantization",
+    "compute": "FP16",
+    "kv_cache": {
+      "dtype": "FP16",
+      "strategy": "fixed-size",
+      "maximum_context_tokens": 4096,
+      "key_bytes": 234881024,
+      "value_bytes": 234881024,
+      "total_mib": 448
+    },
+    "aot_architecture": "h16p",
+    "preferred_compute": "neural-engine"
+  },
+  "standalone_model_suite": {
+    "completed_full_suite_runs": 4,
+    "case_count_per_suite": 6,
+    "final_load_seconds": 11.312,
+    "final_suite_seconds": 40.395,
+    "final_peak_resident_mib": 2963.7,
+    "after_unload_resident_mib": 198.7,
+    "minimum_observed_available_mib": 837.9,
+    "long_context": {
+      "input_tokens": 3790,
+      "ttft_seconds": 5.627,
+      "visible_decode_tokens_per_second": 15.828,
+      "tail_marker_retrieved": true
+    },
+    "reasoning": {
+      "input_tokens": 69,
+      "output_tokens": 271,
+      "reasoning_tokens": 260,
+      "visible_answer_correct": true
+    },
+    "result": "pass"
+  },
+  "product_runtime_confirmation": {
+    "suite_case_count": 3,
+    "initial_load_seconds": 11.513,
+    "initial_load_diagnostic_peak_rss_bytes": 3349463040,
+    "short_ttft_seconds": 0.426,
+    "short_visible_decode_tokens_per_second": 16.376,
+    "near_4k_input_tokens": 3194,
+    "near_4k_ttft_seconds": 5.138,
+    "near_4k_visible_decode_tokens_per_second": 13.087,
+    "unload_seconds": 0.061,
+    "rss_after_five_second_recovery_bytes": 268173312,
+    "highest_accepted_thermal_state": "nominal",
+    "accepted_lifecycle_paths": [
+      "offline cold start with downloaded asset",
+      "unload and reload",
+      "background lazy recovery",
+      "cancellation without transcript commit",
+      "independent session isolation",
+      "low-memory cancellation without partial result",
+      "delete and relaunch reconciliation"
+    ],
+    "result": "pass"
+  },
+  "execution_trace": {
+    "mpsgraph_program_intervals": 547,
+    "apple_neural_engine_prediction_intervals": 547,
+    "supported_claim": "Apple Neural Engine participated in the traced inference program.",
+    "exclusive_ane_execution_claimed": false
+  },
+  "historical_integration_findings": {
+    "model_numerical_instability_established": false,
+    "core_ai_runtime_bug_claimed": false,
+    "note": "Earlier incomplete streams were superseded by product-runtime findings around memory-pressure cancellation and shared-engine lifecycle."
+  }
+}

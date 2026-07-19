@@ -1,0 +1,213 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		BB0000000000000000000001 /* CoreAIQwen17CompanionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000011 /* CoreAIQwen17CompanionApp.swift */; };
+		BB0000000000000000000002 /* CoreAILM in Frameworks */ = {isa = PBXBuildFile; productRef = BB0000000000000000000091 /* CoreAILM */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		BB0000000000000000000011 /* CoreAIQwen17CompanionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreAIQwen17CompanionApp.swift; sourceTree = "<group>"; };
+		BB0000000000000000000012 /* CoreAIQwen17Companion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoreAIQwen17Companion.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		BB0000000000000000000021 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (BB0000000000000000000002 /* CoreAILM in Frameworks */);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		BB0000000000000000000031 = {
+			isa = PBXGroup;
+			children = (
+				BB0000000000000000000032 /* CoreAIQwen17Companion */,
+				BB0000000000000000000033 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		BB0000000000000000000032 /* CoreAIQwen17Companion */ = {
+			isa = PBXGroup;
+			children = (BB0000000000000000000011 /* CoreAIQwen17CompanionApp.swift */);
+			path = CoreAIQwen17Companion;
+			sourceTree = "<group>";
+		};
+		BB0000000000000000000033 /* Products */ = {
+			isa = PBXGroup;
+			children = (BB0000000000000000000012 /* CoreAIQwen17Companion.app */);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		BB0000000000000000000041 /* CoreAIQwen17Companion */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BB0000000000000000000072 /* Build configuration list for PBXNativeTarget "CoreAIQwen17Companion" */;
+			buildPhases = (
+				BB0000000000000000000023 /* Sources */,
+				BB0000000000000000000021 /* Frameworks */,
+				BB0000000000000000000022 /* Resources */,
+			);
+			buildRules = ();
+			dependencies = ();
+			name = CoreAIQwen17Companion;
+			packageProductDependencies = (BB0000000000000000000091 /* CoreAILM */);
+			productName = CoreAIQwen17Companion;
+			productReference = BB0000000000000000000012 /* CoreAIQwen17Companion.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BB0000000000000000000051 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2700;
+				LastUpgradeCheck = 2700;
+				TargetAttributes = {BB0000000000000000000041 = {CreatedOnToolsVersion = 27.0;};};
+			};
+			buildConfigurationList = BB0000000000000000000071 /* Build configuration list for PBXProject "CoreAIQwen17Companion" */;
+			compatibilityVersion = "Xcode 16.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (en, Base);
+			mainGroup = BB0000000000000000000031;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (BB0000000000000000000090 /* XCRemoteSwiftPackageReference "coreai-models" */);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = BB0000000000000000000033 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (BB0000000000000000000041 /* CoreAIQwen17Companion */);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		BB0000000000000000000022 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = ();
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		BB0000000000000000000023 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (BB0000000000000000000001 /* CoreAIQwen17CompanionApp.swift in Sources */);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		BB0000000000000000000061 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		BB0000000000000000000062 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		BB0000000000000000000063 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Core AI Qwen 1.7B";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks");
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = org.example.CoreAIQwen17Companion;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		BB0000000000000000000064 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Core AI Qwen 1.7B";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks");
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = org.example.CoreAIQwen17Companion;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		BB0000000000000000000071 /* Build configuration list for PBXProject "CoreAIQwen17Companion" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (BB0000000000000000000061, BB0000000000000000000062);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BB0000000000000000000072 /* Build configuration list for PBXNativeTarget "CoreAIQwen17Companion" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (BB0000000000000000000063, BB0000000000000000000064);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		BB0000000000000000000090 /* XCRemoteSwiftPackageReference "coreai-models" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/coreai-models.git";
+			requirement = {kind = revision; revision = 04a3fd6cfe9bfae9cf05b1f246cf915d930d1c0a;};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		BB0000000000000000000091 /* CoreAILM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BB0000000000000000000090 /* XCRemoteSwiftPackageReference "coreai-models" */;
+			productName = CoreAILM;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = BB0000000000000000000051 /* Project object */;
+}

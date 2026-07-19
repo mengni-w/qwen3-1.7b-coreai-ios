@@ -1,0 +1,46 @@
+{
+  "schema_version": 2,
+  "source": {
+    "model": "Qwen/Qwen3-1.7B",
+    "revision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+    "declared_license": "Apache-2.0",
+    "config_sha256": "1ddb5b89ebc90dcb417a45c213d818577e65976454d29385c8f6140771d95197",
+    "tokenizer_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+    "weight_shard_sha256": [
+      "169ad53ec313c3a34b06c0809216e4fc072cce444a5d4ff2b59690d064130ed5",
+      "912becff8d60672aa8628ef08c05898d9adf17c2ad4ae3caf99b065622fdeff9"
+    ]
+  },
+  "recipe": {
+    "sha256": "dab03ae1dd6c6290a7964e05ebcda7fe027c2bb240174fcf034e64a376be9d72",
+    "transformer_projection_count": 196,
+    "projection_weight_recipe": "W8 per-tensor K-means palettization",
+    "embedding_recipe": "INT8 per-tensor quantization",
+    "compute_precision": "FP16",
+    "kv_cache_precision": "FP16",
+    "maximum_context_tokens": 4096
+  },
+  "device_validated_artifact": {
+    "coreai_models_commit": "85e2f2d8c6433825e64219a32693ed1a4aed519f",
+    "source_aimodel_sha256": "66325b4cc0657e1f89a7a0a92f37899d01ddc37d168295dbbad0d71bef7f75e3",
+    "compiled_main_sha256": "0c2dfcfeaae195386f1e61c05e0cf2b4a1ce6ecda1c321803afc0019b1d886d7",
+    "estimated_bundle_bytes": 1797634137,
+    "aot_function_count": 34
+  },
+  "isolated_authoring_export": {
+    "coreai_models_commit": "917dc99f0cc23ac0905c4de26e18e5a3764703fc",
+    "source_main_mlirb_sha256": "f27baa8a22109d3a724df16bc5215a1554780e718f821875467898187532f324",
+    "logical_tied_parameter_count": 1720574976,
+    "main_artifact_bpw": 8.08872,
+    "bundle_bpw": 8.16257,
+    "aot_storage_aware_bpw": 8.01111
+  },
+  "toolchain": {
+    "xcode": "27.0 beta (27A5218g)",
+    "coreai_build": "3600.75.3",
+    "torch": "2.9.0",
+    "coremltools": "9.0",
+    "coreai_opt": "0.2.1"
+  },
+  "payloads_distributed": false
+}

@@ -1,0 +1,259 @@
+diff --git a/models/qwen3/README.md b/models/qwen3/README.md
+index bfa50ce..9398bbf 100644
+--- a/models/qwen3/README.md
++++ b/models/qwen3/README.md
+@@ -4,11 +4,12 @@ Alibaba's Qwen3 models for on-device inference via Core AI.
+ 
+ ## Supported Models
+ 
+-| Model      | Parameters | macOS | iOS |
+-| ---------- | ---------- | ----- | --- |
+-| Qwen3 0.6B | 0.6B       | Yes   | Yes |
+-| Qwen3 4B   | 4.0B       | Yes   | Yes |
+-| Qwen3 8B   | 8.0B       | Yes   | No  |
++| Model      | Parameters | macOS | iOS          |
++| ---------- | ---------- | ----- | ------------ |
++| Qwen3 0.6B | 0.6B       | Yes   | Yes          |
++| Qwen3 1.7B | 1.7B       | No    | Experimental |
++| Qwen3 4B   | 4.0B       | Yes   | Yes          |
++| Qwen3 8B   | 8.0B       | Yes   | No           |
+ 
+ ## Setup to export models
+ 
+@@ -32,6 +33,9 @@ uv run coreai.llm.export Qwen/Qwen3-0.6B --compression none
+ # iOS variant
+ uv run coreai.llm.export Qwen/Qwen3-0.6B --platform iOS
+ 
++# Experimental Qwen3 1.7B iOS preset
++uv run coreai.llm.export qwen3-1.7b --platform iOS --experimental
++
+ # Custom output directory
+ uv run coreai.llm.export Qwen/Qwen3-0.6B --output-dir ./my-models/
+ 
+@@ -42,6 +46,12 @@ uv run coreai.llm.export Qwen/Qwen3-0.6B --num-layers 1 --compression none
+ uv run coreai.llm.export Qwen/Qwen3-0.6B --dry-run
+ ```
+ 
++The experimental Qwen3 1.7B iOS preset uses a 4096-token context,
++[8-bit per-tensor K-means-palettized transformer weights][qwen3-1.7b-w8-yaml],
++and a separately INT8-quantized embedding table. The YAML exclusions keep the
++embedding modules out of K-means palettization; they do not disable the earlier
++embedding quantization.
++
+ ## Run a Core AI Language Model
+ 
+ ### In your iOS and macOS applications via Foundation Models
+@@ -92,4 +102,5 @@ Perplexity score on the [`WikiText-2`](https://huggingface.co/datasets/EleutherA
+ 
+ [presets-info]: ../README.md#quantization-options
+ [mixed-4bit-8bit-yaml]: qwen3_0_6b_mixed_4bit_8bit.yaml
++[qwen3-1.7b-w8-yaml]: qwen3_1_7b_w8_per_tensor.yaml
+ [qwen3-4b-mixed-yaml]: qwen3_4b_mixed_4bit_8bit.yaml
+diff --git a/models/qwen3/qwen3_1_7b_w8_per_tensor.yaml b/models/qwen3/qwen3_1_7b_w8_per_tensor.yaml
+new file mode 100644
+index 0000000..68d2cd1
+--- /dev/null
++++ b/models/qwen3/qwen3_1_7b_w8_per_tensor.yaml
+@@ -0,0 +1,10 @@
++kmeans_palettization_config:
++  global_config:
++    op_state_spec:
++      weight:
++        n_bits: 8
++        granularity:
++          type: per_tensor
++  module_type_configs:
++    torch.nn.modules.sparse.Embedding: null
++    coreai_models.primitives.ios.embedding.LoadEmbeddings: null
+diff --git a/python/src/coreai_models/export/metadata.py b/python/src/coreai_models/export/metadata.py
+index d4228a9..891d6d6 100644
+--- a/python/src/coreai_models/export/metadata.py
++++ b/python/src/coreai_models/export/metadata.py
+@@ -52,6 +52,14 @@ _METADATA: dict[str, AIModelMetadataFields] = {
+             "family. Source: https://huggingface.co/Qwen/Qwen3-0.6B"
+         ),
+     ),
++    "Qwen/Qwen3-1.7B": AIModelMetadataFields(
++        author="Qwen Team",
++        license="Apache-2.0",
++        model_description=(
++            "Qwen3-1.7B is a 1.7B-parameter causal language model from the Qwen3 "
++            "family. Source: https://huggingface.co/Qwen/Qwen3-1.7B"
++        ),
++    ),
+     "Qwen/Qwen3-4B": AIModelMetadataFields(
+         author="Qwen Team",
+         license="Apache-2.0",
+diff --git a/python/src/coreai_models/llm/export.py b/python/src/coreai_models/llm/export.py
+index 723b115..2185d96 100644
+--- a/python/src/coreai_models/llm/export.py
++++ b/python/src/coreai_models/llm/export.py
+@@ -142,7 +142,10 @@ def build_parser() -> argparse.ArgumentParser:
+     parser.add_argument(
+         "--experimental",
+         action="store_true",
+-        help="Allow exporting models without a registry preset. Requires --compute-precision.",
++        help=(
++            "Allow experimental registry presets or models without a registry preset. "
++            "Unregistered models require --compute-precision."
++        ),
+     )
+     parser.add_argument(
+         "--disable-embedding-quantization-ios",
+@@ -289,6 +292,12 @@ def _resolve_export_config(args: argparse.Namespace) -> ExportConfig:
+         # HuggingFace ID — check if we have a matching preset for defaults
+         preset = try_lookup_preset_by_hf_id(args.model, model_type="llm", variant=args.platform)
+ 
++    if preset is not None and preset.experimental and not args.experimental:
++        raise SystemExit(
++            f"Error: '{args.model}' uses an experimental registry preset. "
++            "Pass --experimental to continue."
++        )
++
+     if preset is not None:
+         hf_model_id = preset.hf_id
+         variant = args.platform or preset.variant or "macOS"
+diff --git a/python/src/coreai_models/model_registry.py b/python/src/coreai_models/model_registry.py
+index cc6a0bc..b907ecb 100644
+--- a/python/src/coreai_models/model_registry.py
++++ b/python/src/coreai_models/model_registry.py
+@@ -143,6 +143,22 @@ LLM_PRESETS: list[ModelPreset] = [
+         IOS_DEFAULT_MAX_CONTEXT_LENGTH,
+         compression_config="models/qwen3/qwen3_0_6b_mixed_4bit_8bit.yaml",
+     ),
++    ModelPreset(
++        "qwen3-1.7b",
++        "Qwen/Qwen3-1.7B",
++        "qwen3",
++        "llm",
++        "iOS",
++        "none",
++        "float16",
++        IOS_DEFAULT_MAX_CONTEXT_LENGTH,
++        experimental=True,
++        notes=(
++            "Experimental 8-bit per-tensor K-means-palettized transformer weights "
++            "with a separately INT8-quantized embedding table."
++        ),
++        compression_config="models/qwen3/qwen3_1_7b_w8_per_tensor.yaml",
++    ),
+     ModelPreset(
+         "qwen2.5-1.5b-instruct",
+         "Qwen/Qwen2.5-1.5B-Instruct",
+@@ -549,6 +565,8 @@ def _preset_to_export_args(preset: ModelPreset) -> list[str]:
+     # Skip the flag for the macOS default to match the batch scripts.
+     if preset.type == "llm" and preset.variant and preset.variant != "macOS":
+         args += ["--platform", preset.variant]
++    if preset.experimental:
++        args.append("--experimental")
+     return args
+ 
+ 
+diff --git a/python/tests/test_model_conversion/test_ios_models.py b/python/tests/test_model_conversion/test_ios_models.py
+index e0c9b49..ac86d66 100644
+--- a/python/tests/test_model_conversion/test_ios_models.py
++++ b/python/tests/test_model_conversion/test_ios_models.py
+@@ -70,6 +70,7 @@ class TestQwen3EndtoEnd:
+         [
+             "yujiepan/qwen3-tiny-random",
+             pytest.param("Qwen/Qwen3-0.6B", marks=pytest.mark.slow),
++            pytest.param("Qwen/Qwen3-1.7B", marks=pytest.mark.slow),
+         ],
+     )
+     @pytest.mark.parametrize("precision", [torch.float32, torch.float16])
+diff --git a/python/tests/test_model_units/test_export/test_llm_export.py b/python/tests/test_model_units/test_export/test_llm_export.py
+new file mode 100644
+index 0000000..0886f5f
+--- /dev/null
++++ b/python/tests/test_model_units/test_export/test_llm_export.py
+@@ -0,0 +1,51 @@
++# Copyright 2026 massif-01
++#
++# Use of this source code is governed by a BSD-3-clause license that can
++# be found in the LICENSE file or at https://opensource.org/licenses/BSD-3-Clause
++
++"""Tests for LLM export preset resolution and recipe contracts."""
++
++from __future__ import annotations
++
++from pathlib import Path
++
++import pytest
++import yaml
++
++from coreai_models.llm.export import _resolve_export_config, build_parser
++
++
++@pytest.mark.parametrize("model", ["qwen3-1.7b", "Qwen/Qwen3-1.7B"])
++def test_qwen3_1_7b_experimental_preset_requires_opt_in(model: str) -> None:
++    args = build_parser().parse_args([model, "--platform", "iOS"])
++
++    with pytest.raises(SystemExit, match="uses an experimental registry preset"):
++        _resolve_export_config(args)
++
++
++def test_qwen3_1_7b_preset_resolves_locked_ios_recipe() -> None:
++    args = build_parser().parse_args(["qwen3-1.7b", "--platform", "iOS", "--experimental"])
++
++    config = _resolve_export_config(args)
++
++    assert config.hf_model_id == "Qwen/Qwen3-1.7B"
++    assert config.variant == "iOS"
++    assert config.compute_precision == "float16"
++    assert config.max_context_length == 4096
++    assert config.disable_embedding_quantization is False
++
++
++def test_qwen3_1_7b_recipe_contract() -> None:
++    repo_root = Path(__file__).resolve().parents[4]
++    recipe_path = repo_root / "models/qwen3/qwen3_1_7b_w8_per_tensor.yaml"
++    recipe = yaml.safe_load(recipe_path.read_text())
++    palettization = recipe["kmeans_palettization_config"]
++
++    assert palettization["global_config"]["op_state_spec"]["weight"] == {
++        "n_bits": 8,
++        "granularity": {"type": "per_tensor"},
++    }
++    assert palettization["module_type_configs"] == {
++        "torch.nn.modules.sparse.Embedding": None,
++        "coreai_models.primitives.ios.embedding.LoadEmbeddings": None,
++    }
+diff --git a/python/tests/test_model_units/test_model_registry.py b/python/tests/test_model_units/test_model_registry.py
+index 2a9e580..27fc243 100644
+--- a/python/tests/test_model_units/test_model_registry.py
++++ b/python/tests/test_model_units/test_model_registry.py
+@@ -93,6 +93,34 @@ def test_export_args_iOS_emits_variant_flag() -> None:
+     assert args[args.index("--platform") + 1] == "iOS"
+ 
+ 
++def test_qwen3_1_7b_experimental_ios_preset() -> None:
++    p = lookup_preset("qwen3-1.7b", model_type="llm", variant="iOS")
++
++    assert p.hf_id == "Qwen/Qwen3-1.7B"
++    assert p.experimental is True
++    assert p.compute_precision == "float16"
++    assert p.max_context_length == 4096
++    assert p.compression_config == "models/qwen3/qwen3_1_7b_w8_per_tensor.yaml"
++
++
++def test_qwen3_1_7b_export_args_use_locked_w8_recipe() -> None:
++    p = lookup_preset("qwen3-1.7b", model_type="llm", variant="iOS")
++    args = _preset_to_export_args(p)
++
++    assert args == [
++        "Qwen/Qwen3-1.7B",
++        "--compression-config",
++        "models/qwen3/qwen3_1_7b_w8_per_tensor.yaml",
++        "--compute-precision",
++        "float16",
++        "--max-context-length",
++        "4096",
++        "--platform",
++        "iOS",
++        "--experimental",
++    ]
++
++
+ def test_export_args_diffusion_no_variant_no_context() -> None:
+     p = lookup_preset("flux2-klein-4b", model_type="diffusion")
+     args = _preset_to_export_args(p)

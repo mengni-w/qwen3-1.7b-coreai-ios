@@ -1,0 +1,40 @@
+{
+  "schema_version": 2,
+  "status": "validated_frozen_w8_holdout",
+  "model": "Qwen3-1.7B",
+  "mechanism": {
+    "transformer_projection_weights": "W8 per-tensor K-means palettization",
+    "tied_embedding": "INT8 per-tensor quantization",
+    "compute": "FP16",
+    "kv_cache": "FP16 fixed-size",
+    "maximum_context_tokens": 4096
+  },
+  "evaluations": {
+    "w8_tuning": {
+      "mean_cosine": 0.997067,
+      "minimum_cosine": 0.967261,
+      "top1_agreement": 0.9844,
+      "mean_nll_delta": 0.002985
+    },
+    "w8_frozen_holdout": {
+      "mean_cosine": 0.996598,
+      "minimum_cosine": 0.959625,
+      "top1_agreement": 0.9837,
+      "mean_nll_delta": 0.003167
+    }
+  },
+  "hard_failures_in_four_complete_device_suites": {
+    "empty_response": 0,
+    "token_limit_or_truncation": 0,
+    "degenerate_repetition": 0,
+    "context_overflow": 0,
+    "crash": 0,
+    "oom": 0,
+    "assertion_failure": 0
+  },
+  "wikitext_2": {
+    "full_evaluation_completed": false,
+    "claimed_as_pass": false,
+    "note": "A complete public WikiText-2 perplexity matrix is not included."
+  }
+}
