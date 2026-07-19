@@ -22,6 +22,12 @@ redistribution-restricted payloads.
 - raw device logs, Instruments traces, private prompts, and product source;
 - credentials, access tokens, and API keys.
 
+Generated Core AI containers may preserve absolute build paths even when their
+sidecar metadata has been sanitized. Any separately distributed `.aimodel` or
+`.aimodelc` must therefore be rebuilt under a neutral path and pass
+`scripts/audit-public-artifact.sh` before upload. Binary string replacement is
+not an accepted remediation because it can invalidate the generated container.
+
 Before each public release:
 
 1. verify every JSON and YAML file parses;
@@ -40,7 +46,7 @@ Audit date: 2026-07-19
 
 Status: **pass**
 
-- 22 public files before the checksum manifest;
+- 23 public files before the checksum manifest;
 - no local home/temp paths, local account names, private product identifiers,
   signing teams, device identifiers, development-server addresses, or
   credentials detected;

@@ -9,6 +9,38 @@
   artifact;
 - a compatible physical iPhone for runtime validation.
 
+## Public-distribution build hygiene
+
+Core AI export and AOT artifacts can retain absolute source and Python module
+paths inside generated binary containers. This does not affect inference, but
+an artifact built under a personal home directory can disclose the local
+account name when redistributed.
+
+The device evidence in this repository was produced from a private validation
+build. For a public binary release, rebuild the checkout, Python environment,
+source snapshot, export, and AOT output under a neutral path such as
+`/private/tmp/coreai-public-build`. Do not hex-edit or otherwise patch a
+generated `.aimodel` or `.aimodelc`; rebuilding is required to preserve the
+container's integrity.
+
+Before uploading any model bundle, scan the complete distribution directory,
+including binary files:
+
+```bash
+./scripts/audit-public-artifact.sh /private/tmp/coreai-public-build/release
+```
+
+Projects with additional private identifiers can add one regular expression:
+
+```bash
+COREAI_PUBLIC_FORBIDDEN_PATTERN='private-bundle-id|internal-project-name' \
+  ./scripts/audit-public-artifact.sh /private/tmp/coreai-public-build/release
+```
+
+A passing scan is a publication gate, not a substitute for rerunning model
+integrity checks and at least one physical-device inference on the rebuilt
+artifact.
+
 ## 1. Lock Apple source
 
 ```bash
