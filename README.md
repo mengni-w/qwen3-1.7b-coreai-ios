@@ -3,6 +3,11 @@
 This repository documents a reproducible Qwen3-1.7B onboarding for Apple's
 `coreai-models` iOS path.
 
+> **Quality-first result:** the frozen W8 holdout retained `0.996598` mean
+> logits cosine, `0.959625` minimum cosine, `98.37%` top-1 agreement, and
+> `0.003167` mean NLL delta against the uncompressed reference. Multiple W4 and
+> mixed W4/W8 candidates were rejected before this mechanism was frozen.
+
 The tested configuration fills the practical gap between Apple's existing
 Qwen3-0.6B and Qwen3-4B iOS presets:
 
@@ -38,6 +43,44 @@ Validation against that main revision completed with:
 Apple's current repository does not accept code pull requests. The intended
 upstream channel is a **Model request** issue; `MODEL_REQUEST.md` contains the
 copy-ready issue fields.
+
+## Why this is a distinct contribution
+
+Community Qwen3-1.7B Core AI artifacts now exist on Hugging Face, but they
+solve different deployment problems:
+
+- [`mlboydaisuke/qwen3-1.7b-CoreAI-official`](https://huggingface.co/mlboydaisuke/qwen3-1.7b-CoreAI-official)
+  publishes a dynamic INT4 GPU bundle specialized for `h18p` and reports an
+  eight-question prompt check on iPhone 17 Pro. Its model card explicitly says
+  that its static ANE export did not invoke successfully, so it intentionally
+  ships the GPU path.
+- [`kevinqz/Qwen3-1.7B-CoreAI`](https://huggingface.co/kevinqz/Qwen3-1.7B-CoreAI)
+  publishes a third-party fabric-generated INT8 `.aimodel`. Its reproduction
+  manifest exports the macOS path and records no AOT target; its model card
+  reports that numeric accuracy was not run and that iPhone throughput was
+  still pending when audited.
+
+This repository does not redistribute a compiled model. It contributes the
+missing Apple-main onboarding surface: a locked W8 recipe, preset, metadata,
+documentation, tests, conversion-matrix coverage, and a resource-free
+companion. It additionally validates the static `h16p` path on iPhone 15 Pro
+and records Apple Neural Engine participation.
+
+That static Neural Engine result is the main technical distinction. A dynamic
+GPU graph can retain flexible shapes and use GPU kernels; the static iOS path
+must survive shape specialization, prompt/extend bucketing, mutable KV state,
+`h16p` AOT compilation, device specialization, and the Foundation Models event
+bridge. This project closes that full path on A17 Pro. It does not infer a
+speed or energy win without a controlled cross-runtime measurement.
+
+The fidelity evidence is also deliberately stricter than a prompt-only smoke
+test. Multiple W4 and mixed W4/W8 candidates were rejected before export. The
+frozen W8 recipe then passed an untouched holdout against the reference model
+at `0.996598` mean logits cosine, `0.959625` minimum cosine, `98.37%` top-1
+agreement, and `0.003167` mean NLL delta. These are conversion-fidelity
+measurements, not a claim of superior downstream benchmark quality.
+
+See `RELATED_WORK.md` for the dated, scope-aware comparison.
 
 ## Frozen mechanism
 
@@ -111,6 +154,7 @@ This project does not claim:
 - `REPRODUCTION.md` — source, patch, export, AOT, and companion instructions.
 - `RESULTS.md` — human-readable evidence and limits.
 - `DECISIONS.md` — hypotheses superseded during implementation.
+- `RELATED_WORK.md` — comparison with adjacent public Core AI artifacts.
 - `patches/` — reference patch against the locked Apple main revision.
 - `recipes/` — frozen W8 recipe.
 - `results/` — sanitized machine-readable evidence.

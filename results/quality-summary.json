@@ -9,6 +9,18 @@
     "kv_cache": "FP16 fixed-size",
     "maximum_context_tokens": 4096
   },
+  "comparison_reference": "Frozen uncompressed reference logits and NLL under identical inputs",
+  "selection_evidence": {
+    "rejected_candidate_families": [
+      "uniform W4",
+      "mixed W4/W8"
+    ],
+    "representative_rejected_mean_cosine_range": {
+      "minimum": 0.856886,
+      "maximum": 0.981232
+    },
+    "decision": "Rejected under the frozen quality contract before W8 holdout evaluation"
+  },
   "evaluations": {
     "w8_tuning": {
       "mean_cosine": 0.997067,

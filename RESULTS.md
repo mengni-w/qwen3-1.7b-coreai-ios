@@ -19,6 +19,11 @@
 | W8 tuning | 0.997067 | 0.967261 | 98.44% | 0.002985 | pass |
 | W8 frozen holdout | 0.996598 | 0.959625 | 98.37% | 0.003167 | pass |
 
+The W8 result was selected through a quality gate, not a successful generation
+smoke. Uniform and mixed W4/W8 candidates were evaluated and rejected;
+representative candidate mean cosine values ranged from 0.856886 to 0.981232.
+The final mechanism was then locked before the separate holdout was scored.
+
 These are frozen logits/NLL comparison gates. They are not a substitute for a
 complete public benchmark suite. Full WikiText-2 perplexity was not completed
 and is intentionally not presented as a pass.

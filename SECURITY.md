@@ -40,7 +40,7 @@ Audit date: 2026-07-19
 
 Status: **pass**
 
-- 21 public files before the checksum manifest;
+- 22 public files before the checksum manifest;
 - no local home/temp paths, local account names, private product identifiers,
   signing teams, device identifiers, development-server addresses, or
   credentials detected;

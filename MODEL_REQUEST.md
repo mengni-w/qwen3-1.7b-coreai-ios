@@ -33,6 +33,12 @@ fixed-size FP16 KV cache with a 4,096-token maximum context.
 
 We prepared and validated a standalone Qwen3-1.7B iOS onboarding:
 
+- related community conversions exist, but they do not make this request a
+  duplicate: one publishes a dynamic INT4 GPU bundle for `h18p` after its
+  static ANE path failed to invoke, while another publishes a third-party INT8
+  macOS-path asset with no recorded AOT target and numeric accuracy reported as
+  not run; this request is for an Apple-main preset, recipe, metadata, tests,
+  and a validated static `h16p` path rather than another hosted compiled model;
 - the preset is explicitly experimental and requires `--experimental`;
 - the reference patch adds model metadata, the frozen compression recipe,
   registry entry, documentation, focused tests, and the iOS conversion matrix
@@ -46,12 +52,19 @@ We prepared and validated a standalone Qwen3-1.7B iOS onboarding:
   including a 3,790-token long-context case and a reasoning case;
 - the frozen W8 holdout produced mean cosine 0.996598, minimum cosine
   0.959625, 98.37% top-1 agreement, and mean NLL delta 0.003167;
+- multiple W4 and mixed W4/W8 candidates were rejected before export, so the
+  published W8 mechanism is the result of a frozen quality gate rather than a
+  successful single-prompt smoke test;
 - Apple Neural Engine participation was observed in a Core AI Instruments
   trace; exclusive ANE execution is not claimed;
-- the public reproduction repository contains no model weights, tokenizer,
-  compiled model, signed app, device identifier, local path, private prompt,
-  or product source.
+- the [public reproduction repository](https://github.com/massif-01/qwen3-1.7b-coreai-ios)
+  contains no model weights, tokenizer, compiled model, signed app, device
+  identifier, local path, private prompt, or product source.
 
 Full WikiText-2 perplexity is not included in the current evidence and is not
 represented as complete. The repository provides the recipe, reference patch,
 reproduction procedure, sanitized evidence, and resource-free companion app.
+
+Related public artifacts and the limits of cross-project comparison are
+documented in
+[`RELATED_WORK.md`](https://github.com/massif-01/qwen3-1.7b-coreai-ios/blob/main/RELATED_WORK.md).
