@@ -24,6 +24,23 @@ This work originated while building the on-device privacy engine for **e¹
 product source, model weights, tokenizer payloads, compiled models, signing
 material, device identifiers, or user data.
 
+## Download the ready-to-run model
+
+The complete, directly downloadable Core AI model bundle is published on
+Hugging Face:
+
+**[massif/Qwen3-1.7B-CoreAI-ANE-W8-4K-h16p](https://huggingface.co/massif/Qwen3-1.7B-CoreAI-ANE-W8-4K-h16p)**
+
+```bash
+hf download massif/Qwen3-1.7B-CoreAI-ANE-W8-4K-h16p \
+  --local-dir Qwen3-1.7B-CoreAI-ANE-W8-4K-h16p
+```
+
+The Hugging Face repository contains the compiled `h16p` artifact, tokenizer,
+frozen recipe, checksums, machine-readable evidence, and integration example.
+This GitHub repository remains the source for the reproducible onboarding
+patch, tests, methodology, and Apple contribution material.
+
 ## Status
 
 The model recipe, export path, AOT artifact, quality checks, and physical-device
@@ -60,11 +77,13 @@ solve different deployment problems:
   reports that numeric accuracy was not run and that iPhone throughput was
   still pending when audited.
 
-This repository does not redistribute a compiled model. It contributes the
-missing Apple-main onboarding surface: a locked W8 recipe, preset, metadata,
-documentation, tests, conversion-matrix coverage, and a resource-free
-companion. It additionally validates the static `h16p` path on iPhone 15 Pro
-and records Apple Neural Engine participation.
+This GitHub repository does not redistribute a compiled model; the verified
+artifact is published separately on
+[Hugging Face](https://huggingface.co/massif/Qwen3-1.7B-CoreAI-ANE-W8-4K-h16p).
+The GitHub project contributes the missing Apple-main onboarding surface: a
+locked W8 recipe, preset, metadata, documentation, tests, conversion-matrix
+coverage, and a resource-free companion. It additionally validates the static
+`h16p` path on iPhone 15 Pro and records Apple Neural Engine participation.
 
 That static Neural Engine result is the main technical distinction. A dynamic
 GPU graph can retain flexible shapes and use GPU kernels; the static iOS path
