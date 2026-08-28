@@ -1,0 +1,17 @@
+\begin{table}[H]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Profile & $n$ & EM & F1 & Exact matches \\
+\midrule
+Static-W8 & 300 & 59.33 & 81.70 & 178 \\
+Dynamic-INT4 & 300 & 57.67 & 81.42 & 173 \\
+Static-W8 $-$ Dynamic-INT4 & 300 & +1.67 & +0.28 & -- \\
+\bottomrule
+\end{tabular}
+\vspace{3pt}\par\footnotesize W8-minus-INT4 95\% bootstrap intervals: EM [-3.00, +6.33], F1 [-2.44, +3.00]. Sign-test $p$: EM 0.576, F1 0.614.
+\caption{Paired CMRC2018 quality on the frozen 300-example subset. Both intervals include zero; no equivalence test was performed. \evidence{CL-12,CL-13,CL-14}}
+\label{tab:paired-quality}
+\end{table}

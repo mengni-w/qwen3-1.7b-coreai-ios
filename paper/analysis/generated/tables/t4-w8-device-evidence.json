@@ -1,0 +1,134 @@
+{
+  "byteIdentical": false,
+  "historicalArtifact": {
+    "device": {
+      "architecture": "h16p",
+      "class": "iPhone 15 Pro (iPhone16,1)",
+      "identifiers_included": false,
+      "os": "iOS 27"
+    },
+    "identity": {
+      "aot_function_count": 34,
+      "compiled_main_sha256": "0c2dfcfeaae195386f1e61c05e0cf2b4a1ce6ecda1c321803afc0019b1d886d7",
+      "coreai_models_commit": "85e2f2d8c6433825e64219a32693ed1a4aed519f",
+      "estimated_bundle_bytes": 1797634137,
+      "source_aimodel_sha256": "66325b4cc0657e1f89a7a0a92f37899d01ddc37d168295dbbad0d71bef7f75e3"
+    },
+    "suite": {
+      "after_unload_resident_mib": 198.7,
+      "case_count_per_suite": 6,
+      "completed_full_suite_runs": 4,
+      "final_load_seconds": 11.312,
+      "final_peak_resident_mib": 2963.7,
+      "final_suite_seconds": 40.395,
+      "long_context": {
+        "input_tokens": 3790,
+        "tail_marker_retrieved": true,
+        "ttft_seconds": 5.627,
+        "visible_decode_tokens_per_second": 15.828
+      },
+      "minimum_observed_available_mib": 837.9,
+      "reasoning": {
+        "input_tokens": 69,
+        "output_tokens": 271,
+        "reasoning_tokens": 260,
+        "visible_answer_correct": true
+      },
+      "result": "pass"
+    },
+    "trace": {
+      "apple_neural_engine_prediction_intervals": 547,
+      "exclusive_ane_execution_claimed": false,
+      "mpsgraph_program_intervals": 547,
+      "supported_claim": "Apple Neural Engine participated in the traced inference program."
+    }
+  },
+  "mechanismRelationship": "same frozen W8 mechanism",
+  "publicArtifact": {
+    "artifact": {
+      "architecture": "h16p",
+      "compiled_main_h16p_sha256": "a7eefeef16708a324f9919890355eb92180ec85eef419ebd5822e8c8afd42f5f",
+      "compute": "FP16",
+      "embedding": "INT8 per-tensor",
+      "kv_cache": "FP16 fixed-size",
+      "max_context_tokens": 4096,
+      "preferred_compute": "neural-engine",
+      "source_aimodel_main_sha256": "5e885ec407f1b2690df5098d38b1bed4a3e66f4352c859fb2bb79666bc0aef73",
+      "transformer_weights": "W8 per-tensor K-means palettization"
+    },
+    "claim_boundary": "This validates the exact public h16p artifact on one iPhone 15 Pro. It does not establish exclusive ANE execution or cross-device performance.",
+    "device": {
+      "chip": "A17 Pro",
+      "model": "iPhone 15 Pro",
+      "os": "iOS 27"
+    },
+    "schema_version": 1,
+    "suite": {
+      "cases": [
+        {
+          "input_tokens": 160,
+          "name": "business_json_cold",
+          "output_tokens": 60,
+          "reasoning_tokens": 1,
+          "result": "pass",
+          "ttft_seconds": 1.213,
+          "visible_decode_tokens_per_second": 19.516
+        },
+        {
+          "input_tokens": 241,
+          "name": "hot_turn_1_context",
+          "output_tokens": 5,
+          "reasoning_tokens": 1,
+          "result": "pass",
+          "ttft_seconds": 0.395,
+          "visible_decode_tokens_per_second": 57.719
+        },
+        {
+          "input_tokens": 275,
+          "name": "hot_turn_2_rewrite",
+          "output_tokens": 5,
+          "reasoning_tokens": 1,
+          "result": "pass",
+          "ttft_seconds": 0.43,
+          "visible_decode_tokens_per_second": 56.526
+        },
+        {
+          "input_tokens": 309,
+          "name": "hot_turn_3_injection",
+          "output_tokens": 5,
+          "reasoning_tokens": 1,
+          "result": "pass",
+          "ttft_seconds": 0.425,
+          "visible_decode_tokens_per_second": 55.482
+        },
+        {
+          "expected_tail_marker": "TARGET-0377",
+          "input_tokens": 3790,
+          "name": "long_context_3779_tokens",
+          "output_tokens": 10,
+          "reasoning_tokens": 1,
+          "result": "pass",
+          "ttft_seconds": 5.709,
+          "visible_decode_tokens_per_second": 16.748
+        },
+        {
+          "input_tokens": 69,
+          "name": "reasoning_chat",
+          "output_tokens": 288,
+          "reasoning_tokens": 277,
+          "result": "pass",
+          "ttft_seconds": 17.977,
+          "visible_decode_tokens_per_second": 19.866
+        }
+      ],
+      "cases_completed": 6,
+      "duration_seconds": 77.645,
+      "estimated_disk_bytes": 1797634196,
+      "load_seconds": 46.176,
+      "peak_resident_mib": 2766.4,
+      "resident_after_unload_mib": 197.3,
+      "result": "pass"
+    }
+  },
+  "schemaVersion": 1
+}

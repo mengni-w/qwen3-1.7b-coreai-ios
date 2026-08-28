@@ -1,0 +1,15 @@
+{
+  "measurements": {
+    "compiledModelBundleMiB": {
+      "INT4_GPU": 924.6,
+      "W8_ANE": 1714.4
+    },
+    "peakProcessResidentMiB": {
+      "INT4_GPU": 1995.3,
+      "W8_ANE": 2865.0
+    }
+  },
+  "rssMeaning": "Peak process resident memory in the disclosed benchmark",
+  "schemaVersion": 1,
+  "unit": "MiB"
+}

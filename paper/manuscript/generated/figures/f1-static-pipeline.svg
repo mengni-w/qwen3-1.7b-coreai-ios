@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="410" viewBox="0 0 1100 410">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<style>text{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;fill:#171717}.title{font-size:25px;font-weight:700}.label{font-size:16px;font-weight:600}.body{font-size:14px}.small{font-size:12px;fill:#555}.box{fill:#f7f7f5;stroke:#777;stroke-width:1.5}.w8{fill:#f9ecea;stroke:#d94a42;stroke-width:2}.int4{fill:#edf2fa;stroke:#315b9a;stroke-width:2}.arrow{stroke:#333;stroke-width:2;fill:none}</style>
+<text x="40" y="45" class="title">Static W8 authoring-to-device path</text>
+<text x="40" y="70" class="small">Version-locked source, recipe, AOT target, runtime, and evidence</text>
+<rect x="35" y="125" width="145" height="120" rx="8" class="box"/>
+<text x="107.5" y="157" text-anchor="middle" class="label">Frozen source</text>
+<text x="107.5" y="190" text-anchor="middle" class="body">Qwen3-1.7B</text>
+<text x="107.5" y="216" text-anchor="middle" class="small">70d244cc</text>
+<line x1="180" y1="185" x2="205" y2="185" class="arrow"/>
+<polygon points="205,185 195,179 195,191" fill="#333"/>
+<rect x="210" y="125" width="145" height="120" rx="8" class="box"/>
+<text x="282.5" y="157" text-anchor="middle" class="label">Apple-main onboarding</text>
+<text x="282.5" y="190" text-anchor="middle" class="body">preset + metadata</text>
+<text x="282.5" y="216" text-anchor="middle" class="small">recipe + tests</text>
+<line x1="355" y1="185" x2="380" y2="185" class="arrow"/>
+<polygon points="380,185 370,179 370,191" fill="#333"/>
+<rect x="385" y="125" width="145" height="120" rx="8" class="box"/>
+<text x="457.5" y="157" text-anchor="middle" class="label">Core AI export</text>
+<text x="457.5" y="190" text-anchor="middle" class="body">static .aimodel</text>
+<text x="457.5" y="216" text-anchor="middle" class="small">FP16 fixed KV</text>
+<line x1="530" y1="185" x2="555" y2="185" class="arrow"/>
+<polygon points="555,185 545,179 545,191" fill="#333"/>
+<rect x="560" y="125" width="145" height="120" rx="8" class="box"/>
+<text x="632.5" y="157" text-anchor="middle" class="label">h16p AOT</text>
+<text x="632.5" y="190" text-anchor="middle" class="body">ANE preferred</text>
+<text x="632.5" y="216" text-anchor="middle" class="small">34 functions</text>
+<line x1="705" y1="185" x2="730" y2="185" class="arrow"/>
+<polygon points="730,185 720,179 720,191" fill="#333"/>
+<rect x="735" y="125" width="145" height="120" rx="8" class="box"/>
+<text x="807.5" y="157" text-anchor="middle" class="label">iPhone runtime</text>
+<text x="807.5" y="190" text-anchor="middle" class="body">CoreAILanguageModel</text>
+<text x="807.5" y="216" text-anchor="middle" class="small">LanguageModelSession</text>
+<line x1="880" y1="185" x2="905" y2="185" class="arrow"/>
+<polygon points="905,185 895,179 895,191" fill="#333"/>
+<rect x="910" y="125" width="145" height="120" rx="8" class="box"/>
+<text x="982.5" y="157" text-anchor="middle" class="label">Validation</text>
+<text x="982.5" y="190" text-anchor="middle" class="body">six-case suites</text>
+<text x="982.5" y="216" text-anchor="middle" class="small">ANE trace</text>
+<rect x="210" y="300" width="680" height="70" rx="8" class="w8"/>
+<text x="550" y="330" text-anchor="middle" class="label">W8 per-tensor K-means palettization</text>
+<text x="550" y="354" text-anchor="middle" class="body">INT8 per-tensor quantization · FP16 fixed-size · 4,096 tokens</text>
+</svg>

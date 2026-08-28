@@ -1,0 +1,15 @@
+\begin{table}[H]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Evaluation & Mean cosine & Min. cosine & Top-1 agree. & Mean $\Delta$NLL \\
+\midrule
+Tuning & 0.997067 & 0.967261 & 98.44\% & 0.002985 \\
+Frozen holdout & 0.996598 & 0.959625 & 98.37\% & 0.003167 \\
+\bottomrule
+\end{tabular}
+\caption{W8 conversion fidelity relative to frozen uncompressed-reference outputs. These are conversion metrics, not a capability benchmark. \evidence{CL-06,CL-07}}
+\label{tab:w8-fidelity}
+\end{table}

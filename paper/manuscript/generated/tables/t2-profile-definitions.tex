@@ -1,0 +1,21 @@
+\begin{table}[H]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{@{}p{0.21\textwidth}XX@{}}
+\toprule
+Dimension & Static-W8 & Dynamic-INT4 \\
+\midrule
+Transformer weights & W8 per-tensor K-means palettization & INT4 block-32 symmetric-with-clipping \\
+Embedding & INT8 per-tensor quantization & not separately reported in the artifact summary \\
+Compute & FP16 & FP16 \\
+KV cache & FP16 fixed-size & FP16 growing/dynamic \\
+Graph & static & dynamic \\
+Context cap & 4,096 tokens & 4,096 tokens \\
+Preferred compute & neural-engine & gpu \\
+AOT target & h16p & h16p \\
+\bottomrule
+\end{tabularx}
+\caption{Compared deployment profiles. The rows are coupled system choices, not independently randomized factors. \evidence{CL-03,CL-04,CL-11}}
+\label{tab:profiles}
+\end{table}

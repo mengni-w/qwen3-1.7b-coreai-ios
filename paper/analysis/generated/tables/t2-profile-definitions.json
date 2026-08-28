@@ -1,0 +1,33 @@
+{
+  "causalIsolationClaimed": false,
+  "common": {
+    "architecture": "h16p",
+    "baseModel": "Qwen/Qwen3-1.7B",
+    "baseRevision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+    "platform": "iOS 27",
+    "tokenizerSHA256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4"
+  },
+  "profiles": {
+    "INT4_GPU": {
+      "compute": "FP16",
+      "contextTokens": 4096,
+      "embedding": "not separately reported in the artifact summary",
+      "graphShape": "dynamic",
+      "kvCache": "FP16 growing/dynamic",
+      "preferredCompute": "gpu",
+      "sourceArtifactSHA256": "C0E3A7463B722AE6740DE3CFDFA835B06451436567663BDD79F2C8E996794CD6",
+      "transformerWeights": "INT4 block-32 symmetric-with-clipping"
+    },
+    "W8_ANE": {
+      "compute": "FP16",
+      "contextTokens": 4096,
+      "embedding": "INT8 per-tensor quantization",
+      "graphShape": "static",
+      "historicalSourceArtifactSHA256": "66325b4cc0657e1f89a7a0a92f37899d01ddc37d168295dbbad0d71bef7f75e3",
+      "kvCache": "FP16 fixed-size",
+      "preferredCompute": "neural-engine",
+      "transformerWeights": "W8 per-tensor K-means palettization"
+    }
+  },
+  "schemaVersion": 1
+}

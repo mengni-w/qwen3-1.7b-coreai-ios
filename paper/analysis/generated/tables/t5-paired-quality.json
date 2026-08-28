@@ -1,0 +1,166 @@
+{
+  "comparison": {
+    "emDifferenceFirstMinusSecond": {
+      "lower95Points": -3.0,
+      "observedPoints": 1.6666666666666667,
+      "resamples": 10000,
+      "upper95Points": 6.333333333333333
+    },
+    "emWinSignTestPValue": 0.5758493477318467,
+    "emWins": {
+      "first": 28,
+      "second": 23,
+      "tie": 249
+    },
+    "f1DifferenceFirstMinusSecond": {
+      "lower95Points": -2.4442097469681867,
+      "observedPoints": 0.28037670241297635,
+      "resamples": 10000,
+      "upper95Points": 2.9988675953705775
+    },
+    "f1WinSignTestPValue": 0.613734467630139,
+    "f1Wins": {
+      "first": 52,
+      "second": 46,
+      "tie": 202
+    },
+    "first": "W8_ANE",
+    "identicalPredictions": 187,
+    "pairedSamples": 300,
+    "second": "INT4_GPU"
+  },
+  "equivalenceEstablished": false,
+  "metric": "CMRC2018 official EM/F1 formula; NLTK Treebank tokenizer without sentence splitting",
+  "schemaVersion": 1,
+  "sourceQualitySHA256": "47bae909fdac3e80996b4042daff173931dec306c6f8a9977189792f4effa171",
+  "variants": {
+    "INT4_GPU": {
+      "byStratum": {
+        "long": {
+          "average": 68.90174308421143,
+          "em": 57.0,
+          "endToEndOutputTokensPerSecond": 1.470710266132349,
+          "exactMatchCount": 57,
+          "f1": 80.80348616842285,
+          "maximumResponseTokenHits": 0,
+          "meanElapsedSeconds": 6.50026060207,
+          "meanInputTokens": 673.83,
+          "meanOutputTokens": 9.56,
+          "medianElapsedSeconds": 6.569108125,
+          "p95ElapsedSeconds": 7.270188667,
+          "skip": 0,
+          "total": 100
+        },
+        "medium": {
+          "average": 73.39341533185731,
+          "em": 62.0,
+          "endToEndOutputTokensPerSecond": 1.4684950610599041,
+          "exactMatchCount": 62,
+          "f1": 84.78683066371462,
+          "maximumResponseTokenHits": 0,
+          "meanElapsedSeconds": 5.91762289873,
+          "meanInputTokens": 472.36,
+          "meanOutputTokens": 8.69,
+          "medianElapsedSeconds": 5.625683813,
+          "p95ElapsedSeconds": 6.480461167,
+          "skip": 0,
+          "total": 100
+        },
+        "short": {
+          "average": 66.33793614696958,
+          "em": 54.0,
+          "endToEndOutputTokensPerSecond": 1.8730897852931818,
+          "exactMatchCount": 54,
+          "f1": 78.67587229393918,
+          "maximumResponseTokenHits": 0,
+          "meanElapsedSeconds": 5.408176415,
+          "meanInputTokens": 366.52,
+          "meanOutputTokens": 10.13,
+          "medianElapsedSeconds": 5.404143958500001,
+          "p95ElapsedSeconds": 6.449082958,
+          "skip": 0,
+          "total": 100
+        }
+      },
+      "summary": {
+        "average": 69.5443648543461,
+        "em": 57.666666666666664,
+        "endToEndOutputTokensPerSecond": 1.5920511954997754,
+        "exactMatchCount": 173,
+        "f1": 81.42206304202554,
+        "maximumResponseTokenHits": 0,
+        "meanElapsedSeconds": 5.942019971933333,
+        "meanInputTokens": 504.2366666666667,
+        "meanOutputTokens": 9.46,
+        "medianElapsedSeconds": 5.7997741455,
+        "p95ElapsedSeconds": 7.086740042,
+        "skip": 0,
+        "total": 300
+      }
+    },
+    "W8_ANE": {
+      "byStratum": {
+        "long": {
+          "average": 66.42096165181161,
+          "em": 54.0,
+          "endToEndOutputTokensPerSecond": 9.117814806045606,
+          "exactMatchCount": 54,
+          "f1": 78.8419233036232,
+          "maximumResponseTokenHits": 0,
+          "meanElapsedSeconds": 1.2053326629,
+          "meanInputTokens": 673.83,
+          "meanOutputTokens": 10.99,
+          "medianElapsedSeconds": 0.9006768125,
+          "p95ElapsedSeconds": 3.00394525,
+          "skip": 0,
+          "total": 100
+        },
+        "medium": {
+          "average": 74.04622149050037,
+          "em": 64.0,
+          "endToEndOutputTokensPerSecond": 10.22172550117355,
+          "exactMatchCount": 64,
+          "f1": 84.09244298100074,
+          "maximumResponseTokenHits": 0,
+          "meanElapsedSeconds": 0.91960990333,
+          "meanInputTokens": 472.36,
+          "meanOutputTokens": 9.4,
+          "medianElapsedSeconds": 0.6884688125,
+          "p95ElapsedSeconds": 2.353057334,
+          "skip": 0,
+          "total": 100
+        },
+        "short": {
+          "average": 71.08647647434582,
+          "em": 60.0,
+          "endToEndOutputTokensPerSecond": 11.823921197006483,
+          "exactMatchCount": 60,
+          "f1": 82.17295294869163,
+          "maximumResponseTokenHits": 0,
+          "meanElapsedSeconds": 0.9497695234,
+          "meanInputTokens": 366.52,
+          "meanOutputTokens": 11.23,
+          "medianElapsedSeconds": 0.609458146,
+          "p95ElapsedSeconds": 2.1419587079999998,
+          "skip": 0,
+          "total": 100
+        }
+      },
+      "summary": {
+        "average": 70.51788653888592,
+        "em": 59.333333333333336,
+        "endToEndOutputTokensPerSecond": 10.283889703573857,
+        "exactMatchCount": 178,
+        "f1": 81.70243974443851,
+        "maximumResponseTokenHits": 0,
+        "meanElapsedSeconds": 1.0249040298766667,
+        "meanInputTokens": 504.2366666666667,
+        "meanOutputTokens": 10.54,
+        "medianElapsedSeconds": 0.7812183125000001,
+        "p95ElapsedSeconds": 2.494345875,
+        "skip": 0,
+        "total": 300
+      }
+    }
+  }
+}

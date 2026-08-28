@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="500" viewBox="0 0 900 500">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<style>text{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;fill:#161616}.title{font-size:24px;font-weight:700}.label{font-size:15px}.small{font-size:12px;fill:#555}.axis{stroke:#777;stroke-width:1}.grid{stroke:#ddd;stroke-width:1}.w8{fill:#d94a42}.int4{fill:#315b9a}.w8point{fill:#fff;stroke:#8f211b;stroke-width:2}.int4point{fill:#fff;stroke:#173b73;stroke-width:2}</style>
+<text x="40" y="48" class="title">Storage and peak process memory</text>
+<text x="40" y="75" class="small">MiB; RSS is process resident memory, not total system RAM</text>
+<line x1="90" y1="420" x2="840" y2="420" class="axis"/>
+<rect x="177" y="248.56" width="76" height="171.44" class="w8"/>
+<text x="215" y="240.56" text-anchor="middle" class="small">1,714.4</text>
+<rect x="287" y="327.54" width="76" height="92.46" class="int4"/>
+<text x="325" y="319.54" text-anchor="middle" class="small">924.6</text>
+<text x="270" y="448" text-anchor="middle" class="label">Compiled bundle</text>
+<rect x="557" y="133.50" width="76" height="286.50" class="w8"/>
+<text x="595" y="125.50" text-anchor="middle" class="small">2,865.0</text>
+<rect x="667" y="220.47" width="76" height="199.53" class="int4"/>
+<text x="705" y="212.47" text-anchor="middle" class="small">1,995.3</text>
+<text x="650" y="448" text-anchor="middle" class="label">Peak process RSS</text>
+<rect x="650" y="45" width="14" height="14" class="w8"/><text x="672" y="57" class="small">Static-W8</text>
+<rect x="760" y="45" width="14" height="14" class="int4"/><text x="782" y="57" class="small">Dynamic-INT4</text>
+</svg>

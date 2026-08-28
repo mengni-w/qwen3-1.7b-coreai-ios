@@ -1,0 +1,6 @@
+click==8.5.0
+defusedxml==0.7.1
+joblib==1.5.3
+nltk==3.10.0
+regex==2026.7.19
+tqdm==4.70.0

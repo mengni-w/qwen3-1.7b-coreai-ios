@@ -1,0 +1,18 @@
+\begin{table}[H]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{@{}p{0.22\textwidth}p{0.22\textwidth}p{0.22\textwidth}X@{}}
+\toprule
+Evidence object & Measure A & Measure B & Interpretation / identity \\
+\midrule
+Historical suites & 4 complete & 6 per suite & Pass; zero recorded hard failures \\
+Historical final suite & 2,963.7 MiB peak RSS & 198.7 MiB after unload & A-W8-HISTORICAL \\
+Historical trace & 547 & 547 & ANE participation; non-exclusive \\
+Public rebuild suite & 6 / 6 cases & 2,766.4 MiB peak RSS & A-W8-PUBLIC \\
+Public near-4K case & 3,790 input / 10 output & 5.709 s TTFT & Tail marker retrieved \\
+\bottomrule
+\end{tabularx}
+\caption{Physical-device evidence on iPhone 15 Pro / iOS 27. Historical and public W8 payloads use the same mechanism but are not byte-identical. \evidence{CL-08,CL-09,CL-10,CL-22}}
+\label{tab:device-evidence}
+\end{table}

@@ -1,0 +1,19 @@
+\begin{table}[H]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}llrrr@{}}
+\toprule
+Input / output & Profile & TTFT (s) & Total (s) & Visible decode (tok/s) \\
+\midrule
+161 / 60 & Static-W8 & 0.431 & 3.259 & 20.505 \\
+161 / 60 & Dynamic-INT4 & 1.221 & 2.592 & 43.162 \\
+3,790 / 10 & Static-W8 & 5.647 & 6.116 & -- \\
+3,790 / 10 & Dynamic-INT4 & 13.522 & 13.717 & -- \\
+120 / 256 & Static-W8 & 0.404 & 13.292 & 19.615 \\
+120 / 256 & Dynamic-INT4 & 0.559 & 7.159 & 38.487 \\
+\bottomrule
+\end{tabular}
+\caption{Workload medians after one warm-up and three accepted samples. Near-4K decode rate is omitted because only nine visible tokens remained. \evidence{CL-17,CL-18,CL-19,CL-20}}
+\label{tab:workload-performance}
+\end{table}

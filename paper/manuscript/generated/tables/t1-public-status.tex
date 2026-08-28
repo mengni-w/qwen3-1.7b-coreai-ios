@@ -1,0 +1,19 @@
+\begin{table}[H]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}p{0.19\textwidth}>{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{0.23\textwidth}@{}}
+\toprule
+Work & Route & Public evidence & Boundary \\
+\midrule
+Apple public Qwen3 registry & Official authoring presets & Qwen3-0.6B, 4B, and 8B; no 1.7B preset at the audited commit & Repository state only at commit 7062017c \\
+Apple issue 116 / PR 196 & Open request / closed attempt & Issue open; PR closed and unmerged after a reported local iOS regression & No regression root cause, acceptance, or roadmap commitment \\
+mlboydaisuke community artifact & Dynamic INT4 / GPU / h18p & iPhone 17 Pro timing and eight model-card questions & Different device, context, and evaluation protocol \\
+kevinqz community artifact & Stateful INT8 .aimodel; macOS export manifest & Structural gate passed; numeric gate not run & No disclosed iPhone AOT or paired benchmark \\
+This work: W8 profile & Static W8 / fixed KV / ANE-preferred / h16p & Frozen fidelity gate, iPhone 15 Pro suites, and ANE trace participation & One device class; no exclusive-ANE claim \\
+This work: INT4 profile & Dynamic INT4 / growing KV / GPU-preferred / h16p & Same-device paired quality, latency, storage, and RSS comparison & Coupled system profile; no isolated causal attribution \\
+\bottomrule
+\end{tabularx}
+\caption{Public Qwen3-1.7B Core AI status audited 2026-08-28. Community model-card claims are contextual, not re-measured results. \evidence{CL-01,CL-02,CL-24,CL-25}}
+\label{tab:public-status}
+\end{table}
