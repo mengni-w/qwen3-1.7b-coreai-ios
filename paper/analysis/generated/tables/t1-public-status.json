@@ -1,0 +1,100 @@
+{
+  "auditedAt": "2026-08-28T09:07:26Z",
+  "claimBoundary": "Dated public-source status only; community evidence uses different devices and protocols unless explicitly paired in this work",
+  "communitySnapshots": {
+    "kevinqz": {
+      "boundary": "community artifact; no directly comparable iPhone timing or quality protocol",
+      "deviceEvidence": "model card reports real-hardware load and generation without an iPhone AOT target",
+      "lastModified": "2026-07-11T00:59:42Z",
+      "modelCardSHA256": "de79c3cb9daf4d3be71c353e95846749297ec802136933c159a8d78dda7ac5e8",
+      "parityReportSHA256": "561bea7469d09b3df76474d8aa021debe5e23912ec5ac90b07e994bccfd318f0",
+      "profile": "stateful INT8 .aimodel; reproduction manifest uses the macOS export path",
+      "qualityEvidence": "numeric accuracy not run",
+      "repository": "https://huggingface.co/kevinqz/Qwen3-1.7B-CoreAI",
+      "reproductionManifestSHA256": "e58dd90d9ebbea4df534475359e5427c6bc3caa036849ea69cc6aaa572f5c8ab",
+      "revision": "340f4c4c8c422c56e0cc9b5ecb7eabdf37781f54"
+    },
+    "mlboydaisuke": {
+      "boundary": "community artifact; not Apple-published; different device and protocol",
+      "deviceEvidence": "iPhone 17 Pro reported by model card",
+      "lastModified": "2026-08-15T05:16:03Z",
+      "modelCardSHA256": "9c497a9d9aee41f5dca34694a689a2395cee379cdce4ed00c5ccfea464c84321",
+      "profile": "dynamic INT4, GPU, h18p",
+      "qualityEvidence": "eight checkable questions reported by model card",
+      "repository": "https://huggingface.co/mlboydaisuke/qwen3-1.7b-CoreAI-official",
+      "revision": "af6335a8a108e383be8aa44925a8fe03a1cd2cd9"
+    }
+  },
+  "officialApple": {
+    "issue116": {
+      "assignees": [
+        "stikves"
+      ],
+      "createdAt": "2026-07-19T07:42:48Z",
+      "state": "open",
+      "updatedAt": "2026-08-26T00:43:22Z",
+      "url": "https://github.com/apple/coreai-models/issues/116"
+    },
+    "mainCommit": "7062017c8e86c6cf4f49b721ddc3494efcdb7c7d",
+    "mainCommitDate": "2026-08-27T18:27:12Z",
+    "modelRegistrySHA256": "aa4aaa268d96d5b30fd00c4f35e65a7851ada92cad26275fb75b95fc0ff66761",
+    "pullRequest196": {
+      "closedAt": "2026-08-27T16:39:04Z",
+      "headCommit": "f39347bcd64946ba32f8f74f3c7dcfdbad3106c6",
+      "merged": false,
+      "regressionCommentDate": "2026-08-27T01:05:46Z",
+      "regressionCommentID": 5432991306,
+      "regressionRootCauseDisclosed": false,
+      "state": "closed",
+      "url": "https://github.com/apple/coreai-models/pull/196"
+    },
+    "qwen3ReadmeSHA256": "04724d8086b3c64fc0e46fd59caac175c74c732fbae527b70e3eaabe9ab39a6e",
+    "qwen3RegisteredPresets": [
+      "Qwen3-0.6B",
+      "Qwen3-4B",
+      "Qwen3-8B"
+    ],
+    "qwen3_1_7bRegistered": false,
+    "repository": "https://github.com/apple/coreai-models",
+    "rootReadmeSHA256": "d81c1a8d7cbf353528625757e196476f7ef2265a8ac66b35fefb17e5eab36e41"
+  },
+  "rows": [
+    {
+      "comparisonBoundary": "Repository state only at commit 7062017c",
+      "publishedEvidence": "Qwen3-0.6B, 4B, and 8B; no 1.7B preset at the audited commit",
+      "route": "Official authoring presets",
+      "work": "Apple public Qwen3 registry"
+    },
+    {
+      "comparisonBoundary": "No regression root cause, acceptance, or roadmap commitment",
+      "publishedEvidence": "Issue open; PR closed and unmerged after a reported local iOS regression",
+      "route": "Open request / closed attempt",
+      "work": "Apple issue 116 / PR 196"
+    },
+    {
+      "comparisonBoundary": "Different device, context, and evaluation protocol",
+      "publishedEvidence": "iPhone 17 Pro timing and eight model-card questions",
+      "route": "Dynamic INT4 / GPU / h18p",
+      "work": "mlboydaisuke community artifact"
+    },
+    {
+      "comparisonBoundary": "No disclosed iPhone AOT or paired benchmark",
+      "publishedEvidence": "Structural gate passed; numeric gate not run",
+      "route": "Stateful INT8 .aimodel; macOS export manifest",
+      "work": "kevinqz community artifact"
+    },
+    {
+      "comparisonBoundary": "One device class; no exclusive-ANE claim",
+      "publishedEvidence": "Frozen fidelity gate, iPhone 15 Pro suites, and ANE trace participation",
+      "route": "Static W8 / fixed KV / ANE-preferred / h16p",
+      "work": "This work: W8 profile"
+    },
+    {
+      "comparisonBoundary": "Coupled system profile; no isolated causal attribution",
+      "publishedEvidence": "Same-device paired quality, latency, storage, and RSS comparison",
+      "route": "Dynamic INT4 / growing KV / GPU-preferred / h16p",
+      "work": "This work: INT4 profile"
+    }
+  ],
+  "schemaVersion": 1
+}

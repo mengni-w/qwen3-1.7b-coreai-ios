@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="470" viewBox="0 0 980 470">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<style>text{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;fill:#161616}.title{font-size:24px;font-weight:700}.label{font-size:15px}.small{font-size:12px;fill:#555}.axis{stroke:#777;stroke-width:1}.grid{stroke:#ddd;stroke-width:1}.w8{fill:#d94a42}.int4{fill:#315b9a}.w8point{fill:#fff;stroke:#8f211b;stroke-width:2}.int4point{fill:#fff;stroke:#173b73;stroke-width:2}</style>
+<text x="40" y="48" class="title">Paired quality difference: Static-W8 minus Dynamic-INT4</text>
+<text x="40" y="75" class="small">95% bootstrap intervals; both intervals cross zero</text>
+<line x1="170.00" y1="105" x2="170.00" y2="390" class="grid"/>
+<text x="170.00" y="414" text-anchor="middle" class="small">-4</text>
+<line x1="236.36" y1="105" x2="236.36" y2="390" class="grid"/>
+<text x="236.36" y="414" text-anchor="middle" class="small">-3</text>
+<line x1="302.73" y1="105" x2="302.73" y2="390" class="grid"/>
+<text x="302.73" y="414" text-anchor="middle" class="small">-2</text>
+<line x1="369.09" y1="105" x2="369.09" y2="390" class="grid"/>
+<text x="369.09" y="414" text-anchor="middle" class="small">-1</text>
+<line x1="435.45" y1="105" x2="435.45" y2="390" class="grid"/>
+<text x="435.45" y="414" text-anchor="middle" class="small">0</text>
+<line x1="501.82" y1="105" x2="501.82" y2="390" class="grid"/>
+<text x="501.82" y="414" text-anchor="middle" class="small">1</text>
+<line x1="568.18" y1="105" x2="568.18" y2="390" class="grid"/>
+<text x="568.18" y="414" text-anchor="middle" class="small">2</text>
+<line x1="634.55" y1="105" x2="634.55" y2="390" class="grid"/>
+<text x="634.55" y="414" text-anchor="middle" class="small">3</text>
+<line x1="700.91" y1="105" x2="700.91" y2="390" class="grid"/>
+<text x="700.91" y="414" text-anchor="middle" class="small">4</text>
+<line x1="767.27" y1="105" x2="767.27" y2="390" class="grid"/>
+<text x="767.27" y="414" text-anchor="middle" class="small">5</text>
+<line x1="833.64" y1="105" x2="833.64" y2="390" class="grid"/>
+<text x="833.64" y="414" text-anchor="middle" class="small">6</text>
+<line x1="900.00" y1="105" x2="900.00" y2="390" class="grid"/>
+<text x="900.00" y="414" text-anchor="middle" class="small">7</text>
+<line x1="435.45" y1="100" x2="435.45" y2="395" stroke="#111" stroke-width="2"/>
+<text x="40" y="195" class="label">F1</text>
+<line x1="273.25" y1="190" x2="634.47" y2="190" stroke="#315b9a" stroke-width="5"/>
+<line x1="273.25" y1="180" x2="273.25" y2="200" stroke="#315b9a" stroke-width="2"/>
+<line x1="634.47" y1="180" x2="634.47" y2="200" stroke="#315b9a" stroke-width="2"/>
+<circle cx="454.06" cy="190" r="8" fill="#d94a42"/>
+<text x="900" y="220" text-anchor="end" class="small">Δ 0.28 points · p=0.614</text>
+<text x="40" y="315" class="label">Exact match</text>
+<line x1="236.36" y1="310" x2="855.76" y2="310" stroke="#315b9a" stroke-width="5"/>
+<line x1="236.36" y1="300" x2="236.36" y2="320" stroke="#315b9a" stroke-width="2"/>
+<line x1="855.76" y1="300" x2="855.76" y2="320" stroke="#315b9a" stroke-width="2"/>
+<circle cx="546.06" cy="310" r="8" fill="#d94a42"/>
+<text x="900" y="340" text-anchor="end" class="small">Δ 1.67 points · p=0.576</text>
+<text x="40" y="452" class="small">No equivalence test was performed.</text>
+</svg>

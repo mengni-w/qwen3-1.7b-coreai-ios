@@ -179,6 +179,14 @@ This project does not claim:
 - `results/` — sanitized machine-readable evidence.
 - `companion/` — unsigned, resource-free iOS validation app.
 - `licenses/` — third-party notices and Apple BSD license text.
+- `paper/` — technical report source, evidence pipeline, generated tables and
+  figures, claim audit, and compiled PDF.
+
+## Technical report
+
+The complete technical report and its reproducibility materials are available
+under [`paper/`](paper/). The compiled report is
+[`paper/manuscript/output/pdf/qwen3-coreai-report.pdf`](paper/manuscript/output/pdf/qwen3-coreai-report.pdf).
 
 ## License
 

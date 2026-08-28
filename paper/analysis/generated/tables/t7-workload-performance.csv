@@ -1,0 +1,7 @@
+workload,input_tokens,output_tokens,variant,median_ttft_seconds,median_total_seconds,median_visible_decode_tokens_per_second,median_end_to_end_output_tokens_per_second
+business_161_60,161,60,W8_ANE,0.431,3.259,20.505,18.41
+business_161_60,161,60,INT4_GPU,1.221,2.592,43.162,23.15
+near_4k_3790_10,3790,10,W8_ANE,5.647,6.116,,1.635
+near_4k_3790_10,3790,10,INT4_GPU,13.522,13.717,,0.729
+decode_120_256,120,256,W8_ANE,0.404,13.292,19.615,19.26
+decode_120_256,120,256,INT4_GPU,0.559,7.159,38.487,35.762

@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="680" viewBox="0 0 1100 680">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<style>text{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;fill:#161616}.title{font-size:24px;font-weight:700}.label{font-size:15px}.small{font-size:12px;fill:#555}.axis{stroke:#777;stroke-width:1}.grid{stroke:#ddd;stroke-width:1}.w8{fill:#d94a42}.int4{fill:#315b9a}.w8point{fill:#fff;stroke:#8f211b;stroke-width:2}.int4point{fill:#fff;stroke:#173b73;stroke-width:2}</style>
+<text x="40" y="45" class="title">Workload-dependent latency</text>
+<text x="40" y="70" class="small">Input / output tokens; bars are medians and circles are individual accepted samples</text>
+<text x="40" y="113" class="label">Time to first token (seconds)</text>
+<line x1="90" y1="320" x2="1040" y2="320" class="axis"/>
+<rect x="152" y="315.45" width="50" height="4.55" class="w8"/>
+<circle cx="165" cy="315.31" r="4.5" class="w8point"/>
+<circle cx="177" cy="315.45" r="4.5" class="w8point"/>
+<circle cx="189" cy="315.47" r="4.5" class="w8point"/>
+<text x="177" y="309.45" text-anchor="middle" class="small">0.431</text>
+<rect x="228" y="307.10" width="50" height="12.90" class="int4"/>
+<circle cx="241" cy="307.10" r="4.5" class="int4point"/>
+<circle cx="253" cy="306.18" r="4.5" class="int4point"/>
+<circle cx="265" cy="307.71" r="4.5" class="int4point"/>
+<text x="253" y="301.10" text-anchor="middle" class="small">1.221</text>
+<text x="215" y="342" text-anchor="middle" class="small">161 / 60</text>
+<rect x="442" y="260.34" width="50" height="59.66" class="w8"/>
+<circle cx="455" cy="261.24" r="4.5" class="w8point"/>
+<circle cx="467" cy="260.34" r="4.5" class="w8point"/>
+<circle cx="479" cy="259.84" r="4.5" class="w8point"/>
+<text x="467" y="254.34" text-anchor="middle" class="small">5.647</text>
+<rect x="518" y="177.14" width="50" height="142.86" class="int4"/>
+<circle cx="531" cy="177.33" r="4.5" class="int4point"/>
+<circle cx="543" cy="177.14" r="4.5" class="int4point"/>
+<circle cx="555" cy="175.26" r="4.5" class="int4point"/>
+<text x="543" y="171.14" text-anchor="middle" class="small">13.522</text>
+<text x="505" y="342" text-anchor="middle" class="small">3,790 / 10</text>
+<rect x="732" y="315.73" width="50" height="4.27" class="w8"/>
+<circle cx="745" cy="315.73" r="4.5" class="w8point"/>
+<circle cx="757" cy="315.66" r="4.5" class="w8point"/>
+<circle cx="769" cy="316.84" r="4.5" class="w8point"/>
+<text x="757" y="309.73" text-anchor="middle" class="small">0.404</text>
+<rect x="808" y="314.09" width="50" height="5.91" class="int4"/>
+<circle cx="821" cy="314.32" r="4.5" class="int4point"/>
+<circle cx="833" cy="314.08" r="4.5" class="int4point"/>
+<circle cx="845" cy="314.09" r="4.5" class="int4point"/>
+<text x="833" y="308.09" text-anchor="middle" class="small">0.559</text>
+<text x="795" y="342" text-anchor="middle" class="small">120 / 256</text>
+<text x="40" y="408" class="label">Total generation time (seconds)</text>
+<line x1="90" y1="615" x2="1040" y2="615" class="axis"/>
+<rect x="152" y="581.06" width="50" height="33.94" class="w8"/>
+<circle cx="165" cy="580.65" r="4.5" class="w8point"/>
+<circle cx="177" cy="581.06" r="4.5" class="w8point"/>
+<circle cx="189" cy="581.10" r="4.5" class="w8point"/>
+<text x="177" y="575.06" text-anchor="middle" class="small">3.259</text>
+<rect x="228" y="588.01" width="50" height="26.99" class="int4"/>
+<circle cx="241" cy="588.01" r="4.5" class="int4point"/>
+<circle cx="253" cy="587.42" r="4.5" class="int4point"/>
+<circle cx="265" cy="588.89" r="4.5" class="int4point"/>
+<text x="253" y="582.01" text-anchor="middle" class="small">2.592</text>
+<text x="215" y="637" text-anchor="middle" class="small">161 / 60</text>
+<rect x="442" y="551.30" width="50" height="63.70" class="w8"/>
+<circle cx="455" cy="552.21" r="4.5" class="w8point"/>
+<circle cx="467" cy="551.30" r="4.5" class="w8point"/>
+<circle cx="479" cy="550.83" r="4.5" class="w8point"/>
+<text x="467" y="545.30" text-anchor="middle" class="small">6.116</text>
+<rect x="518" y="472.14" width="50" height="142.86" class="int4"/>
+<circle cx="531" cy="472.27" r="4.5" class="int4point"/>
+<circle cx="543" cy="472.14" r="4.5" class="int4point"/>
+<circle cx="555" cy="470.27" r="4.5" class="int4point"/>
+<text x="543" y="466.14" text-anchor="middle" class="small">13.717</text>
+<text x="505" y="637" text-anchor="middle" class="small">3,790 / 10</text>
+<rect x="732" y="476.57" width="50" height="138.43" class="w8"/>
+<circle cx="745" cy="476.67" r="4.5" class="w8point"/>
+<circle cx="757" cy="475.86" r="4.5" class="w8point"/>
+<circle cx="769" cy="476.57" r="4.5" class="w8point"/>
+<text x="757" y="470.57" text-anchor="middle" class="small">13.292</text>
+<rect x="808" y="540.44" width="50" height="74.56" class="int4"/>
+<circle cx="821" cy="542.10" r="4.5" class="int4point"/>
+<circle cx="833" cy="538.03" r="4.5" class="int4point"/>
+<circle cx="845" cy="540.44" r="4.5" class="int4point"/>
+<text x="833" y="534.44" text-anchor="middle" class="small">7.159</text>
+<text x="795" y="637" text-anchor="middle" class="small">120 / 256</text>
+<rect x="790" y="40" width="14" height="14" class="w8"/><text x="812" y="52" class="small">Static-W8</text>
+<rect x="900" y="40" width="14" height="14" class="int4"/><text x="922" y="52" class="small">Dynamic-INT4</text>
+</svg>

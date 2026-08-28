@@ -1,0 +1,273 @@
+{
+  "p95Claimed": false,
+  "samplePolicy": "one warm-up followed by three accepted measured samples",
+  "schemaVersion": 1,
+  "workloads": {
+    "business_161_60": {
+      "acceptedSamples": [
+        {
+          "endToEndOutputTokensPerSecond": 23.15,
+          "inputTokens": 161,
+          "outputTokens": 60,
+          "residentMiB": 1098.9,
+          "run": 1,
+          "totalSeconds": 2.592,
+          "ttftSeconds": 1.221,
+          "variant": "INT4_GPU",
+          "visibleDecodeTokensPerSecond": 42.303,
+          "workload": "business_161_60"
+        },
+        {
+          "endToEndOutputTokensPerSecond": 22.66,
+          "inputTokens": 161,
+          "outputTokens": 60,
+          "residentMiB": 1099.2,
+          "run": 2,
+          "totalSeconds": 2.648,
+          "ttftSeconds": 1.308,
+          "variant": "INT4_GPU",
+          "visibleDecodeTokensPerSecond": 43.297,
+          "workload": "business_161_60"
+        },
+        {
+          "endToEndOutputTokensPerSecond": 23.937,
+          "inputTokens": 161,
+          "outputTokens": 60,
+          "residentMiB": 1099.6,
+          "run": 3,
+          "totalSeconds": 2.507,
+          "ttftSeconds": 1.163,
+          "variant": "INT4_GPU",
+          "visibleDecodeTokensPerSecond": 43.162,
+          "workload": "business_161_60"
+        },
+        {
+          "endToEndOutputTokensPerSecond": 18.191,
+          "inputTokens": 161,
+          "outputTokens": 60,
+          "residentMiB": 1434.0,
+          "run": 1,
+          "totalSeconds": 3.298,
+          "ttftSeconds": 0.444,
+          "variant": "W8_ANE",
+          "visibleDecodeTokensPerSecond": 20.32,
+          "workload": "business_161_60"
+        },
+        {
+          "endToEndOutputTokensPerSecond": 18.41,
+          "inputTokens": 161,
+          "outputTokens": 60,
+          "residentMiB": 1422.3,
+          "run": 2,
+          "totalSeconds": 3.259,
+          "ttftSeconds": 0.431,
+          "variant": "W8_ANE",
+          "visibleDecodeTokensPerSecond": 20.505,
+          "workload": "business_161_60"
+        },
+        {
+          "endToEndOutputTokensPerSecond": 18.433,
+          "inputTokens": 161,
+          "outputTokens": 60,
+          "residentMiB": 1422.4,
+          "run": 3,
+          "totalSeconds": 3.255,
+          "ttftSeconds": 0.429,
+          "variant": "W8_ANE",
+          "visibleDecodeTokensPerSecond": 20.522,
+          "workload": "business_161_60"
+        }
+      ],
+      "inputTokens": 161,
+      "medians": {
+        "INT4_GPU": {
+          "endToEndOutputTokensPerSecond": 23.15,
+          "residentMiB": 1099.2,
+          "totalSeconds": 2.592,
+          "ttftSeconds": 1.221,
+          "visibleDecodeTokensPerSecond": 43.162
+        },
+        "W8_ANE": {
+          "endToEndOutputTokensPerSecond": 18.41,
+          "residentMiB": 1422.4,
+          "totalSeconds": 3.259,
+          "ttftSeconds": 0.431,
+          "visibleDecodeTokensPerSecond": 20.505
+        }
+      },
+      "outputTokens": 60
+    },
+    "decode_120_256": {
+      "acceptedSamples": [
+        {
+          "endToEndOutputTokensPerSecond": 36.573,
+          "inputTokens": 120,
+          "outputTokens": 256,
+          "run": 1,
+          "totalSeconds": 7.0,
+          "ttftSeconds": 0.538,
+          "variant": "INT4_GPU",
+          "visibleDecodeTokensPerSecond": 39.31,
+          "workload": "decode_120_256"
+        },
+        {
+          "endToEndOutputTokensPerSecond": 34.638,
+          "inputTokens": 120,
+          "outputTokens": 256,
+          "run": 2,
+          "totalSeconds": 7.391,
+          "ttftSeconds": 0.56,
+          "variant": "INT4_GPU",
+          "visibleDecodeTokensPerSecond": 37.186,
+          "workload": "decode_120_256"
+        },
+        {
+          "endToEndOutputTokensPerSecond": 35.762,
+          "inputTokens": 120,
+          "outputTokens": 256,
+          "run": 3,
+          "totalSeconds": 7.159,
+          "ttftSeconds": 0.559,
+          "variant": "INT4_GPU",
+          "visibleDecodeTokensPerSecond": 38.487,
+          "workload": "decode_120_256"
+        },
+        {
+          "endToEndOutputTokensPerSecond": 19.274,
+          "inputTokens": 120,
+          "outputTokens": 256,
+          "run": 1,
+          "totalSeconds": 13.282,
+          "ttftSeconds": 0.404,
+          "variant": "W8_ANE",
+          "visibleDecodeTokensPerSecond": 19.724,
+          "workload": "decode_120_256"
+        },
+        {
+          "endToEndOutputTokensPerSecond": 19.161,
+          "inputTokens": 120,
+          "outputTokens": 256,
+          "run": 2,
+          "totalSeconds": 13.36,
+          "ttftSeconds": 0.411,
+          "variant": "W8_ANE",
+          "visibleDecodeTokensPerSecond": 19.615,
+          "workload": "decode_120_256"
+        },
+        {
+          "endToEndOutputTokensPerSecond": 19.26,
+          "inputTokens": 120,
+          "outputTokens": 256,
+          "run": 3,
+          "totalSeconds": 13.292,
+          "ttftSeconds": 0.299,
+          "variant": "W8_ANE",
+          "visibleDecodeTokensPerSecond": 19.548,
+          "workload": "decode_120_256"
+        }
+      ],
+      "inputTokens": 120,
+      "medians": {
+        "INT4_GPU": {
+          "endToEndOutputTokensPerSecond": 35.762,
+          "totalSeconds": 7.159,
+          "ttftSeconds": 0.559,
+          "visibleDecodeTokensPerSecond": 38.487
+        },
+        "W8_ANE": {
+          "endToEndOutputTokensPerSecond": 19.26,
+          "totalSeconds": 13.292,
+          "ttftSeconds": 0.404,
+          "visibleDecodeTokensPerSecond": 19.615
+        }
+      },
+      "outputTokens": 256
+    },
+    "near_4k_3790_10": {
+      "acceptedSamples": [
+        {
+          "endToEndOutputTokensPerSecond": 0.73,
+          "inputTokens": 3790,
+          "outputTokens": 10,
+          "residentMiB": 1104.3,
+          "run": 1,
+          "totalSeconds": 13.705,
+          "ttftSeconds": 13.504,
+          "variant": "INT4_GPU",
+          "workload": "near_4k_3790_10"
+        },
+        {
+          "endToEndOutputTokensPerSecond": 0.729,
+          "inputTokens": 3790,
+          "outputTokens": 10,
+          "residentMiB": 1104.4,
+          "run": 2,
+          "totalSeconds": 13.717,
+          "ttftSeconds": 13.522,
+          "variant": "INT4_GPU",
+          "workload": "near_4k_3790_10"
+        },
+        {
+          "endToEndOutputTokensPerSecond": 0.72,
+          "inputTokens": 3790,
+          "outputTokens": 10,
+          "residentMiB": 1104.8,
+          "run": 3,
+          "totalSeconds": 13.897,
+          "ttftSeconds": 13.7,
+          "variant": "INT4_GPU",
+          "workload": "near_4k_3790_10"
+        },
+        {
+          "endToEndOutputTokensPerSecond": 1.659,
+          "inputTokens": 3790,
+          "outputTokens": 10,
+          "residentMiB": 1433.2,
+          "run": 1,
+          "totalSeconds": 6.029,
+          "ttftSeconds": 5.562,
+          "variant": "W8_ANE",
+          "workload": "near_4k_3790_10"
+        },
+        {
+          "endToEndOutputTokensPerSecond": 1.635,
+          "inputTokens": 3790,
+          "outputTokens": 10,
+          "residentMiB": 1433.4,
+          "run": 2,
+          "totalSeconds": 6.116,
+          "ttftSeconds": 5.647,
+          "variant": "W8_ANE",
+          "workload": "near_4k_3790_10"
+        },
+        {
+          "endToEndOutputTokensPerSecond": 1.623,
+          "inputTokens": 3790,
+          "outputTokens": 10,
+          "residentMiB": 1433.4,
+          "run": 3,
+          "totalSeconds": 6.162,
+          "ttftSeconds": 5.694,
+          "variant": "W8_ANE",
+          "workload": "near_4k_3790_10"
+        }
+      ],
+      "inputTokens": 3790,
+      "medians": {
+        "INT4_GPU": {
+          "endToEndOutputTokensPerSecond": 0.729,
+          "residentMiB": 1104.4,
+          "totalSeconds": 13.717,
+          "ttftSeconds": 13.522
+        },
+        "W8_ANE": {
+          "endToEndOutputTokensPerSecond": 1.635,
+          "residentMiB": 1433.4,
+          "totalSeconds": 6.116,
+          "ttftSeconds": 5.647
+        }
+      },
+      "outputTokens": 10
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "claimBoundary": "Conversion fidelity under frozen inputs, not general capability",
+  "evaluations": {
+    "w8_frozen_holdout": {
+      "mean_cosine": 0.996598,
+      "mean_nll_delta": 0.003167,
+      "minimum_cosine": 0.959625,
+      "top1_agreement": 0.9837
+    },
+    "w8_tuning": {
+      "mean_cosine": 0.997067,
+      "mean_nll_delta": 0.002985,
+      "minimum_cosine": 0.967261,
+      "top1_agreement": 0.9844
+    }
+  },
+  "mechanism": {
+    "compute": "FP16",
+    "kv_cache": "FP16 fixed-size",
+    "maximum_context_tokens": 4096,
+    "tied_embedding": "INT8 per-tensor quantization",
+    "transformer_projection_weights": "W8 per-tensor K-means palettization"
+  },
+  "schemaVersion": 1,
+  "selectionEvidence": {
+    "decision": "Rejected under the frozen quality contract before W8 holdout evaluation",
+    "rejected_candidate_families": [
+      "uniform W4",
+      "mixed W4/W8"
+    ],
+    "representative_rejected_mean_cosine_range": {
+      "maximum": 0.981232,
+      "minimum": 0.856886
+    }
+  }
+}

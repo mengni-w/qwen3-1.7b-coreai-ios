@@ -1,0 +1,57 @@
+{
+  "publicStatusLockSHA256": "12b0ed2caf30e1f75e109bac404b8106d5b26ff6242d51588e7dd7fb10595f69",
+  "schemaVersion": 1,
+  "runtime": {
+    "python": "3.11.15",
+    "nltk": "3.10.0"
+  },
+  "dataset": {
+    "id": "hfl/cmrc2018",
+    "config": "default",
+    "split": "validation",
+    "huggingFaceRevisionObserved": "137f2c45a24275fb68f6961c4d357f46288886aa",
+    "officialRepository": "https://github.com/ymcui/cmrc2018",
+    "officialRepositoryCommit": "c0eb1b6ba219847457e6af3180da722bbeb656af",
+    "officialPath": "data/cmrc2018_dev.json",
+    "downloadURL": "https://raw.githubusercontent.com/ymcui/cmrc2018/c0eb1b6ba219847457e6af3180da722bbeb656af/data/cmrc2018_dev.json",
+    "officialSourceSHA256": "5cfe4414c28a8ecbb51670f78c0dc7d1049f286c2d5769b52f1f94bcc0752cf1",
+    "canonicalRowsSHA256": "72b48ce0ca64a07e9a4cd40a0cf0e1c657396c1c234b08cf43f7cdc7bf2ea1ab",
+    "expectedRows": 3219,
+    "expectedUniqueContexts": 848,
+    "frozenSampleSHA256": "9fb9d896c96fc2ef0fa9961a5b65d2ac5b8bd09744f717a0a0ecb9f6c9fe05ff",
+    "license": "CC-BY-SA-4.0"
+  },
+  "repositories": {
+    "w8": {
+      "url": "https://github.com/massif-01/qwen3-1.7b-coreai-ios.git",
+      "commit": "46668db811559ce21b0006f07706a6d0bde08656",
+      "files": {
+        "results/artifact-summary.json": "3fee177b437e677a8611a0bed1b3b522b79abb15778cff635aea4532d74d95de",
+        "results/device-runtime-summary.json": "b714b1bf67541c4e4c200eb98eff83e36446df9819477a1be19d5bba0f19726d",
+        "results/quality-summary.json": "b2e6e067b6ee68fd935143e131805179806ec034a8d69fe0b706118884fa72d4"
+      }
+    },
+    "comparison": {
+      "url": "https://github.com/massif-01/qwen3-1.7b-coreai-reproduction.git",
+      "commit": "34a4c08a9282bd076b8b5fe154c5507e6a8b3774",
+      "files": {
+        "benchmarks/results/artifact-summary.json": "2c50cec391f72d98a09c65c20fe8fab1c35a8843abf10c5a9b28886a97cf6239",
+        "benchmarks/results/quality-comparison.json": "47bae909fdac3e80996b4042daff173931dec306c6f8a9977189792f4effa171",
+        "benchmarks/results/raw/int4-gpu-no-thinking-results.jsonl": "18bc453cadd0b9c20e18ae016752a74f52de20ddc32aeda2ff5f2fcc5d00983f",
+        "benchmarks/results/raw/w8-ane-no-thinking-results.jsonl": "772fa31dbd4f6c1b5c668636fcea8d6bef1f04234b7ddde57cae477ebf86cfbe",
+        "benchmarks/tools/freeze_cmrc.py": "4b1b46f4618d06f30e9279f356cbdbb69b4e7b6d0443ea301ee503609fd75260",
+        "benchmarks/tools/score_frozen_cmrc_py3.py": "e89ce35f5f16671831ffb412b9194a60ee83b1ac4ba62b9d49b7d81c090cf4c9",
+        "docs/speed-result.md": "a9eb6c8075537d5c5bd9ff1af9f59170da7727714c8da049402d3ae7d313c3ee",
+        "requirements.txt": "34050bd7d84c1c95d9876ddff24c7802008e3cc0041db0c276b2ff3ad6a7b634"
+      }
+    }
+  },
+  "remoteFiles": {
+    "w8PublicDeviceValidation": {
+      "url": "https://huggingface.co/massif/Qwen3-1.7B-CoreAI-ANE-W8-4K-h16p/resolve/466ebe2e5cec125fa113ea71503add41bba581a8/evidence/public-release-device-validation.json",
+      "revision": "466ebe2e5cec125fa113ea71503add41bba581a8",
+      "sha256": "1a8f49375c0d1334ad3c2af9718610746ad53bdc4687fcc720a1650755b5c0e0"
+    }
+  },
+  "expectedPublishedQualitySHA256": "47bae909fdac3e80996b4042daff173931dec306c6f8a9977189792f4effa171"
+}

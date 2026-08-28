@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="505" viewBox="0 0 1100 505">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<style>text{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;fill:#171717}.title{font-size:25px;font-weight:700}.label{font-size:16px;font-weight:600}.body{font-size:14px}.small{font-size:12px;fill:#555}.box{fill:#f7f7f5;stroke:#777;stroke-width:1.5}.w8{fill:#f9ecea;stroke:#d94a42;stroke-width:2}.int4{fill:#edf2fa;stroke:#315b9a;stroke-width:2}.arrow{stroke:#333;stroke-width:2;fill:none}</style>
+<text x="40" y="45" class="title">Coupled deployment profiles</text>
+<text x="40" y="70" class="small">The comparison does not isolate precision, graph shape, KV strategy, or compute unit causally</text>
+<rect x="45" y="115" width="480" height="315" rx="10" class="w8"/>
+<rect x="575" y="115" width="480" height="315" rx="10" class="int4"/>
+<text x="285" y="155" text-anchor="middle" class="title">Static-W8</text>
+<text x="815" y="155" text-anchor="middle" class="title">Dynamic-INT4</text>
+<text x="75" y="205" class="label">Weights</text>
+<text x="185" y="205" class="body">W8 per-tensor K-means palettization</text>
+<text x="605" y="205" class="label">Weights</text>
+<text x="715" y="205" class="body">INT4 block-32 symmetric-with-clipping</text>
+<text x="75" y="252" class="label">Embedding</text>
+<text x="185" y="252" class="body">INT8 per-tensor quantization</text>
+<text x="605" y="252" class="label">Embedding</text>
+<text x="715" y="252" class="body">not separately reported in the artifact summary</text>
+<text x="75" y="299" class="label">KV state</text>
+<text x="185" y="299" class="body">FP16 fixed-size</text>
+<text x="605" y="299" class="label">KV state</text>
+<text x="715" y="299" class="body">FP16 growing/dynamic</text>
+<text x="75" y="346" class="label">Graph</text>
+<text x="185" y="346" class="body">static</text>
+<text x="605" y="346" class="label">Graph</text>
+<text x="715" y="346" class="body">dynamic</text>
+<text x="75" y="393" class="label">AOT</text>
+<text x="185" y="393" class="body">h16p; neural-engine</text>
+<text x="605" y="393" class="label">AOT</text>
+<text x="715" y="393" class="body">h16p; gpu</text>
+<text x="550" y="475" text-anchor="middle" class="small">Shared: base revision, tokenizer, 4,096-token cap, h16p device class, iOS 27, and benchmark controls</text>
+</svg>

@@ -1,0 +1,20 @@
+{
+  "byteIdenticalToPublished": true,
+  "dataset": {
+    "canonicalRowsSHA256": "72b48ce0ca64a07e9a4cd40a0cf0e1c657396c1c234b08cf43f7cdc7bf2ea1ab",
+    "frozenSampleSHA256": "9fb9d896c96fc2ef0fa9961a5b65d2ac5b8bd09744f717a0a0ecb9f6c9fe05ff",
+    "officialSourceSHA256": "5cfe4414c28a8ecbb51670f78c0dc7d1049f286c2d5769b52f1f94bcc0752cf1",
+    "rows": 3219,
+    "samples": 300,
+    "uniqueContexts": 848
+  },
+  "newDeviceMeasurementsCreated": false,
+  "newModelOutputsCreated": false,
+  "publishedQualitySHA256": "47bae909fdac3e80996b4042daff173931dec306c6f8a9977189792f4effa171",
+  "recomputedQualitySHA256": "47bae909fdac3e80996b4042daff173931dec306c6f8a9977189792f4effa171",
+  "runtime": {
+    "nltk": "3.10.0",
+    "python": "3.11.15"
+  },
+  "schemaVersion": 1
+}

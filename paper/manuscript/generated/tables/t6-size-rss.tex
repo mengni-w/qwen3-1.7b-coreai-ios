@@ -1,0 +1,15 @@
+\begin{table}[H]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Metric (MiB) & Static-W8 & Dynamic-INT4 & Dynamic-INT4 reduction \\
+\midrule
+Compiled bundle & 1,714.4 & 924.6 & 789.8 (46.1\%) \\
+Peak process RSS & 2,865.0 & 1,995.3 & 869.7 (30.4\%) \\
+\bottomrule
+\end{tabular}
+\caption{Compiled resource-directory logical size and peak process resident memory in the disclosed benchmark. \evidence{CL-15,CL-16}}
+\label{tab:size-rss}
+\end{table}
