@@ -392,7 +392,11 @@ def validate_environment(
         )
     expected_prefix = (coreai_repo.resolve() / ".venv").resolve()
     actual_prefix = Path(sys.prefix).resolve()
-    executable_path = Path(sys.executable).resolve()
+    executable = Path(sys.executable)
+    # A venv executable is itself normally a symlink to the managed base
+    # interpreter. Resolve directory aliases such as /tmp -> /private/tmp,
+    # but retain the venv entrypoint rather than following its final symlink.
+    executable_path = executable.parent.resolve() / executable.name
     if actual_prefix != expected_prefix or not executable_path.is_relative_to(
         coreai_repo.resolve() / ".venv"
     ):

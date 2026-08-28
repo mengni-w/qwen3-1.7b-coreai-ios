@@ -116,7 +116,10 @@ class ContractTests(unittest.TestCase):
             physical_venv = physical_coreai / ".venv"
             physical_python = physical_venv / "bin/python"
             physical_python.parent.mkdir(parents=True)
-            physical_python.touch()
+            base_python = root / "managed-python/bin/python3.12"
+            base_python.parent.mkdir(parents=True)
+            base_python.touch()
+            physical_python.symlink_to(base_python)
             alias = root / "alias"
             alias.symlink_to(root / "physical", target_is_directory=True)
             aliased_coreai = alias / "coreai"
