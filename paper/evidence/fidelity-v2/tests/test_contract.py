@@ -109,6 +109,38 @@ class ContractTests(unittest.TestCase):
                         source_lock=Path(temporary) / "source-lock.json",
                     )
 
+    def test_environment_resolves_executable_path_alias_before_dot_venv_check(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            physical_coreai = root / "physical" / "coreai"
+            physical_venv = physical_coreai / ".venv"
+            physical_python = physical_venv / "bin/python"
+            physical_python.parent.mkdir(parents=True)
+            physical_python.touch()
+            alias = root / "alias"
+            alias.symlink_to(root / "physical", target_is_directory=True)
+            aliased_coreai = alias / "coreai"
+            aliased_python = aliased_coreai / ".venv/bin/python"
+            with (
+                patch("evaluator.runtime.platform.system", return_value="Darwin"),
+                patch("evaluator.runtime.platform.machine", return_value="arm64"),
+                patch("evaluator.runtime.sys.version_info", (3, 12, 0)),
+                patch("evaluator.runtime.sys.prefix", str(physical_venv)),
+                patch("evaluator.runtime.sys.executable", str(aliased_python)),
+                patch(
+                    "evaluator.runtime.NUMERIC_THREAD_ENVIRONMENT",
+                    {"FROZEN_TEST_THREADS": None},
+                ),
+            ):
+                with self.assertRaisesRegex(
+                    ContractError, "environment-lock numeric thread controls differ"
+                ):
+                    validate_environment(
+                        coreai_repo=aliased_coreai,
+                        model_dir=root / "model",
+                        source_lock=root / "source-lock.json",
+                    )
+
     def test_system_message_hash_is_frozen(self):
         self.assertEqual(
             hashlib.sha256(SYSTEM_MESSAGE.encode("utf-8")).hexdigest(),

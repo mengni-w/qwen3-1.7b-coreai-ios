@@ -392,7 +392,7 @@ def validate_environment(
         )
     expected_prefix = (coreai_repo.resolve() / ".venv").resolve()
     actual_prefix = Path(sys.prefix).resolve()
-    executable_path = Path(os.path.abspath(sys.executable))
+    executable_path = Path(sys.executable).resolve()
     if actual_prefix != expected_prefix or not executable_path.is_relative_to(
         coreai_repo.resolve() / ".venv"
     ):
