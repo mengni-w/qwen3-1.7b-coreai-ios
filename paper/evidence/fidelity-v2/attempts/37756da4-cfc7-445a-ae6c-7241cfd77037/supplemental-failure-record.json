@@ -56,9 +56,9 @@
       "rmsNormDefaultSquaresInInputDType": true,
       "rmsNormParityBranchPromotesInputToFP32": true
     },
-    "confidence": "high",
+    "diagnosticStatus": "consistent_with_observed_failure_but_not_uniquely_proven",
     "evaluatorDidNotFreezeOrRecordUSE_HF_IMPL": true,
-    "explanation": "With the inherited default path, sufficiently large FP16 activations overflow during RMSNorm squaring. The reciprocal RMS becomes zero, so a finite but all-zero activation and logit tensor can result.",
+    "explanation": "With the inherited default path, sufficiently large FP16 activations can overflow during RMSNorm squaring. The reciprocal RMS becomes zero, so this mechanism can explain a finite but all-zero activation and logit tensor. The failed process retained no layer-level activation trace that could establish a unique cause.",
     "syntheticReproduction": {
       "defaultPathInput": [
         300.0,

@@ -20,15 +20,17 @@ manifest verifies without modification. The temporary logit arrays were
 removed by the evaluator's temporary-directory cleanup; only their hashes and
 shape metadata remain in the sealed raw records.
 
-Postmortem analysis traced the failure to an unfrozen numerical control in the
-pinned Apple implementation. The iOS RMSNorm class squares FP16 activations
-directly by default. Its Hugging Face parity branch first promotes the
-activation to FP32, but that branch is selected only when `USE_HF_IMPL=true`
-at module construction. The failed evaluator neither fixed nor recorded this
-environment variable. Apple's own iOS primitive and model-comparison tests set
-it to `true`. A two-element synthetic RMSNorm example reproduced the failure:
-FP16 inputs `[300, -300]` overflow when squared and normalize to exact signed
-zeros while still passing a finite-value check.
+The postmortem diagnosis is consistent with an unfrozen numerical control in
+the pinned Apple implementation. The iOS RMSNorm class squares FP16
+activations directly by default. Its Hugging Face parity branch first promotes
+the activation to FP32, but that branch is selected only when
+`USE_HF_IMPL=true` at module construction. The failed evaluator neither fixed
+nor recorded this environment variable. Apple's own iOS primitive and
+model-comparison tests set it to `true`. A two-element synthetic RMSNorm
+example reproduced the mechanism: FP16 inputs `[300, -300]` overflow when
+squared and normalize to exact signed zeros while still passing a finite-value
+check. Because no layer-level activation trace was retained from the failed
+1.7B process, this diagnosis is not presented as proof of a unique cause.
 
 `supplemental-failure-record.json` separates direct observations from the
 postmortem interpretation and records two additional procedural limitations:
