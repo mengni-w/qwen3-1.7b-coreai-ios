@@ -36,6 +36,9 @@ class FrozenContract:
     protocol_sha256: str = (
         "b7d98264068aad19b950e96af04c52fa027e57afcf67062e06125c9a875cc6b2"
     )
+    amendment_1_sha256: str = (
+        "07eab8874485e8954ee959d611de302de122ad04c1e5c0fcca6f1e957ab368d3"
+    )
     prompt_manifest_file_sha256: str = (
         "59eedc731dab284755a59fc60b548a034a2a657ed8c9998413d58419b5ac1a95"
     )

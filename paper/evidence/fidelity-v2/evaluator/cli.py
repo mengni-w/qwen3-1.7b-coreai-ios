@@ -7,6 +7,7 @@ import json
 import os
 import resource
 import signal
+import shutil
 import subprocess
 import sys
 import time
@@ -24,12 +25,14 @@ from .contract import (
     write_json,
 )
 from .runtime import (
+    NUMERICAL_PARITY_ENVIRONMENT,
     NUMERIC_THREAD_ENVIRONMENT,
     _peak_rss_record,
     prepare_preflight,
     repository_root,
     run_worker,
 )
+from .health import run_health_probe, verify_health_probe
 
 
 WORKER_SENTINEL = "QWEN3_FIDELITY_V2_ORCHESTRATED_WORKER"
@@ -42,6 +45,12 @@ class _TerminationRequested(Exception):
 
 
 def _configure_process_environment() -> None:
+    inherited = os.environ.get("USE_HF_IMPL")
+    if inherited is not None and inherited != "true":
+        raise ContractError(
+            f"inherited USE_HF_IMPL={inherited!r}; amended evaluator requires 'true'"
+        )
+    os.environ.update(NUMERICAL_PARITY_ENVIRONMENT)
     for name, value in NUMERIC_THREAD_ENVIRONMENT.items():
         os.environ[name] = value
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -77,10 +86,13 @@ def _validate_empty_destination(path: Path, description: str) -> None:
         raise ContractError(f"{description} must not exist or must be empty: {path}")
 
 
-def _claim_run_id(
+def _claim_identifier(
     *,
-    run_id: str,
+    identifier: str,
     output_dir: Path,
+    registry_name: str,
+    schema: str,
+    identifier_key: str,
     repo_root: Path | None = None,
 ) -> Path:
     root = (repo_root or repository_root()).resolve()
@@ -90,12 +102,12 @@ def _claim_run_id(
     common_git_dir = Path(common_git_dir_text)
     if not common_git_dir.is_absolute():
         common_git_dir = root / common_git_dir
-    registry = common_git_dir.resolve() / "qwen3-fidelity-v2-run-ids"
+    registry = common_git_dir.resolve() / registry_name
     registry.mkdir(parents=True, exist_ok=True)
-    claim_path = registry / f"{run_id}.json"
+    claim_path = registry / f"{identifier}.json"
     payload = {
-        "schema": "qwen3-coreai-ios-fidelity-run-id-claim-v1",
-        "runID": run_id,
+        "schema": schema,
+        identifier_key: identifier,
         "claimedAtUnixSeconds": time.time(),
         "repositoryCommit": run_checked(["git", "rev-parse", "HEAD"], cwd=root),
         "outputDirectoryUTF8SHA256": sha256_bytes(
@@ -120,10 +132,39 @@ def _claim_run_id(
             os.fsync(handle.fileno())
     except FileExistsError as error:
         raise ContractError(
-            f"run ID {run_id} was already claimed in this repository; "
+            f"identifier {identifier} was already claimed in this repository; "
             "a different output directory does not permit a rerun"
         ) from error
     return claim_path
+
+
+def _claim_run_id(
+    *,
+    run_id: str,
+    output_dir: Path,
+    repo_root: Path | None = None,
+) -> Path:
+    return _claim_identifier(
+        identifier=run_id,
+        output_dir=output_dir,
+        registry_name="qwen3-fidelity-v2-run-ids",
+        schema="qwen3-coreai-ios-fidelity-run-id-claim-v1",
+        identifier_key="runID",
+        repo_root=repo_root,
+    )
+
+
+def _claim_health_probe_id(
+    *, probe_id: str, output_dir: Path, repo_root: Path | None = None
+) -> Path:
+    return _claim_identifier(
+        identifier=probe_id,
+        output_dir=output_dir,
+        registry_name="qwen3-fidelity-v2-health-probe-ids",
+        schema="qwen3-coreai-ios-fidelity-health-probe-id-claim-v1",
+        identifier_key="probeID",
+        repo_root=repo_root,
+    )
 
 
 def prepare_source(model_dir: Path, lock_file: Path) -> int:
@@ -204,27 +245,83 @@ def _sample_process_tree(process: object) -> tuple[int, int] | None:
         return None
 
 
+def launch_health_probe(
+    *,
+    probe_id: str,
+    coreai_repo: Path,
+    model_dir: Path,
+    source_lock: Path,
+    output_dir: Path,
+) -> int:
+    preflight = prepare_preflight(
+        coreai_repo=coreai_repo,
+        model_dir=model_dir,
+        source_lock=source_lock,
+    )
+    _validate_empty_destination(output_dir, "health-probe output directory")
+    claim_path = _claim_health_probe_id(probe_id=probe_id, output_dir=output_dir)
+    _empty_destination(output_dir, "health-probe output directory")
+    (output_dir / "probe-id-claim.json").write_bytes(claim_path.read_bytes())
+    started_wall = time.time()
+    started_monotonic = time.monotonic()
+    status = run_health_probe(
+        probe_id=probe_id,
+        coreai_repo=coreai_repo,
+        model_dir=model_dir,
+        source_lock=source_lock,
+        output_dir=output_dir,
+        preflight=preflight,
+    )
+    write_json(
+        output_dir / "process-result.json",
+        {
+            "schema": "qwen3-coreai-ios-fidelity-health-process-result-v1",
+            "probeID": probe_id,
+            "exitCode": status,
+            "startedAtUnixSeconds": started_wall,
+            "finishedAtUnixSeconds": time.time(),
+            "elapsedSeconds": time.monotonic() - started_monotonic,
+            "peakMemory": _peak_rss_record(),
+        },
+    )
+    manifest_hash = _write_evidence_manifest(output_dir)
+    print(f"probe_id={probe_id}")
+    print(f"exit_code={status}")
+    print(f"output_dir={output_dir}")
+    print(f"evidence_manifest_sha256={manifest_hash}")
+    return status
+
+
 def launch_run(
     *,
     run_id: str,
     coreai_repo: Path,
     model_dir: Path,
     source_lock: Path,
+    health_probe_dir: Path,
     output_dir: Path,
 ) -> int:
     # A rejected preflight is not the frozen official attempt. The output
     # directory is created only after all non-model checks and the synthetic
     # Apple-authoring smoke test pass.
-    prepare_preflight(
+    preflight = prepare_preflight(
         coreai_repo=coreai_repo,
         model_dir=model_dir,
         source_lock=source_lock,
+    )
+    environment_identity, _tokenizer, serialized_cases, _eos = preflight
+    health_validation = verify_health_probe(
+        probe_dir=health_probe_dir,
+        environment=environment_identity,
+        serialized_cases=serialized_cases,
     )
     _validate_empty_destination(output_dir, "run output directory")
     claim_path = _claim_run_id(run_id=run_id, output_dir=output_dir)
     _empty_destination(output_dir, "run output directory")
     claim_copy = output_dir / "run-id-claim.json"
     claim_copy.write_bytes(claim_path.read_bytes())
+    write_json(output_dir / "health-probe-validation.json", health_validation)
+    shutil.copytree(health_probe_dir, output_dir / "health-probe")
     script = repository_root() / "paper/evidence/fidelity-v2/run_fidelity_v2.py"
     command = [
         sys.executable,
@@ -244,6 +341,7 @@ def launch_run(
     environment = dict(os.environ)
     environment["PYTHONHASHSEED"] = str(CONTRACT.seed)
     environment.update(NUMERIC_THREAD_ENVIRONMENT)
+    environment.update(NUMERICAL_PARITY_ENVIRONMENT)
     environment["TOKENIZERS_PARALLELISM"] = "false"
     environment[WORKER_SENTINEL] = run_id
     started_wall = time.time()
@@ -403,6 +501,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     for name, help_text in (
         ("check", "validate all frozen inputs without running either model"),
+        ("health-probe", "run the single Apple/Hugging Face parity probe"),
         ("run", "execute the single official reference/candidate run"),
         ("_worker", "internal orchestrated worker; do not invoke directly"),
     ):
@@ -413,6 +512,11 @@ def build_parser() -> argparse.ArgumentParser:
         if name in {"run", "_worker"}:
             command.add_argument("--run-id", type=_validate_run_id, required=True)
             command.add_argument("--output-dir", type=_path, required=True)
+        if name == "health-probe":
+            command.add_argument("--probe-id", type=_validate_run_id, required=True)
+            command.add_argument("--output-dir", type=_path, required=True)
+        if name == "run":
+            command.add_argument("--health-probe-dir", type=_path, required=True)
     return parser
 
 
@@ -420,7 +524,11 @@ def main(arguments: Sequence[str] | None = None) -> int:
     # These variables are set before NumPy, Torch, Transformers, or coreai-opt
     # are imported. The run subcommand repeats them in the fresh worker's
     # launch environment so they take effect at interpreter startup.
-    _configure_process_environment()
+    try:
+        _configure_process_environment()
+    except ContractError as error:
+        print(f"CONTRACT_ERROR: {error}", file=sys.stderr)
+        return 2
     parser = build_parser()
     args = parser.parse_args(arguments)
     try:
@@ -428,12 +536,21 @@ def main(arguments: Sequence[str] | None = None) -> int:
             return prepare_source(args.model_dir, args.source_lock)
         if args.command == "check":
             return check_environment(args.coreai_repo, args.model_dir, args.source_lock)
+        if args.command == "health-probe":
+            return launch_health_probe(
+                probe_id=args.probe_id,
+                coreai_repo=args.coreai_repo,
+                model_dir=args.model_dir,
+                source_lock=args.source_lock,
+                output_dir=args.output_dir,
+            )
         if args.command == "run":
             return launch_run(
                 run_id=args.run_id,
                 coreai_repo=args.coreai_repo,
                 model_dir=args.model_dir,
                 source_lock=args.source_lock,
+                health_probe_dir=args.health_probe_dir,
                 output_dir=args.output_dir,
             )
         if args.command == "_worker":

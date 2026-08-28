@@ -11,6 +11,7 @@ import platform
 import random
 import resource
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -64,6 +65,8 @@ NUMERIC_THREAD_ENVIRONMENT = {
     "OPENBLAS_NUM_THREADS": "1",
     "VECLIB_MAXIMUM_THREADS": "1",
 }
+
+NUMERICAL_PARITY_ENVIRONMENT = {"USE_HF_IMPL": "true"}
 
 SPAWN_DETERMINISM_SENTINEL = "QWEN3_FIDELITY_V2_DETERMINISTIC_SPAWN"
 SPAWN_PROBE_DIRECTORY = "QWEN3_FIDELITY_V2_SPAWN_PROBE_DIRECTORY"
@@ -129,6 +132,9 @@ def _determinism_state() -> dict[str, Any]:
         "numericThreadEnvironment": {
             name: os.environ.get(name) for name in NUMERIC_THREAD_ENVIRONMENT
         },
+        "numericalParityEnvironment": {
+            name: os.environ.get(name) for name in NUMERICAL_PARITY_ENVIRONMENT
+        },
     }
 
 
@@ -151,6 +157,7 @@ def _expected_determinism_state() -> dict[str, Any]:
         "torchThreads": 1,
         "torchInteropThreads": 1,
         "numericThreadEnvironment": NUMERIC_THREAD_ENVIRONMENT,
+        "numericalParityEnvironment": NUMERICAL_PARITY_ENVIRONMENT,
     }
 
 
@@ -260,6 +267,7 @@ def _relevant_evaluator_files() -> list[Path]:
     root = repository_root()
     paths = [
         root / "paper/EXPERIMENT_PROTOCOL_V1.md",
+        root / "paper/FIDELITY_V2_AMENDMENT_1.md",
         root / "paper/evidence/fidelity-v2/prompt-manifest.json",
         root / "paper/evidence/fidelity-v2/environment.lock.json",
         root / "paper/evidence/fidelity-v2/README.md",
@@ -296,10 +304,14 @@ def _validate_evaluator_commit() -> dict[str, Any]:
 
     head = run_checked(["git", "rev-parse", "HEAD"], cwd=root)
     protocol_path = "paper/EXPERIMENT_PROTOCOL_V1.md"
+    amendment_path = "paper/FIDELITY_V2_AMENDMENT_1.md"
     prompt_path = "paper/evidence/fidelity-v2/prompt-manifest.json"
     evaluator_path = "paper/evidence/fidelity-v2/evaluator/runtime.py"
     protocol_commit = run_checked(
         ["git", "log", "-1", "--format=%H", "--", protocol_path], cwd=root
+    )
+    amendment_commit = run_checked(
+        ["git", "log", "-1", "--format=%H", "--", amendment_path], cwd=root
     )
     prompt_commit = run_checked(
         ["git", "log", "-1", "--format=%H", "--", prompt_path], cwd=root
@@ -307,13 +319,18 @@ def _validate_evaluator_commit() -> dict[str, Any]:
     evaluator_commit = run_checked(
         ["git", "log", "-1", "--format=%H", "--", evaluator_path], cwd=root
     )
-    if not protocol_commit or not prompt_commit or not evaluator_commit:
+    if (
+        not protocol_commit
+        or not amendment_commit
+        or not prompt_commit
+        or not evaluator_commit
+    ):
         raise ContractError(
-            "protocol, prompt manifest, and evaluator must all be committed"
+            "protocol, amendment, prompt manifest, and evaluator must all be committed"
         )
-    if len({protocol_commit, prompt_commit, evaluator_commit}) != 3:
+    if len({protocol_commit, amendment_commit, prompt_commit, evaluator_commit}) != 4:
         raise ContractError(
-            "protocol, prompt manifest, and evaluator require three ordered commits"
+            "protocol, prompt manifest, amendment, and corrected evaluator require distinct commits"
         )
     protocol_commit_paths = run_checked(
         [
@@ -353,14 +370,23 @@ def _validate_evaluator_commit() -> dict[str, Any]:
         cwd=root,
     )
     run_checked(
+        ["git", "merge-base", "--is-ancestor", amendment_commit, evaluator_commit],
+        cwd=root,
+    )
+    run_checked(
         ["git", "merge-base", "--is-ancestor", evaluator_commit, head], cwd=root
     )
 
     protocol = root / protocol_path
+    amendment = root / amendment_path
     prompt_manifest = root / prompt_path
     if sha256_file(protocol) != CONTRACT.protocol_sha256:
         raise ContractError(
             "experiment protocol hash differs from the frozen evaluator constant"
+        )
+    if sha256_file(amendment) != CONTRACT.amendment_1_sha256:
+        raise ContractError(
+            "fidelity amendment hash differs from the corrected evaluator constant"
         )
     if sha256_file(prompt_manifest) != CONTRACT.prompt_manifest_file_sha256:
         raise ContractError(
@@ -370,9 +396,34 @@ def _validate_evaluator_commit() -> dict[str, Any]:
     return {
         "repositoryCommit": head,
         "protocolCommit": protocol_commit,
+        "amendmentCommit": amendment_commit,
         "promptManifestCommit": prompt_commit,
         "evaluatorCommit": evaluator_commit,
         "sourceFiles": source_tree_manifest(paths, root),
+    }
+
+
+def _validate_read_only_source(
+    model_dir: Path,
+    source_lock: Path,
+    source_identity: dict[str, Any],
+) -> dict[str, Any]:
+    write_mask = stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH
+
+    def mode_record(path: Path, label: str) -> dict[str, Any]:
+        mode = stat.S_IMODE(path.stat().st_mode)
+        if mode & write_mask:
+            raise ContractError(f"{label} has a write bit set: {oct(mode)}")
+        return {"label": label, "modeOctal": f"{mode:04o}"}
+
+    payload_modes = []
+    for entry in source_identity["files"]:
+        relative = entry["path"]
+        payload_modes.append(mode_record(model_dir / relative, relative))
+    return {
+        "sourceRoot": mode_record(model_dir, "source-model root"),
+        "sourceLock": mode_record(source_lock, "source-model lock"),
+        "payloads": payload_modes,
     }
 
 
@@ -412,6 +463,14 @@ def validate_environment(
             "numeric-library thread controls are not frozen to one thread: "
             f"{actual_thread_environment}"
         )
+    actual_parity_environment = {
+        name: os.environ.get(name) for name in NUMERICAL_PARITY_ENVIRONMENT
+    }
+    if actual_parity_environment != NUMERICAL_PARITY_ENVIRONMENT:
+        raise ContractError(
+            "Apple/Hugging Face numerical parity control is not frozen: "
+            f"{actual_parity_environment}"
+        )
 
     root = repository_root()
     environment_lock_path = root / "paper/evidence/fidelity-v2/environment.lock.json"
@@ -431,6 +490,13 @@ def validate_environment(
         raise ContractError("evaluator environment-lock distribution pins differ")
     if environment_lock.get("numericThreadEnvironment") != NUMERIC_THREAD_ENVIRONMENT:
         raise ContractError("evaluator environment-lock numeric thread controls differ")
+    if (
+        environment_lock.get("numericalParityEnvironment")
+        != NUMERICAL_PARITY_ENVIRONMENT
+    ):
+        raise ContractError(
+            "evaluator environment-lock numerical parity control differs"
+        )
     locked_coreai = environment_lock.get("coreAIModels", {})
     if locked_coreai != {
         "baseCommit": CONTRACT.apple_base_commit,
@@ -442,6 +508,9 @@ def validate_environment(
     recipe = root / "recipes/qwen3_1_7b_w8_per_tensor.yaml"
     coreai_identity = validate_coreai_checkout(coreai_repo, paper_patch, recipe)
     source_identity = validate_source_model_lock(model_dir, source_lock)
+    source_permissions = _validate_read_only_source(
+        model_dir, source_lock, source_identity
+    )
     evaluator_identity = _validate_evaluator_commit()
     distributions = _distribution_versions()
 
@@ -469,6 +538,7 @@ def validate_environment(
         "installedDistributionSnapshot": _installed_distribution_snapshot(),
         "coreAIModels": coreai_identity,
         "sourceModel": source_identity,
+        "sourceModelPermissions": source_permissions,
         "evaluator": evaluator_identity,
         "controls": {
             "seed": CONTRACT.seed,
@@ -476,6 +546,7 @@ def validate_environment(
             "torchThreads": 1,
             "torchInteropThreads": 1,
             "numericLibraryThreadEnvironment": NUMERIC_THREAD_ENVIRONMENT,
+            "numericalParityEnvironment": NUMERICAL_PARITY_ENVIRONMENT,
             "executionDevice": "cpu",
             "decode": "greedy",
             "doSample": False,
@@ -697,6 +768,8 @@ def _new_caches(model: Any, torch: Any) -> tuple[Any, Any]:
 
 
 def _normalise_logits(output: Any, *, expected_query_length: int) -> Any:
+    import torch
+
     if str(output.dtype) != "torch.float16":
         raise ContractError(f"unexpected Apple iOS logit dtype: {output.dtype}")
     if output.ndim != 4 or output.shape[0] != 1 or output.shape[1] != 1:
@@ -706,6 +779,15 @@ def _normalise_logits(output: Any, *, expected_query_length: int) -> Any:
         raise ContractError(
             f"unexpected normalized logit layout: {tuple(logits.shape)}"
         )
+    fp32 = logits.to(torch.float32)
+    if not bool(torch.isfinite(fp32).all()):
+        raise ContractError("Apple iOS logits contain a non-finite value")
+    row_norms = torch.linalg.vector_norm(fp32, dim=1)
+    if not bool((row_norms > 0).all()):
+        raise ContractError("Apple iOS logits contain a zero-norm row")
+    row_ranges = fp32.amax(dim=1) - fp32.amin(dim=1)
+    if not bool((row_ranges > 0).all()):
+        raise ContractError("Apple iOS logits contain a zero-range row")
     return logits
 
 

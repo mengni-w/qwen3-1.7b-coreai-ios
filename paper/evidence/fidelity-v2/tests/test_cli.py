@@ -33,6 +33,7 @@ class CLIOrchestrationTests(unittest.TestCase):
                         coreai_repo=Path(temporary) / "coreai",
                         model_dir=Path(temporary) / "model",
                         source_lock=Path(temporary) / "source-lock.json",
+                        health_probe_dir=Path(temporary) / "health",
                         output_dir=output,
                     )
             claim.assert_not_called()
@@ -89,10 +90,19 @@ class CLIOrchestrationTests(unittest.TestCase):
             root = Path(temporary)
             claim = root / "claim.json"
             claim.write_text('{"runID":"synthetic"}\n', encoding="utf-8")
+            health = root / "health"
+            health.mkdir()
             output = root / "output"
             child = InterruptedChild()
             with (
-                patch("evaluator.cli.prepare_preflight", return_value=None),
+                patch(
+                    "evaluator.cli.prepare_preflight",
+                    return_value=({}, None, [], 0),
+                ),
+                patch(
+                    "evaluator.cli.verify_health_probe",
+                    return_value={"status": "success"},
+                ),
                 patch("evaluator.cli._claim_run_id", return_value=claim),
                 patch("evaluator.cli.repository_root", return_value=root),
                 patch("evaluator.cli.subprocess.Popen", return_value=child),
@@ -104,6 +114,7 @@ class CLIOrchestrationTests(unittest.TestCase):
                     coreai_repo=root / "coreai",
                     model_dir=root / "model",
                     source_lock=root / "source-lock.json",
+                    health_probe_dir=health,
                     output_dir=output,
                 )
             self.assertEqual(status, 130)

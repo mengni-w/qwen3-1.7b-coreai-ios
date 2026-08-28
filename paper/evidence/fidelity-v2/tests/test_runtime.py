@@ -54,6 +54,7 @@ class RuntimeTests(unittest.TestCase):
                     -10.0,
                     dtype=torch.float16,
                 )
+                output[0, 0, :, 0] = -9.0
                 output[0, 0, -1, self.tokens[len(self.calls) - 1]] = 10.0
                 return output
 
@@ -112,7 +113,9 @@ class RuntimeTests(unittest.TestCase):
         self.assertTrue(bool(torch.equal(selected, expected)))
 
     def test_logit_layout_and_dtype_fail_closed(self):
-        valid = torch.zeros((1, 1, 2, 3), dtype=torch.float16)
+        valid = torch.tensor(
+            [[[[1.0, 2.0, 3.0], [-1.0, 0.0, 1.0]]]], dtype=torch.float16
+        )
         normalized = _normalise_logits(valid, expected_query_length=2)
         self.assertEqual(tuple(normalized.shape), (2, 3))
         with self.assertRaises(ContractError):
@@ -124,6 +127,17 @@ class RuntimeTests(unittest.TestCase):
             )
         with self.assertRaises(ContractError):
             _normalise_logits(valid, expected_query_length=1)
+
+    def test_logit_gate_rejects_nonfinite_zero_norm_and_zero_range_rows(self):
+        invalid_rows = (
+            torch.tensor([[[[1.0, float("nan")]]]], dtype=torch.float16),
+            torch.zeros((1, 1, 1, 2), dtype=torch.float16),
+            torch.ones((1, 1, 1, 2), dtype=torch.float16),
+        )
+        for output in invalid_rows:
+            with self.subTest(output=output):
+                with self.assertRaises(ContractError):
+                    _normalise_logits(output, expected_query_length=1)
 
 
 if __name__ == "__main__":

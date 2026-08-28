@@ -1,6 +1,7 @@
 # Fidelity confirmation evaluator
 
-This directory implements Section 2 of `paper/EXPERIMENT_PROTOCOL_V1.md`. It
+This directory implements Section 2 of `paper/EXPERIMENT_PROTOCOL_V1.md` as
+revised prospectively by `paper/FIDELITY_V2_AMENDMENT_1.md`. It
 is intentionally separate from the retrospective analysis pipeline. The
 evaluator measures the currently disclosed authoring mechanism: Apple’s iOS
 Qwen3 implementation with an INT8 tied embedding and the exact W8 K-means
@@ -18,7 +19,8 @@ committed. The command checks the required Git history:
 1. the experiment protocol is a standalone earlier commit;
 2. the prompt manifest is a later standalone commit;
 3. the evaluator is committed after both;
-4. all protocol, prompt, evaluator, patch, recipe, and lock files match the
+4. the prospective amendment precedes the corrected evaluator commit;
+5. all protocol, amendment, prompt, evaluator, patch, recipe, and lock files match the
    committed versions.
 
 The official output directory must be new or empty. A UUID identifies the
@@ -80,6 +82,9 @@ after each of the two sequential model loads. Those phase records make a
 background synchronization or accidental edit fail closed rather than allow
 reference and candidate to consume different bytes.
 
+After downloading, remove write permission from the model root, every payload,
+and the lock file. Corrected preflight rejects any write bit on those paths.
+
 ## 3. Validate without inference
 
 After the evaluator commit exists, run the complete preflight. It loads the
@@ -105,7 +110,30 @@ that text templating and direct token templating produce identical token IDs,
 and confirms that the full 64-token allowance fits within 1,024 tokens without
 truncation.
 
-## 4. Execute the single official run
+## 4. Run the one-shot numerical health probe
+
+The amendment requires one non-metric probe before a corrected formal UUID is
+claimed. It compares the final logit vector for the first 16 frozen tokens of
+`semantic_zh_01` between Apple’s iOS FP16 model and the pinned Hugging Face
+FP16 eager-attention model. `USE_HF_IMPL=true` is set before model construction
+and recorded. Both vectors must be nonzero and nonconstant, select the same
+top-1 token, and have binary64 cosine at least `0.99`.
+
+```bash
+uv run --frozen --python 3.12 python \
+  /path/to/qwen3-1.7b-coreai-ios/paper/evidence/fidelity-v2/run_fidelity_v2.py \
+  health-probe \
+  --probe-id 00000000-0000-4000-8000-000000000000 \
+  --coreai-repo /path/to/coreai-models-fidelity-v2 \
+  --model-dir /path/to/qwen3-1.7b-source-70d244cc \
+  --source-lock /path/to/qwen3-1.7b-source-70d244cc.lock.json \
+  --output-dir /path/to/fidelity-v2-health-probe
+```
+
+The probe UUID and output directory are single use. Every attempted probe is
+retained; a failed probe cannot be replaced under the same amendment.
+
+## 5. Execute the single official run
 
 Freeze a UUID before starting. Do not reuse an output directory.
 
@@ -118,6 +146,7 @@ uv run --frozen --python 3.12 python \
   --coreai-repo /path/to/coreai-models-fidelity-v2 \
   --model-dir /path/to/qwen3-1.7b-source-70d244cc \
   --source-lock /path/to/qwen3-1.7b-source-70d244cc.lock.json \
+  --health-probe-dir /path/to/fidelity-v2-health-probe \
   --output-dir /path/to/fidelity-v2-official-run
 ```
 
