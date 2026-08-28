@@ -1,0 +1,45 @@
+{
+  "childPeakMemory": {
+    "peakResidentBytes": 4731830272,
+    "ruMaxRSSRaw": 4731830272,
+    "ruMaxRSSReportedUnit": "bytes"
+  },
+  "command": [
+    "python",
+    "paper/evidence/fidelity-v2/run_fidelity_v2.py",
+    "_worker",
+    "--run-id",
+    "37756da4-cfc7-445a-ae6c-7241cfd77037",
+    "--coreai-repo",
+    "<COREAI_MODELS_CHECKOUT>",
+    "--model-dir",
+    "<PINNED_SOURCE_MODEL_DIRECTORY>",
+    "--source-lock",
+    "<SOURCE_MODEL_LOCK_JSON>",
+    "--output-dir",
+    "<RUN_OUTPUT_DIRECTORY>"
+  ],
+  "elapsedSeconds": 989.249375125044,
+  "exitCode": -2,
+  "finishedAtUnixSeconds": 1787934597.637526,
+  "orchestratorInterrupted": true,
+  "orchestratorPeakMemory": {
+    "peakResidentBytes": 605372416,
+    "ruMaxRSSRaw": 605372416,
+    "ruMaxRSSReportedUnit": "bytes"
+  },
+  "runID": "37756da4-cfc7-445a-ae6c-7241cfd77037",
+  "sampledProcessTreePeakMemory": {
+    "maximumObservedProcessCount": 5,
+    "peakAggregateResidentBytes": 4742692864,
+    "sampleCount": 7763,
+    "samplingErrorCount": 0,
+    "samplingIntervalSeconds": 0.1,
+    "semantics": "maximum sampled sum of RSS for the worker and all observed descendants; distinct from ru_maxrss"
+  },
+  "schema": "qwen3-coreai-ios-fidelity-process-result-v1",
+  "startedAtUnixSeconds": 1787933608.437411,
+  "terminationActions": [
+    "SIGINT"
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "classification": "formal_attempt_failed_invalid_reference",
+  "directObservations": {
+    "completedReferenceCaseCount": 3,
+    "completedReferenceCases": [
+      "semantic_zh_01",
+      "semantic_zh_02",
+      "semantic_en_01"
+    ],
+    "completionTokenCountPerCompletedCase": 64,
+    "completionTokenIDsPerCompletedCase": "64 occurrences of token ID 0",
+    "completionTokenIDsSHA256": "ec1d842e12c6a283010956453440f9cacfdec6b4b7d16b44717e363411b1ac87",
+    "completionUTF8SHA256": "c68fcdd377d83f0c428341a0418d9e3c50a2ab318b7afcf0d9fe5d42dad5d8ed",
+    "decodedCompletion": "64 exclamation marks",
+    "ephemeralTeacherForcedLogits": {
+      "allCompletedCasesRecordedTheSameSHA256": true,
+      "dtype": "float16",
+      "originalArraysRetained": false,
+      "recordedNPYFileSHA256": "db3244d789d030648f6742a594f1c5fcfd1e6764b7acb57156d7d67581326bbb",
+      "shape": [
+        64,
+        151936
+      ],
+      "temporaryCleanup": "The evaluator removed the isolated temporary directory after SIGINT."
+    },
+    "process": {
+      "elapsedSeconds": 989.249375125044,
+      "fourthReferenceCaseStarted": "echo_zh_01",
+      "orchestratorExitCode": 130,
+      "orchestratorInterrupted": true,
+      "terminationActions": [
+        "SIGINT"
+      ],
+      "workerExitCode": -2
+    },
+    "sourceRevalidation": {
+      "canonicalSHA256": "0208857e10f0cc7888036473b1abc93b8a3bc725f1434b778a9bfebc93e88b16",
+      "fileCount": 12,
+      "phasesCompleted": [
+        "before_reference_load",
+        "after_reference_load"
+      ],
+      "sameBytesAcrossCompletedPhases": true
+    }
+  },
+  "originalEvidence": {
+    "directory": "raw",
+    "manifestSHA256": "bcff40221f2eac23f6d63bf44cd634bf48e9a7827b78c065e61370e3eebfde62",
+    "manifestVerified": true,
+    "modifiedAfterSealing": false
+  },
+  "postmortemAssessment": {
+    "appleEvidence": {
+      "modelComparisonTestsSetUSE_HF_IMPL": true,
+      "pinnedCoreAIModelsCommit": "04a3fd6cfe9bfae9cf05b1f246cf915d930d1c0a",
+      "rmsNormDefaultSquaresInInputDType": true,
+      "rmsNormParityBranchPromotesInputToFP32": true
+    },
+    "confidence": "high",
+    "evaluatorDidNotFreezeOrRecordUSE_HF_IMPL": true,
+    "explanation": "With the inherited default path, sufficiently large FP16 activations overflow during RMSNorm squaring. The reciprocal RMS becomes zero, so a finite but all-zero activation and logit tensor can result.",
+    "syntheticReproduction": {
+      "defaultPathInput": [
+        300.0,
+        -300.0
+      ],
+      "defaultPathOutput": [
+        0.0,
+        -0.0
+      ],
+      "finiteCheckWouldPass": true,
+      "reconstructedZeroNPYFileSHA256": "db3244d789d030648f6742a594f1c5fcfd1e6764b7acb57156d7d67581326bbb",
+      "reconstructedZeroNPYMatchesRecordedHash": true
+    }
+  },
+  "proceduralDeviations": [
+    {
+      "effectOnInterpretation": "The byte-level lock and completed before/after reference-load revalidations establish identical source bytes, but the run must not be described as having used a read-only source snapshot.",
+      "id": "source_snapshot_owner_writable",
+      "observation": "The model directory and source-lock file were owner-writable when the formal run began."
+    },
+    {
+      "effectOnInterpretation": "The sealed directory is a complete record of the interrupted process, not a complete ten-case experiment package.",
+      "id": "interrupted_worker_incomplete_failure_matrix",
+      "observation": "After SIGINT the orchestrator wrote process metadata and a manifest, but the worker did not write worker-run.json, ten comparisons, aggregates, or unstarted per-case failure records."
+    }
+  ],
+  "publicationStatus": "retain_and_disclose_but_do_not_use_for_fidelity_metrics",
+  "runID": "37756da4-cfc7-445a-ae6c-7241cfd77037",
+  "schema": "qwen3-coreai-ios-fidelity-failed-attempt-supplement-v1"
+}

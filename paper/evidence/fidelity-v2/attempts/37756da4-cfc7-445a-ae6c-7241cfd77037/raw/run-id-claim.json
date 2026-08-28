@@ -1,0 +1,8 @@
+{
+  "claimedAtUnixSeconds": 1787933608.4216871,
+  "outputDirectoryUTF8SHA256": "b965f77f3a793de488339cbcf004e089989e23a708b828d70071bdf023a35bf1",
+  "repositoryCommit": "785047be54ae83d96672a9c33aa4a8f80d231fe2",
+  "runID": "37756da4-cfc7-445a-ae6c-7241cfd77037",
+  "schema": "qwen3-coreai-ios-fidelity-run-id-claim-v1",
+  "scope": "repository-git-common-directory"
+}
