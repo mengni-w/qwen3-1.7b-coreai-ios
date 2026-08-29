@@ -5,6 +5,9 @@
     "python": "3.11.15",
     "nltk": "3.10.0"
   },
+  "localFiles": {
+    "results/fidelity-v2-summary.json": "fa2ef349a04d26cdb09686f9eb53c925b9c72c68ca7a04b1f89bbc96fcdd6cca"
+  },
   "dataset": {
     "id": "hfl/cmrc2018",
     "config": "default",

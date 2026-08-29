@@ -108,6 +108,39 @@ Admitted objects and audited SHA-256 values:
 | `results/quality-summary.json` | `D` | `b2e6e067b6ee68fd935143e131805179806ec034a8d69fe0b706118884fa72d4` |
 | `results/upstream-validation.json` | `D` | `325b4bcb4dac20c9b656d83489863a5cdcb22c24c641d3d5ec12f6f179bac6a0` |
 
+`results/quality-summary.json` is retained as historical evidence of the W4
+and mixed-W4/W8 selection process. Its W8 tuning and holdout values are
+superseded by S-FIDELITY-V2 and are not used for manuscript headline metrics.
+
+### S-FIDELITY-V2 — Corrected formal authoring-model fidelity evaluation
+
+- Classes: `M`, `R`, `D`
+- Repository: <https://github.com/massif-01/qwen3-1.7b-coreai-ios>
+- Evidence publication commit:
+  [`c54a355d5696e914efa64213f50e98264589ef2e`](https://github.com/massif-01/qwen3-1.7b-coreai-ios/commit/c54a355d5696e914efa64213f50e98264589ef2e)
+- Corrected run ID: `c5ac8729-efb6-4a7f-bf39-5ffa13cdfb24`
+- Status: 10/10 reference cases, 10/10 candidate cases, and 10/10
+  comparisons completed successfully
+- Evaluated representation: Apple iOS Qwen3 PyTorch authoring model with the
+  published W8-plus-INT8 mechanism enabled; CPU execution with FP16 model
+  logits and binary64 metric computation
+- Limit: this evidence does not contain logits from a compiled `.aimodelc`, a
+  downstream capability benchmark, or a device-performance measurement
+
+Admitted objects and audited SHA-256 values:
+
+| Object | Class | SHA-256 |
+| --- | --- | --- |
+| `paper/EXPERIMENT_PROTOCOL_V1.md` | `M` | `b7d98264068aad19b950e96af04c52fa027e57afcf67062e06125c9a875cc6b2` |
+| `paper/FIDELITY_V2_AMENDMENT_1.md` | `M` | `07eab8874485e8954ee959d611de302de122ad04c1e5c0fcca6f1e957ab368d3` |
+| `paper/evidence/fidelity-v2/prompt-manifest.json` | `M` | `59eedc731dab284755a59fc60b548a034a2a657ed8c9998413d58419b5ac1a95` |
+| `paper/evidence/fidelity-v2/environment.lock.json` | `M` | `c0f169ab66d52385d7d31456bbbdeb5e93103c5355b7510a87da61453d30ad47` |
+| `paper/evidence/fidelity-v2/run_fidelity_v2.py` | `M` | `3f8d729bd42b22fa590562f17f6703a66fc6611cc3cf922379108116a6ddd82b` |
+| `paper/evidence/fidelity-v2/attempts/c5ac8729-efb6-4a7f-bf39-5ffa13cdfb24/PUBLIC_MANIFEST.sha256` | `M` | `52b1400d86bd0bcdc96239262653a9af30b6ed69bdc53708df9d449de66f40cb` |
+| `paper/evidence/fidelity-v2/attempts/c5ac8729-efb6-4a7f-bf39-5ffa13cdfb24/raw/aggregates.json` | `D` | `172e2218ba6e44d55a7efab5280a8bd2fa1703231a62811761e41539a59e9e0d` |
+| `paper/evidence/fidelity-v2/attempts/c5ac8729-efb6-4a7f-bf39-5ffa13cdfb24/raw/case-comparisons.jsonl` | `R` | `be19235ff92a84b4c3b52d9dc278b577f41fcb40355ed7ff4e4d7bfa4f61262f` |
+| `results/fidelity-v2-summary.json` | `D` | `fa2ef349a04d26cdb09686f9eb53c925b9c72c68ca7a04b1f89bbc96fcdd6cca` |
+
 ### S-W8-HF — Public W8/ANE resource directory
 
 - Classes: `A`, `D`, `N`
@@ -348,17 +381,27 @@ Admitted public objects:
 - Evidence: S-W8-GIT `results/quality-summary.json` and `RESULTS.md`
 - Limit: representative rejected mean-cosine range is reported; complete
   candidate-level raw logits are not distributed in the paper repository
+- Supersession boundary: the historical file supports the selection sequence
+  and rejected-candidate range only; its W8 tuning and holdout values are not
+  admitted as current fidelity results
 
 ### CL-07 — W8 frozen-holdout fidelity
 
 - Status: `READY`
-- Admitted values: mean cosine `0.996598`, minimum cosine `0.959625`, top-1
-  agreement `0.9837`, mean NLL delta `0.003167`
-- Evidence: S-W8-GIT `results/quality-summary.json`
-- Interpretation: fidelity to the uncompressed reference under the disclosed
-  frozen inputs
+- Corrected formal run: `c5ac8729-efb6-4a7f-bf39-5ffa13cdfb24`
+- Tuning values: mean cosine `0.9972995580522954`, minimum cosine
+  `0.9634192756433698`, top-1 agreement `0.9895833333333334`, mean NLL delta
+  `0.0041901005215974`
+- Holdout values: mean cosine `0.9968972864500013`, minimum cosine
+  `0.953391227144109`, top-1 agreement `0.9696691176470589`, mean NLL delta
+  `0.008879966197800114`
+- Evidence: S-FIDELITY-V2 `results/fidelity-v2-summary.json`, sealed aggregate,
+  case comparisons, protocol, and prospective amendment
+- Interpretation: authoring-model fidelity to the uncompressed reference under
+  ten frozen inputs; case-level arithmetic macro, candidate-minus-reference NLL
 - Forbidden inference: general language capability, benchmark superiority, or
   downstream equivalence
+- Additional forbidden inference: compiled-device logit fidelity
 
 ### CL-08 — Historical W8 physical-device suite
 
@@ -612,7 +655,7 @@ the related-work audit is refreshed immediately before submission.
 | --- | --- | --- | --- | --- |
 | T1 | Apple and related public status | S-APPLE-MAIN, S-APPLE-ISSUE-116, S-APPLE-PR-196, refreshed related-work audit | CL-01, CL-02 | Date-stamped script/API snapshot plus manual source review |
 | T2 | Profile definitions | W8 and INT4 artifact summaries | CL-03, CL-04, CL-11 | Generate from normalized manifest JSON |
-| T3 | W8 fidelity | `results/quality-summary.json` | CL-06, CL-07 | Generate directly from JSON |
+| T3 | W8 fidelity | `results/fidelity-v2-summary.json`; historical selection fields from `results/quality-summary.json` | CL-06, CL-07 | Generate metrics from fidelity-v2 JSON; retain the older file only for selection history |
 | T4 | W8 device and trace evidence | `results/device-runtime-summary.json`; public-release validation JSON | CL-08, CL-09, CL-10 | Generate directly from JSON; keep artifact identity column |
 | T5 | Paired CMRC quality and uncertainty | raw JSONL, scorer, `quality-comparison.json` | CL-12–CL-14 | Recompute from raw files; compare byte-for-byte with published JSON |
 | T6 | Bundle size and RSS | artifact manifests and fixed-hash speed report | CL-15, CL-16 | Parse source values into normalized JSON; never hand-copy into manuscript |

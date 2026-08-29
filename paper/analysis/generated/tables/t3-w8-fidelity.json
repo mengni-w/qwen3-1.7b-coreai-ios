@@ -1,27 +1,61 @@
 {
-  "claimBoundary": "Conversion fidelity under frozen inputs, not general capability",
+  "claimBoundary": "Conversion fidelity of the disclosed W8 authoring recipe under ten frozen inputs; not compiled-device logits, downstream capability, ANE performance, or general benchmark quality.",
   "evaluations": {
     "w8_frozen_holdout": {
-      "mean_cosine": 0.996598,
-      "mean_nll_delta": 0.003167,
-      "minimum_cosine": 0.959625,
-      "top1_agreement": 0.9837
+      "case_count": 4,
+      "mean_cosine": 0.9968972864500013,
+      "mean_nll_delta": 0.008879966197800114,
+      "minimum_cosine": 0.953391227144109,
+      "successful_case_count": 4,
+      "top1_agreement": 0.9696691176470589
     },
     "w8_tuning": {
-      "mean_cosine": 0.997067,
-      "mean_nll_delta": 0.002985,
-      "minimum_cosine": 0.967261,
-      "top1_agreement": 0.9844
+      "case_count": 6,
+      "mean_cosine": 0.9972995580522954,
+      "mean_nll_delta": 0.0041901005215974,
+      "minimum_cosine": 0.9634192756433698,
+      "successful_case_count": 6,
+      "top1_agreement": 0.9895833333333334
     }
   },
+  "healthProbe": {
+    "binary64_cosine": 0.9999970493198227,
+    "manifest_sha256": "d926f7d79be1220bf08e9d851f6df5d0f714ccf47b4358acc3c0dc0b1438a448",
+    "probe_id": "56642727-11dc-46b5-a01d-61c7df989fda",
+    "same_top1": true,
+    "status": "success"
+  },
+  "historicalQualitySummary": {
+    "path": "results/quality-summary.json",
+    "retainedUse": "historical W4 and mixed-W4/W8 selection evidence only",
+    "status": "superseded_for_reported_fidelity_metrics"
+  },
   "mechanism": {
-    "compute": "FP16",
-    "kv_cache": "FP16 fixed-size",
-    "maximum_context_tokens": 4096,
-    "tied_embedding": "INT8 per-tensor quantization",
+    "compute_dtype": "float16",
+    "decode": "greedy",
+    "evaluation_representation": "enabled fake-palettized PyTorch authoring model",
+    "execution_device": "cpu",
+    "implementation": "coreai_models.models.ios.qwen3.Qwen3ForCausalLMForiOS",
+    "maximum_new_tokens": 64,
+    "maximum_total_context_tokens": 1024,
+    "numerical_parity_environment": {
+      "USE_HF_IMPL": "true"
+    },
+    "tied_embedding": "Apple iOS symmetric per-tensor INT8",
+    "transformer_projection_count": 196,
     "transformer_projection_weights": "W8 per-tensor K-means palettization"
   },
-  "schemaVersion": 1,
+  "protocol": {
+    "aggregation": "case-level arithmetic macro; not token weighted",
+    "amendment_commit": "60b9be97f42b5e02215777bd5ef31af782f65764",
+    "evaluator_commit": "69f96e56847d9692255de00e9f8f1e66183151f9",
+    "metric_dtype": "IEEE-754 binary64",
+    "nll_delta_direction": "candidate_minus_reference",
+    "prompt_manifest_commit": "91f468bc6ee07e45dfce1d586aaf070fb8b4a6d5",
+    "protocol_commit": "87cb23e1a2872caa18a406aae249335eeac5b6a6"
+  },
+  "runID": "c5ac8729-efb6-4a7f-bf39-5ffa13cdfb24",
+  "schemaVersion": 2,
   "selectionEvidence": {
     "decision": "Rejected under the frozen quality contract before W8 holdout evaluation",
     "rejected_candidate_families": [
@@ -32,5 +66,14 @@
       "maximum": 0.981232,
       "minimum": 0.856886
     }
-  }
+  },
+  "source": {
+    "coreai_models_commit": "04a3fd6cfe9bfae9cf05b1f246cf915d930d1c0a",
+    "coreai_models_repository": "https://github.com/apple/coreai-models.git",
+    "recipe_sha256": "dab03ae1dd6c6290a7964e05ebcda7fe027c2bb240174fcf034e64a376be9d72",
+    "repository": "Qwen/Qwen3-1.7B",
+    "revision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+    "source_model_canonical_sha256": "0208857e10f0cc7888036473b1abc93b8a3bc725f1434b778a9bfebc93e88b16"
+  },
+  "status": "successful_corrected_formal_attempt"
 }

@@ -3,10 +3,11 @@
 This repository documents a reproducible Qwen3-1.7B onboarding for Apple's
 `coreai-models` iOS path.
 
-> **Quality-first result:** the frozen W8 holdout retained `0.996598` mean
-> logits cosine, `0.959625` minimum cosine, `98.37%` top-1 agreement, and
-> `0.003167` mean NLL delta against the uncompressed reference. Multiple W4 and
-> mixed W4/W8 candidates were rejected before this mechanism was frozen.
+> **Quality-first result:** the corrected formal W8 holdout retained
+> `0.996897` mean logits cosine, `0.953391` minimum cosine, `96.97%` top-1
+> agreement, and `0.008880` mean candidate-minus-reference NLL delta against
+> the uncompressed authoring-model reference. Multiple W4 and mixed W4/W8
+> candidates were rejected before this mechanism was frozen.
 
 The tested configuration fills the practical gap between Apple's existing
 Qwen3-0.6B and Qwen3-4B iOS presets:
@@ -93,11 +94,13 @@ bridge. This project closes that full path on A17 Pro. It does not infer a
 speed or energy win without a controlled cross-runtime measurement.
 
 The fidelity evidence is also deliberately stricter than a prompt-only smoke
-test. Multiple W4 and mixed W4/W8 candidates were rejected before export. The
-frozen W8 recipe then passed an untouched holdout against the reference model
-at `0.996598` mean logits cosine, `0.959625` minimum cosine, `98.37%` top-1
-agreement, and `0.003167` mean NLL delta. These are conversion-fidelity
-measurements, not a claim of superior downstream benchmark quality.
+test. Multiple W4 and mixed W4/W8 candidates were rejected before export. A
+corrected formal evaluation of the frozen recipe then completed six tuning and
+four holdout comparisons. The holdout reached `0.996897` mean logits cosine,
+`0.953391` minimum cosine, `96.97%` top-1 agreement, and `0.008880` mean
+candidate-minus-reference NLL delta. These measurements apply to the
+fake-palettized PyTorch authoring model under the frozen inputs; they are not
+compiled-device logits or a claim of superior downstream benchmark quality.
 
 See `RELATED_WORK.md` for the dated, scope-aware comparison.
 
@@ -122,12 +125,16 @@ embedding quantization.
 
 ## Evidence summary
 
-### Frozen quality evidence
+### Corrected formal fidelity evidence
 
 | Evaluation | Mean cosine | Min cosine | Top-1 agreement | Mean NLL delta |
 | --- | ---: | ---: | ---: | ---: |
-| W8 tuning set | 0.997067 | 0.967261 | 98.44% | 0.002985 |
-| W8 frozen holdout | 0.996598 | 0.959625 | 98.37% | 0.003167 |
+| W8 tuning set (6 cases) | 0.997300 | 0.963419 | 98.96% | 0.004190 |
+| W8 holdout (4 cases) | 0.996897 | 0.953391 | 96.97% | 0.008880 |
+
+The older `results/quality-summary.json` is retained as historical evidence of
+the W4 and mixed-W4/W8 selection sequence. Its W8 values are superseded by
+`results/fidelity-v2-summary.json`.
 
 ### Standalone iPhone suite
 

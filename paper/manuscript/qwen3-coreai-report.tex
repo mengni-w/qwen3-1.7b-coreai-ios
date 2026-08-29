@@ -56,7 +56,7 @@ A Static W8 Implementation and Same-Device Profile Evaluation}
 \begin{abstract}
 Apple's public \artifact{coreai-models} repository contained no Qwen3-1.7B preset at the revision examined in this study.\evidence{CL-01}
 We implement a version-pinned static iOS path with per-tensor W8 K-means-palettized transformer projections, a separately INT8-quantized tied embedding, FP16 compute, fixed KV state, a 4,096-token context, and \artifact{h16p} ahead-of-time compilation with Neural Engine-preferred compute.\evidence{CL-03,CL-04,CL-05}
-The selected W8 mechanism achieved 0.996598 mean and 0.959625 minimum logit cosine on a frozen holdout, 98.37\% top-1 agreement, and a 0.003167 mean NLL delta relative to frozen uncompressed-reference outputs.\evidence{CL-06,CL-07}
+A corrected formal authoring-model evaluation of the frozen W8 mechanism achieved 0.996897 mean and 0.953391 minimum logit cosine on the holdout, 96.97\% top-1 agreement, and a 0.008880 mean candidate-minus-reference NLL delta.\evidence{CL-06,CL-07}
 On an iPhone 15 Pro running iOS 27, the historical W8 artifact completed four six-case suites. An Instruments trace recorded 547 MPSGraph program intervals and 547 Apple Neural Engine Prediction intervals, supporting ANE participation in the traced run.\evidence{CL-08,CL-09}
 A separate public W8 rebuild also passed a six-case device suite.\evidence{CL-10,CL-22}
 We compare this Static-W8 profile with a Dynamic-INT4 profile on the same device using a frozen 300-example CMRC2018 subset.\evidence{CL-11,CL-12}
@@ -146,7 +146,11 @@ Repository commits, Hub revisions, and SHA-256 digests identify the inputs. The 
 
 \subsection{W8 conversion-fidelity selection}
 
-W8 was selected with frozen uncompressed-reference logits and NLL rather than readable-text smoke tests. Uniform W4 and mixed W4/W8 candidates were rejected under the frozen conversion-fidelity contract before the W8 holdout was admitted; representative rejected mean-cosine values ranged from 0.856886 to 0.981232.\evidence{CL-06} The tuning and holdout sets remained separate. These measurements characterize conversion fidelity on the frozen inputs; they are not a downstream task benchmark.\evidence{CL-07}
+W8 was selected with frozen uncompressed-reference logits and NLL rather than readable-text smoke tests. Uniform W4 and mixed W4/W8 candidates were rejected before the W8 mechanism was fixed; the historical selection record reports representative candidate mean cosines from 0.856886 to 0.981232.\evidence{CL-06}
+
+During manuscript review, we evaluated that fixed mechanism with a separate formal protocol. The corrected run used six tuning and four holdout inputs, identical serialized inputs for reference and candidate models, shared reference completions for teacher forcing, and case-level macro-averages computed in IEEE-754 binary64. Both models used the prospectively fixed numerical-parity setting described in Fidelity V2 Amendment 1. The candidate applied the published W8 recipe to 196 transformer projections and the iOS INT8 path to the tied embedding; the reference disabled both compression steps. The evaluation exercised the fake-palettized PyTorch authoring model on CPU, not the compiled device artifact.\evidence{CL-07}
+
+The corrected attempt completed all 10 reference runs, 10 candidate runs, and 10 comparisons. Its values supersede the earlier W8 fidelity numbers in \artifact{results/quality-summary.json}; that file remains part of the historical model-selection record. The tuning and holdout inputs remained separate, and neither set is a downstream capability benchmark.\evidence{CL-06,CL-07}
 
 \subsection{Physical-device validation}
 
@@ -178,7 +182,7 @@ Reported latency values are medians of the three accepted samples, not P95 estim
 
 \subsection{W8 fidelity and authoring validation}
 
-Table~\ref{tab:w8-fidelity} reports the tuning and frozen-holdout conversion metrics. The holdout mean logit cosine was 0.996598, the minimum was 0.959625, top-1 agreement was 98.37\%, and mean NLL delta was 0.003167.\evidence{CL-07}
+Table~\ref{tab:w8-fidelity} reports the corrected tuning and holdout conversion metrics. The holdout mean logit cosine was 0.996897, the minimum was 0.953391, top-1 agreement was 96.97\%, and the mean candidate-minus-reference NLL delta was 0.008880.\evidence{CL-07}
 
 \input{generated/tables/t3-w8-fidelity.tex}
 
@@ -257,7 +261,7 @@ The public W8 repository is fixed at commit \digest{46668db811559ce21b0006f07706
 
 The W8 recipe SHA-256 is \digest{dab03ae1dd6c6290a7964e05ebcda7fe027c2bb240174fcf034e64a376be9d72}. The public W8 compiled \artifact{main-h16p.mlirb} SHA-256 is \digest{a7eefeef16708a324f9919890355eb92180ec85eef419ebd5822e8c8afd42f5f}; the INT4 compiled main and \artifact{resources.bin} hashes are \digest{ad953b6bc902accc1f1200a8870012c5dec6b488f0f4ec0f10a9916b16cb56ef} and \digest{37c7f2fcf85625abb32d83ca24e7a9facd33a37f79dbc3afec64d41eb900f8bc}.\evidence{CL-22,CL-23}
 
-The repository separates evidence reconstruction from document compilation. Running \artifact{./analysis/run.sh} fetches the commits and remote objects listed in \artifact{analysis/source-lock.json}, verifies those inputs, reconstructs the CMRC reference sample, recomputes published quality, extracts per-run timing records, and regenerates Tables~\ref{tab:public-status}--\ref{tab:workload-performance} and Figures~\ref{fig:quality}--\ref{fig:size-rss}. It pins Python 3.11.15 and NLTK 3.10.0. Running \artifact{./manuscript/build.sh} then checks the committed generated outputs and compiles the paper with the documented Chrome and Tectonic versions. The reconstructed quality JSON is byte-identical to the published Python-3 result.\evidence{CL-12,CL-13,CL-23}
+The repository separates evidence reconstruction from document compilation. Running \artifact{./analysis/run.sh} fetches the commits and remote objects listed in \artifact{analysis/source-lock.json}, verifies the corrected formal fidelity-v2 summary, reconstructs the CMRC reference sample, recomputes published CMRC quality, extracts per-run timing records, and regenerates Tables~\ref{tab:public-status}--\ref{tab:workload-performance} and Figures~\ref{fig:quality}--\ref{fig:size-rss}. It pins Python 3.11.15 and NLTK 3.10.0. Running \artifact{./manuscript/build.sh} then checks the committed generated outputs and compiles the paper with the documented Chrome and Tectonic versions. The reconstructed CMRC quality JSON is byte-identical to the published Python-3 result.\evidence{CL-07,CL-12,CL-13,CL-23}
 
 The dataset text is not redistributed by the paper pipeline. Instead, the official CMRC source commit and SHA-256, canonical-row SHA-256, and frozen-sample SHA-256 are checked before scoring.\evidence{CL-12,CL-27}
 
@@ -275,7 +279,7 @@ The system profiles differ in precision, compression granularity, embedding trea
 Only the sanitized trace summary is distributed. It records ANE participation but cannot be used to reconstruct event-level scheduling or exclusive dispatch.\evidence{CL-09}
 
 \paragraph{Quality scope.}
-The paired quality run contains a length-balanced subset of 300 CMRC2018 examples rather than the full validation split or its natural length distribution.\evidence{CL-12,CL-13} Confidence intervals include zero, and no equivalence margin was specified.\evidence{CL-14} The initial 1.0-point EM heuristic failed.\evidence{CL-13,CL-14} Complete WikiText-2 perplexity and downstream task evaluations are unavailable.
+The fidelity-v2 result covers ten frozen authoring-model inputs and does not measure logits from the compiled iPhone artifact.\evidence{CL-07} The paired quality run contains a length-balanced subset of 300 CMRC2018 examples rather than the full validation split or its natural length distribution.\evidence{CL-12,CL-13} Confidence intervals include zero, and no equivalence margin was specified.\evidence{CL-14} The initial 1.0-point EM heuristic failed.\evidence{CL-13,CL-14} Complete WikiText-2 perplexity and downstream task evaluations are unavailable.
 
 \paragraph{Timing scope.}
 Each workload reports three accepted measured samples after one warm-up, which is insufficient for tail-latency estimates.\evidence{CL-17,CL-18,CL-19} Load observations were cache-sensitive. The sustained-decode comparison is conditional on generation reaching 200 output tokens, and the near-4K case contains too few visible decode tokens for a stable rate estimate.\evidence{CL-18,CL-19}
@@ -288,7 +292,7 @@ The downloadable W8 model uses the same mechanism as the historical A/B model, b
 
 \section{Conclusion}
 
-We implemented a reproducible static Apple Core AI path for Qwen3-1.7B, compiled it for \artifact{h16p}, and ran it through \artifact{LanguageModelSession} on an iPhone 15 Pro with measured ANE participation.\evidence{CL-04,CL-05,CL-08,CL-09,CL-10} Static-W8 retained high conversion fidelity under the frozen inputs. In the same-device evaluation, Dynamic-INT4 used less storage and process memory and decoded faster, whereas Static-W8 reached the first token sooner and completed the long-prompt workload faster.\evidence{CL-07,CL-15,CL-16,CL-17,CL-18,CL-19,CL-20} The released materials allow these workload-dependent trade-offs to be inspected and measured again.
+We implemented a reproducible static Apple Core AI path for Qwen3-1.7B, compiled it for \artifact{h16p}, and ran it through \artifact{LanguageModelSession} on an iPhone 15 Pro with measured ANE participation.\evidence{CL-04,CL-05,CL-08,CL-09,CL-10} A corrected formal evaluation confirmed high conversion fidelity for the frozen W8 authoring mechanism while keeping compiled-device behavior outside that claim.\evidence{CL-07} In the same-device profile comparison, Dynamic-INT4 used less storage and process memory and decoded faster, whereas Static-W8 reached the first token sooner and completed the long-prompt workload faster.\evidence{CL-15,CL-16,CL-17,CL-18,CL-19,CL-20} The public recipes, evidence, and analysis code make the implementation and these workload-dependent observations independently inspectable.
 
 \section{Data and Code Availability}
 

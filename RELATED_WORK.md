@@ -16,7 +16,7 @@ repository at the audit date.
 | Execution path | Dynamic INT4 GPU (`coreai-pipelined`) | Stateful KV-cache Core AI asset produced by `coreai-fabric`; reproduction manifest uses `--platform macOS` and records no AOT target | Static-shape, W8 per-tensor projections, separate INT8 embedding, FP16 compute/KV, `h16p`, Neural Engine preferred |
 | Context shape | Dynamic GPU graph; model card reports 40,960 maximum context | Model metadata reports 40,960 maximum context; no iPhone AOT target disclosed | Fixed 4,096-token FP16 KV; 34 AOT functions across prompt, extend, context, and query buckets |
 | Disclosed device evidence | iPhone 17 Pro; GPU path | Model card says real-hardware load/generation passed; no iPhone throughput published and the reproduction manifest is macOS-path | iPhone 15 Pro; four complete six-case suites plus product-runtime acceptance |
-| Disclosed quality evidence | Eight checkable questions, 8/8 | Numeric accuracy `not_run` | Frozen tuning and untouched holdout logits/NLL parity; holdout mean cosine 0.996598, min cosine 0.959625, top-1 98.37%, NLL delta 0.003167 |
+| Disclosed quality evidence | Eight checkable questions, 8/8 | Numeric accuracy `not_run` | Corrected formal authoring-model fidelity on six tuning and four holdout inputs; holdout mean cosine 0.996897, min cosine 0.953391, top-1 96.97%, NLL delta 0.008880 |
 | Static ANE result | Model card says the static ANE bundle loaded but did not invoke, so it was omitted | No static `h16p` ANE result disclosed | Static `h16p` artifact invoked on A17 Pro; Core AI trace showed Neural Engine participation |
 | Apple-main integration | No Apple-main onboarding patch disclosed | No Apple-main onboarding patch disclosed | Patch adds preset, metadata, recipe, docs, focused tests, and iOS conversion-matrix coverage against locked Apple main |
 | Strongest disclosed advantage | Small dynamic INT4 bundle and high reported GPU throughput on iPhone 17 Pro | Reusable catalog/install workflow and downloadable INT8 asset | Highest disclosed conversion-fidelity evidence, A17 Pro static-path validation, and upstream-ready Apple-main integration |
@@ -70,13 +70,14 @@ It then produced:
 
 | Evaluation | Mean cosine | Min cosine | Top-1 agreement | Mean NLL delta |
 | --- | ---: | ---: | ---: | ---: |
-| W8 tuning set | 0.997067 | 0.967261 | 98.44% | 0.002985 |
-| W8 frozen holdout | 0.996598 | 0.959625 | 98.37% | 0.003167 |
+| W8 tuning set (6 cases) | 0.997300 | 0.963419 | 98.96% | 0.004190 |
+| W8 holdout (4 cases) | 0.996897 | 0.953391 | 96.97% | 0.008880 |
 
-This is evidence of fidelity to the reference model under the disclosed test
-contract. It is not a downstream capability leaderboard, and it should not be
-directly compared with another project's prompt score or throughput because the
-hardware, execution path, precision, context shape, and evaluation sets differ.
+This is evidence of fidelity to the uncompressed authoring-model reference
+under the disclosed test contract. It is not a compiled-device-logit result or
+a downstream capability leaderboard, and it should not be directly compared
+with another project's prompt score or throughput because the hardware,
+execution path, precision, context shape, and evaluation sets differ.
 
 ## Adjacent but not direct comparisons
 

@@ -16,17 +16,25 @@
 
 | Gate | Mean cosine | Min cosine | Top-1 agreement | Mean NLL delta | Result |
 | --- | ---: | ---: | ---: | ---: | --- |
-| W8 tuning | 0.997067 | 0.967261 | 98.44% | 0.002985 | pass |
-| W8 frozen holdout | 0.996598 | 0.959625 | 98.37% | 0.003167 | pass |
+| W8 tuning (6 cases) | 0.997300 | 0.963419 | 98.96% | 0.004190 | pass |
+| W8 holdout (4 cases) | 0.996897 | 0.953391 | 96.97% | 0.008880 | pass |
 
-The W8 result was selected through a quality gate, not a successful generation
-smoke. Uniform and mixed W4/W8 candidates were evaluated and rejected;
-representative candidate mean cosine values ranged from 0.856886 to 0.981232.
-The final mechanism was then locked before the separate holdout was scored.
+The W8 mechanism was selected through a quality gate, not a successful
+generation smoke. Uniform and mixed W4/W8 candidates were evaluated and
+rejected; the historical selection record reports representative candidate
+mean cosine values from 0.856886 to 0.981232. The final mechanism was then
+locked.
 
-These are frozen logits/NLL comparison gates. They are not a substitute for a
-complete public benchmark suite. Full WikiText-2 perplexity was not completed
-and is intentionally not presented as a pass.
+The table reports the corrected formal fidelity-v2 run. It evaluated the fixed
+mechanism on six tuning and four holdout inputs and completed all ten reference,
+candidate, and comparison cases. The older `results/quality-summary.json`
+remains selection history, but its W8 metrics are superseded by
+`results/fidelity-v2-summary.json`.
+
+These are authoring-model logits/NLL comparisons under frozen inputs. They are
+not compiled-device logits or a substitute for a complete public benchmark
+suite. Full WikiText-2 perplexity was not completed and is intentionally not
+presented as a pass.
 
 ## Standalone physical-device suite
 

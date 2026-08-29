@@ -19,6 +19,7 @@ import sys
 
 
 ROOT = Path(__file__).resolve().parents[1]
+REPOSITORY_ROOT = ROOT.parent
 ANALYSIS_DIR = ROOT / "analysis"
 LOCK_PATH = ANALYSIS_DIR / "source-lock.json"
 PUBLIC_STATUS_PATH = ANALYSIS_DIR / "public-status-v1.json"
@@ -721,7 +722,8 @@ def generate_tables(
     write_json(tables_dir / "t1-public-status.json", t1)
 
     w8_artifact = read_json(w8_repo / "results/artifact-summary.json")
-    w8_quality = read_json(w8_repo / "results/quality-summary.json")
+    historical_w8_quality = read_json(w8_repo / "results/quality-summary.json")
+    w8_fidelity = read_json(REPOSITORY_ROOT / "results/fidelity-v2-summary.json")
     w8_device = read_json(w8_repo / "results/device-runtime-summary.json")
     int4_artifact = read_json(
         comparison_repo / "benchmarks/results/artifact-summary.json"
@@ -765,12 +767,29 @@ def generate_tables(
     }
     write_json(tables_dir / "t2-profile-definitions.json", t2)
 
+    if not w8_fidelity["historical_relationship"][
+        "supersedes_historical_mismatched_fidelity_values"
+    ]:
+        raise PipelineError("fidelity-v2 summary does not supersede historical values")
     t3 = {
-        "schemaVersion": 1,
-        "mechanism": w8_quality["mechanism"],
-        "selectionEvidence": w8_quality["selection_evidence"],
-        "evaluations": w8_quality["evaluations"],
-        "claimBoundary": "Conversion fidelity under frozen inputs, not general capability",
+        "schemaVersion": 2,
+        "runID": w8_fidelity["run_id"],
+        "status": w8_fidelity["status"],
+        "mechanism": w8_fidelity["mechanism"],
+        "source": w8_fidelity["source"],
+        "protocol": w8_fidelity["protocol"],
+        "healthProbe": w8_fidelity["health_probe"],
+        "selectionEvidence": historical_w8_quality["selection_evidence"],
+        "evaluations": {
+            "w8_tuning": w8_fidelity["evaluations"]["tuning"],
+            "w8_frozen_holdout": w8_fidelity["evaluations"]["holdout"],
+        },
+        "historicalQualitySummary": {
+            "path": "results/quality-summary.json",
+            "status": "superseded_for_reported_fidelity_metrics",
+            "retainedUse": "historical W4 and mixed-W4/W8 selection evidence only",
+        },
+        "claimBoundary": w8_fidelity["claim_boundary"],
     }
     write_json(tables_dir / "t3-w8-fidelity.json", t3)
 
@@ -1102,6 +1121,8 @@ def main() -> int:
 
     lock = read_json(LOCK_PATH)
     require_hash(PUBLIC_STATUS_PATH, lock["publicStatusLockSHA256"])
+    for relative_path, expected_hash in lock["localFiles"].items():
+        require_hash(REPOSITORY_ROOT / relative_path, expected_hash)
     verify_runtime(lock)
     generated_dir = resolve_generated_dir(arguments.generated_dir)
     if arguments.test_only:
@@ -1170,6 +1191,7 @@ def main() -> int:
         "repositoryCommits": {
             name: spec["commit"] for name, spec in lock["repositories"].items()
         },
+        "localFileSHA256": lock["localFiles"],
         "newModelOutputsCreated": False,
         "newDeviceMeasurementsCreated": False,
     }

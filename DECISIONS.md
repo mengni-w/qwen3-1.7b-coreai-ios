@@ -27,8 +27,9 @@ Final conclusion: 4K is the frozen contribution mechanism. KV quantization and
 
 Several 4-bit and mixed W4/W8 candidates exported and ran, but failed the
 quality contract. Representative rejected candidates ranged from mean cosine
-0.856886 to 0.981232. W8 passed the frozen holdout at mean cosine 0.996598 and
-98.37% top-1 agreement.
+0.856886 to 0.981232. The corrected formal W8 holdout later reached mean cosine
+0.996897 and 96.97% top-1 agreement. The older W8 summary values are retained
+only as historical selection evidence.
 
 Final conclusion: W8 is the verified baseline. This repository does not market
 it as a 4-bit recipe.

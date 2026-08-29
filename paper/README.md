@@ -27,6 +27,9 @@ in isolation.
 - [`analysis/README.md`](analysis/README.md) documents the deterministic
   evidence pipeline that rebuilds paper tables and figures without new model
   or device runs.
+- [`evidence/fidelity-v2/README.md`](evidence/fidelity-v2/README.md) documents
+  the corrected formal authoring-model fidelity run; its public summary is the
+  sole numerical source for manuscript Table T3.
 - [`manuscript/qwen3-coreai-report.tex`](manuscript/qwen3-coreai-report.tex) is
   the English technical report; [`manuscript/README.md`](manuscript/README.md)
   documents its reproducible build and visual-review gates.

@@ -7,7 +7,8 @@ new measurement.
 ## What it does
 
 1. Fetches the two public evidence repositories at their exact commits.
-2. Verifies every admitted input against `source-lock.json`.
+2. Verifies every admitted input against `source-lock.json`, including the
+   corrected formal `results/fidelity-v2-summary.json` in this repository.
 3. Downloads the official CMRC2018 development file at its exact commit and
    refuses any source whose SHA-256 differs.
 4. Runs the frozen sample builder and requires the historical 300-sample hash.
@@ -17,7 +18,10 @@ new measurement.
    context-length-stratified bootstrap and exact paired sign tests.
 7. Parses every accepted speed sample from the fixed-hash report, recomputes
    medians, and checks them against the report's headline table.
-8. Generates machine-readable inputs for Tables T2–T7 and Figures F3–F5.
+8. Generates T3 from the corrected formal fidelity-v2 result. The older
+   `quality-summary.json` remains available only as historical model-selection
+   evidence; its W8 fidelity values are superseded.
+9. Generates machine-readable inputs for Tables T2–T7 and Figures F3–F5.
 
 The copyrighted dataset text and cloned repositories remain under the ignored
 `.analysis-work/` directory. Generated outputs contain aggregates and already

@@ -50,8 +50,9 @@ We prepared and validated a standalone Qwen3-1.7B iOS onboarding:
 - clean export and `h16p` AOT compilation completed with 34 functions;
 - an iPhone 15 Pro running iOS 27 completed four full six-case suites,
   including a 3,790-token long-context case and a reasoning case;
-- the frozen W8 holdout produced mean cosine 0.996598, minimum cosine
-  0.959625, 98.37% top-1 agreement, and mean NLL delta 0.003167;
+- the corrected formal W8 holdout produced mean cosine 0.996897, minimum cosine
+  0.953391, 96.97% top-1 agreement, and mean candidate-minus-reference NLL
+  delta 0.008880 under the disclosed authoring-model fidelity protocol;
 - multiple W4 and mixed W4/W8 candidates were rejected before export, so the
   published W8 mechanism is the result of a frozen quality gate rather than a
   successful single-prompt smoke test;

@@ -3,7 +3,7 @@
 - Manuscript: `qwen3-coreai-report.tex`
 - Governing protocol: `../REPORT_PROTOCOL_V1.md`
 - Evidence ledger: `../EVIDENCE_INDEX.md`
-- Audit date: 2026-08-28
+- Audit date: 2026-08-29
 - Audit result: **PASS**
 
 ## Audit method
@@ -26,7 +26,7 @@ the human semantic review that a pattern matcher cannot replace.
 | --- | --- | --- | --- |
 | Abstract — Apple repository lacked a 1.7B preset at the audited commit | CL-01 | Apple README and registry at `7062017c…` | Admitted only as dated repository state; no impossibility inference |
 | Abstract — static W8 authoring-path definition | CL-03, CL-04, CL-05 | Locked recipe, manifests, patch, upstream validation | Admitted as a coupled static profile; “preferred” is retained |
-| Abstract — W8 holdout cosine, top-1, and NLL values | CL-06, CL-07 | `quality-summary.json` | Admitted as conversion fidelity under frozen inputs only |
+| Abstract — corrected formal W8 holdout cosine, top-1, and NLL values | CL-06, CL-07 | `results/fidelity-v2-summary.json` and sealed corrected attempt | Admitted as authoring-model conversion fidelity under ten frozen inputs only; no compiled-device-logit claim |
 | Abstract — four historical suites and 547/547 trace intervals | CL-08, CL-09 | Historical device summary and sanitized trace summary | Admitted with historical artifact identity and non-exclusive ANE wording |
 | Abstract — separate public W8 suite | CL-10, CL-22 | Public-release device-validation JSON | Admitted as separate validation, not substituted into the A/B run |
 | Abstract — paired same-device setup | CL-11, CL-12 | INT4 artifact summary and quality protocol | Admitted as a profile comparison, not isolated hardware causality |
@@ -36,7 +36,7 @@ the human semantic review that a pattern matcher cannot replace.
 | Introduction — Apple sizes present, issue open, PR closed unmerged | CL-01, CL-02 | Apple commit plus dated API objects | Admitted; PR regression root cause remains undisclosed |
 | Introduction — community dynamic GPU and stateful INT8 routes exist | CL-24, CL-25 | Frozen community model cards and manifests | Context only; no same-device comparison is inferred |
 | Introduction contribution 1 — patch, recipe, tests, dry run, AOT procedure | CL-04, CL-05 | W8 repository objects | Admitted as reference implementation, not accepted upstream work |
-| Introduction contribution 2 — quality selection, device suites, trace | CL-06, CL-07, CL-08, CL-09, CL-10 | W8 quality and device records | Admitted with artifact and trace boundaries |
+| Introduction contribution 2 — historical model selection, corrected fidelity, device suites, trace | CL-06, CL-07, CL-08, CL-09, CL-10 | Historical selection record, fidelity-v2 attempt, and device records | Admitted with evaluator, artifact, and trace boundaries |
 | Introduction contribution 3 — paired data and measurements | CL-11, CL-12, CL-13, CL-14, CL-15, CL-16, CL-17, CL-18, CL-19 | Comparison repository | Admitted; no new run or measurement is implied |
 | Introduction contribution 4 — public materials and identity boundary | CL-22, CL-23 | Public Git and Hub revisions | Admitted; exact historical W8 binary is not distributed |
 | Background — Apple authoring/runtime surface and launch contribution policy | CL-26 | Apple root README at audited commit | Context only and time-bounded; no Apple endorsement |
@@ -51,7 +51,9 @@ the human semantic review that a pattern matcher cannot replace.
 | Dynamic INT4 — chat-template no-thinking control | CL-21 | Runtime patch, `NO_THINKING.md`, quality protocol | Admitted for the pinned benchmark only |
 | Methods — retrospective evidence creates no new outputs or measurements | CL-23 | Protocol and deterministic pipeline provenance | Admitted as study-process boundary |
 | Methods — historical/public W8 payloads are not byte-identical | CL-22 | Artifact identity registry | Artifact identities remain separate |
-| W8 selection — rejected W4/mixed candidates and mean-cosine range | CL-06 | Quality summary and results narrative | Admitted; no complete candidate raw-logit release is implied |
+| W8 selection — rejected W4/mixed candidates and mean-cosine range | CL-06 | Historical `quality-summary.json` and results narrative | Admitted only as model-selection history; its W8 headline metrics are superseded |
+| W8 fidelity method — corrected formal protocol, ten inputs, shared teacher-forcing history, and binary64 macro | CL-07 | `FIDELITY_V2_AMENDMENT_1.md`, evaluator, and sealed corrected attempt | Admitted for the fake-palettized authoring model on CPU; not compiled-device logits or downstream capability |
+| W8 fidelity method — 10/10 comparisons and supersession of the earlier W8 values | CL-06, CL-07 | `results/fidelity-v2-summary.json` and historical relationship field | Admitted; the older summary remains model-selection history only |
 | Device method — six case types, four suites, zero final hard failures | CL-08 | Historical device summary | Admitted for A-W8-HISTORICAL only |
 | Device method — trace summary supports participation, not exclusivity | CL-09 | Sanitized trace summary | Mandatory non-exclusivity qualifier present |
 | Device method — separate public rebuild suite | CL-10, CL-22 | Public-release device-validation JSON | Admitted; not substituted for historical A/B |
@@ -61,7 +63,7 @@ the human semantic review that a pattern matcher cannot replace.
 | CMRC method — initial -1.0 heuristic and -1.67 EM failure | CL-13, CL-14 | Frozen feasibility protocol and recomputed results | Admitted alongside the distinct non-significant paired test |
 | Speed method — controls, warm-up, three tagged samples | CL-17, CL-18, CL-19 | Frozen speed protocol/report | Admitted; repeat-input cache contamination excluded before accepted run |
 | Speed method — workloads and replaced 24-token W8 attempt | CL-17, CL-18, CL-19 | Fixed-hash speed report | Admitted with exclusion/replacement disclosure |
-| Results — W8 holdout values | CL-07 | Generated T3 from quality JSON | Admitted as fidelity; no full perplexity matrix claim |
+| Results — corrected formal W8 tuning and holdout values | CL-07 | Generated T3 from `results/fidelity-v2-summary.json` | Admitted as authoring-model fidelity; no compiled-device logits, capability benchmark, or full perplexity claim |
 | Results — Apple-main validation boundary | CL-05 | Upstream-validation JSON | Admitted without binary identity or fresh full-export inference |
 | Results — historical load/RSS/unload and long-context TTFT | CL-08 | Historical device summary | Admitted for specialization-cache-warm historical suite |
 | Results — trace counts and public rebuild RSS/TTFT | CL-09, CL-10 | Separate historical trace and public validation records | Admitted with separate identities |
@@ -81,17 +83,17 @@ the human semantic review that a pattern matcher cannot replace.
 | Reference implementation — community GPU and INT8 context | CL-24, CL-25 | Frozen community objects | Context only; no deficiency or superiority inference |
 | Reproducibility — Git and Hub revisions | CL-22, CL-23 | Frozen public repositories | Admitted exact identifiers |
 | Reproducibility — recipe and compiled-file hashes | CL-22, CL-23 | Hub manifests and checksum locks | Admitted exact identifiers |
-| Reproducibility — deterministic pipeline and byte-identical Python-3 quality JSON | CL-12, CL-13, CL-23 | Source lock, generated provenance, tests | Admitted; no new model/device output |
+| Reproducibility — locked fidelity-v2 summary, deterministic pipeline, and byte-identical Python-3 CMRC JSON | CL-07, CL-12, CL-13, CL-23 | Source lock, corrected fidelity summary, generated provenance, and tests | Admitted; pipeline creates no new model/device output |
 | Reproducibility — dataset is reconstructed, not redistributed | CL-12, CL-27 | Official CMRC commit/hashes | Admitted dataset-boundary statement |
 | Reproducibility — historical/public W8 identity distinction | CL-22 | Artifact identity registry | Exact historical replay requires the historical binary |
 | Limitations — one device/toolchain scope | CL-08, CL-10, CL-11 | Device records | Admitted; universal compatibility rejected |
 | Limitations — coupled profiles | CL-04, CL-11 | Profile manifests | Admitted; causal attribution rejected |
 | Limitations — trace non-exclusivity | CL-09 | Trace summary | Mandatory qualification retained |
-| Limitations — 300 examples, zero-crossing intervals, failed heuristic | CL-12, CL-13, CL-14 | Frozen quality evidence | Admitted; equivalence and full-task generalization rejected |
+| Limitations — ten-input authoring fidelity plus 300-example CMRC scope, zero-crossing intervals, and failed heuristic | CL-07, CL-12, CL-13, CL-14 | Fidelity-v2 and frozen CMRC evidence | Admitted; compiled-device-logit, equivalence, and full-task generalization claims rejected |
 | Limitations — three measured timing samples | CL-17, CL-18, CL-19 | Frozen speed report | Admitted; P95 and universal cold-load ratio rejected |
 | Limitations — historical/public W8 identity distinction | CL-22 | Artifact identity registry | Exact replay limitation retained |
 | Conclusion — reproducible static route and measured ANE participation | CL-04, CL-05, CL-08, CL-09, CL-10 | Patch, runtime suites, trace, public validation | Admitted with device/version and participation wording |
-| Conclusion — W8 fidelity and workload-dependent profile trade-off | CL-07, CL-15, CL-16, CL-17, CL-18, CL-19, CL-20 | Frozen quality, size, RSS, and speed evidence | Admitted; no universal winner or energy claim |
+| Conclusion — corrected authoring-model W8 fidelity and workload-dependent profile trade-off | CL-07, CL-15, CL-16, CL-17, CL-18, CL-19, CL-20 | Fidelity-v2, size, RSS, and speed evidence | Admitted; no compiled-device-logit, universal-winner, or energy claim |
 
 ## Rejected or rewritten claim classes
 
@@ -114,5 +116,5 @@ Every factual or empirical sentence is either linked to an admitted claim ID,
 presented as dated related-work context with a bibliographic source, or framed
 as an explicit limitation. The manuscript is semantically inside Protocol v1.
 It passed the locked build, claim checks, and page-level visual review on
-2026-08-28. The claim IDs remain in the LaTeX source but are hidden in the
+2026-08-29. The claim IDs remain in the LaTeX source but are hidden in the
 submission PDF.

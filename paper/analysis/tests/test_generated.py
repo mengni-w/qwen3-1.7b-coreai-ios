@@ -6,6 +6,8 @@ import unittest
 
 
 ROOT = Path(__file__).resolve().parents[2]
+REPOSITORY_ROOT = ROOT.parent
+FIDELITY_V2_SUMMARY = REPOSITORY_ROOT / "results/fidelity-v2-summary.json"
 GENERATED = Path(
     os.environ.get("ANALYSIS_GENERATED_DIR", ROOT / "analysis/generated")
 ).resolve()
@@ -55,6 +57,37 @@ class GeneratedEvidenceTests(unittest.TestCase):
         self.assertAlmostEqual(quality["variants"]["INT4_GPU"]["summary"]["f1"], 81.4220630420)
         self.assertEqual(quality["comparison"]["pairedSamples"], 300)
         self.assertEqual(quality["comparison"]["identicalPredictions"], 187)
+
+    def test_fidelity_v2_is_the_canonical_t3_source(self):
+        fidelity = load_json("tables/t3-w8-fidelity.json")
+        source = json.loads(FIDELITY_V2_SUMMARY.read_text(encoding="utf-8"))
+        self.assertEqual(fidelity["schemaVersion"], 2)
+        self.assertEqual(fidelity["runID"], source["run_id"])
+        self.assertEqual(
+            fidelity["historicalQualitySummary"],
+            {
+                "path": "results/quality-summary.json",
+                "retainedUse": "historical W4 and mixed-W4/W8 selection evidence only",
+                "status": "superseded_for_reported_fidelity_metrics",
+            },
+        )
+        self.assertEqual(
+            fidelity["evaluations"]["w8_tuning"],
+            source["evaluations"]["tuning"],
+        )
+        self.assertEqual(
+            fidelity["evaluations"]["w8_frozen_holdout"],
+            source["evaluations"]["holdout"],
+        )
+        provenance = load_json("provenance.json")
+        self.assertEqual(
+            provenance["localFileSHA256"],
+            {
+                "results/fidelity-v2-summary.json": hashlib.sha256(
+                    FIDELITY_V2_SUMMARY.read_bytes()
+                ).hexdigest()
+            },
+        )
 
     def test_quality_uses_stratified_paired_bootstrap(self):
         quality = load_json("quality-analysis-v2.json")

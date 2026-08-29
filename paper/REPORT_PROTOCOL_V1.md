@@ -2,7 +2,8 @@
 
 ## Technical Report Protocol v1
 
-**Status:** Frozen before manuscript drafting
+**Status:** Frozen before manuscript drafting; amended after review to admit the
+separately governed fidelity-v2 confirmation
 **Protocol version:** 1.0
 **Date:** 2026-08-28
 **Study type:** Retrospective systems technical report based on completed,
@@ -19,8 +20,12 @@ deployment profile. It will use the already published artifacts, source,
 per-example predictions, statistical results, device measurements, traces,
 and Apple upstream record.
 
-No new empirical result is required for Protocol v1. Existing raw evidence may
-be rechecked or reanalyzed without changing the original measurements.
+No new empirical result was required when Protocol v1 was frozen. Existing raw
+evidence could be rechecked or reanalyzed without changing the original
+measurements. Manuscript review later identified a fidelity-evidence gap. The
+resulting confirmation was authorized prospectively by
+`EXPERIMENT_PROTOCOL_V1.md` and `FIDELITY_V2_AMENDMENT_1.md`; Section 12 records
+its admission without changing the device, CMRC, speed, or trace datasets.
 
 ## 2. Central report claim
 
@@ -67,15 +72,20 @@ free companion application, integrity hashes, and physical-device validation.
 
 The W8 mechanism was selected using frozen logits and NLL comparisons rather
 than prompt smoke alone. Uniform W4 and mixed W4/W8 candidates were rejected.
-The frozen W8 holdout reported:
+The earlier `results/quality-summary.json` remains evidence of that selection
+sequence, but its W8 tuning and holdout numbers are superseded.
 
-- mean logits cosine: `0.996598`;
-- minimum logits cosine: `0.959625`;
-- top-1 agreement: `98.37%`;
-- mean NLL delta: `0.003167`.
+The corrected formal fidelity-v2 run evaluated the fixed W8 mechanism with six
+tuning and four holdout inputs. The holdout reported:
 
-These values support conversion fidelity under the disclosed holdout. They do
-not establish general downstream superiority.
+- mean logits cosine: `0.9968972864500013`;
+- minimum logits cosine: `0.953391227144109`;
+- top-1 agreement: `0.9696691176470589`;
+- mean candidate-minus-reference NLL delta: `0.008879966197800114`.
+
+These values support conversion fidelity of the fake-palettized PyTorch
+authoring model under the disclosed holdout. They do not measure compiled-device
+logits or establish general downstream superiority.
 
 ### C4 — Physical iPhone static-path validation
 
@@ -186,6 +196,10 @@ Primary files:
 - `results/artifact-summary.json`;
 - `results/device-runtime-summary.json`;
 - `results/quality-summary.json`;
+- `results/fidelity-v2-summary.json`;
+- `paper/EXPERIMENT_PROTOCOL_V1.md`;
+- `paper/FIDELITY_V2_AMENDMENT_1.md`;
+- `paper/evidence/fidelity-v2/attempts/c5ac8729-efb6-4a7f-bf39-5ffa13cdfb24/`;
 - `results/upstream-validation.json`.
 
 ### Paired W8/INT4 comparison
@@ -245,7 +259,9 @@ The report must not silently present the public W8 payload as the exact binary
 used in the historical A/B run. This limitation is disclosed in Methods,
 Reproducibility, and Limitations.
 
-No new A/B run is scheduled under Protocol v1.
+No new A/B device run is scheduled under Protocol v1. The fidelity-v2
+confirmation is an authoring-model experiment and does not alter the paired
+device outputs.
 
 ## 7. Existing data use and verification rules
 
@@ -258,6 +274,11 @@ Allowed without creating a new experiment:
 - inspect existing trace summaries and manifests;
 - verify links, commits, licenses, and Apple public status;
 - correct transcription or arithmetic errors while recording the correction.
+
+The corrected fidelity-v2 run is the sole post-freeze exception. It was
+governed by its own prospectively committed protocol and amendment, uses a
+separate attempt identity, and does not merge new outputs into the historical
+device or paired-comparison datasets.
 
 Not allowed to be merged into the existing dataset:
 
@@ -294,7 +315,8 @@ The abstract is written last, after all tables and claim wording are frozen.
 
 - T1: Apple and community Qwen3-1.7B Core AI status at the audit date.
 - T2: W8/ANE and INT4/GPU profile definitions.
-- T3: W8 tuning and frozen-holdout fidelity.
+- T3: corrected formal W8 tuning and holdout fidelity; historical selection
+  evidence remains separate.
 - T4: W8 physical-device suite and trace evidence.
 - T5: paired CMRC2018 EM/F1 with confidence intervals and tests.
 - T6: bundle size and peak RSS.
@@ -344,6 +366,23 @@ These are report boundaries, not automatic requirements for new experiments.
 
 ## 12. Change control
 
-This protocol is frozen before manuscript drafting. Editorial fixes may amend
+This protocol was frozen before manuscript drafting. Editorial fixes may amend
 v1 through Git history. Changes to the central claim, included models, included
 datasets, or evidence admission rules require `REPORT_PROTOCOL_V2.md`.
+
+### Amendment 1 — corrected formal fidelity evidence
+
+Manuscript review found that the earlier W8 summary did not provide a sufficient
+formal record for the paper's fidelity claim. Before corrected model output was
+produced, `EXPERIMENT_PROTOCOL_V1.md`, a frozen prompt manifest, and
+`FIDELITY_V2_AMENDMENT_1.md` defined a one-shot confirmation with explicit
+reference/candidate construction, shared serialized inputs, teacher-forcing
+history, binary64 metrics, and a numerical-parity preflight. Corrected attempt
+`c5ac8729-efb6-4a7f-bf39-5ffa13cdfb24` completed all ten comparisons.
+
+This amendment admits `results/fidelity-v2-summary.json` as the sole source for
+reported W8 tuning and holdout values. The older
+`results/quality-summary.json` remains historical evidence for W4 and mixed-W4/W8
+rejection but no longer supplies manuscript fidelity metrics. All device,
+trace, CMRC, speed, artifact-identity, and claim-boundary provisions of Protocol
+v1 remain unchanged.

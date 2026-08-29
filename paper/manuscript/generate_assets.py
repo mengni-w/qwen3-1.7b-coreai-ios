@@ -189,7 +189,7 @@ def generate_tables() -> None:
     write(
         out / "t3-w8-fidelity.tex",
         table_document(
-            "W8 conversion fidelity relative to frozen uncompressed-reference outputs. These are conversion metrics, not a capability benchmark.",
+            "W8 authoring-model conversion fidelity relative to the frozen uncompressed reference. Values are case-level macro-averages from the corrected formal fidelity-v2 run, not compiled-device logits or a capability benchmark.",
             "tab:w8-fidelity",
             "CL-06,CL-07",
             body,

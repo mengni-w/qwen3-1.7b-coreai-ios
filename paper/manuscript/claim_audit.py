@@ -18,6 +18,7 @@ AUDIT = ROOT / "manuscript" / "CLAIM_AUDIT.md"
 GENERATED = ROOT / "manuscript" / "generated"
 MANIFEST = GENERATED / "MANIFEST.sha256"
 QUALITY_ANALYSIS = ROOT / "analysis" / "generated" / "quality-analysis-v2.json"
+FIDELITY_TABLE = ROOT / "analysis" / "generated" / "tables" / "t3-w8-fidelity.json"
 
 
 class AuditError(RuntimeError):
@@ -137,6 +138,35 @@ def verify_cmrc_headline_numbers(
         )
 
 
+def verify_fidelity_headline_numbers(
+    manuscript: str,
+    fidelity_path: Path = FIDELITY_TABLE,
+) -> None:
+    require(fidelity_path.is_file(), "missing generated W8 fidelity table")
+    try:
+        fidelity = json.loads(fidelity_path.read_text(encoding="utf-8"))
+        holdout = fidelity["evaluations"]["w8_frozen_holdout"]
+        historical = fidelity["historicalQualitySummary"]
+    except (json.JSONDecodeError, KeyError, TypeError) as error:
+        raise AuditError(f"invalid generated W8 fidelity table: {error}") from error
+
+    require(fidelity.get("schemaVersion") == 2, "generated T3 is not fidelity-v2")
+    require(
+        historical.get("status") == "superseded_for_reported_fidelity_metrics",
+        "historical W8 fidelity values are not marked superseded",
+    )
+    expected = (
+        f"The holdout mean logit cosine was {holdout['mean_cosine']:.6f}, "
+        f"the minimum was {holdout['minimum_cosine']:.6f}, top-1 agreement was "
+        f"{100 * holdout['top1_agreement']:.2f}\\%, and the mean "
+        f"candidate-minus-reference NLL delta was {holdout['mean_nll_delta']:.6f}."
+    )
+    require(
+        expected in manuscript,
+        f"manuscript W8 fidelity values drift from generated T3: expected {expected!r}",
+    )
+
+
 def audit() -> None:
     for path in (MANUSCRIPT, BIBLIOGRAPHY, LEDGER, AUDIT):
         require(path.is_file(), f"missing required file: {path.relative_to(ROOT)}")
@@ -207,6 +237,7 @@ def audit() -> None:
     )
 
     verify_cmrc_headline_numbers(manuscript)
+    verify_fidelity_headline_numbers(manuscript)
 
     lowered = manuscript.lower()
     forbidden_positive_patterns = {
