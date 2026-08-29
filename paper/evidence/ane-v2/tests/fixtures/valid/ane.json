@@ -1,0 +1,56 @@
+{
+  "column_mapping_sha256": "7777777777777777777777777777777777777777777777777777777777777777",
+  "excluded_other_process_count": 0,
+  "full_table_sha256": "3030303030303030303030303030303030303030303030303030303030303030",
+  "native_identifier_name": "program-id",
+  "rows": [
+    {
+      "channel": "ane",
+      "duration_ns": 100,
+      "native_identifier": "7",
+      "pid": 42,
+      "process": "TraceApp",
+      "program_label": "prediction-a",
+      "row_id": "a1",
+      "start_ns": 1100,
+      "state": "complete"
+    },
+    {
+      "channel": "ane",
+      "duration_ns": 100,
+      "native_identifier": "7",
+      "pid": 42,
+      "process": "TraceApp",
+      "program_label": "prediction-a",
+      "row_id": "a2",
+      "start_ns": 1100,
+      "state": "complete"
+    },
+    {
+      "channel": "ane",
+      "duration_ns": 50,
+      "native_identifier": "10",
+      "pid": 42,
+      "process": "TraceApp",
+      "program_label": "prediction-c",
+      "row_id": "a3",
+      "start_ns": 1600,
+      "state": "complete"
+    },
+    {
+      "channel": "ane",
+      "duration_ns": 100,
+      "native_identifier": "11",
+      "pid": 42,
+      "process": "TraceApp",
+      "program_label": "outside",
+      "row_id": "a4",
+      "start_ns": 1950,
+      "state": "complete"
+    }
+  ],
+  "schema": "ane-v2-public-canonical-interval-table-v2",
+  "source_export_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "table_role": "ane_prediction",
+  "timestamp_unit": "ns"
+}

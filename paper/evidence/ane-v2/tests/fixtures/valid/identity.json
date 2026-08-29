@@ -1,0 +1,108 @@
+{
+  "app": {
+    "bundle_identifier": "io.massif.PublicW8TraceConfirmation",
+    "bundle_file_count": 12,
+    "bundle_manifest_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "code_signing": {
+      "cdhash": "0123456789abcdef",
+      "codesign_display_sha256": "abababababababababababababababababababababababababababababababab",
+      "entitlements_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "signature_format": "adhoc-test-fixture",
+      "signed": true
+    },
+    "configuration": "Release",
+    "executable_relative_path": "CoreAIQwen17Companion",
+    "executable_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "info_plist_sha256": "cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd"
+  },
+  "artifact": {
+    "artifact_producer": "coreai-build-test",
+    "main_h16p_sha256": "a7eefeef16708a324f9919890355eb92180ec85eef419ebd5822e8c8afd42f5f",
+    "manifest_format": "sha256-tab-size-tab-kind-tab-posix-path-newline-v1",
+    "manifest_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "payloads": [
+      {
+        "kind": "file",
+        "path": "qwen3_1_7b_w8_4k_ios.h16p.aimodelc/main-h16p.mlirb",
+        "sha256": "a7eefeef16708a324f9919890355eb92180ec85eef419ebd5822e8c8afd42f5f",
+        "size_bytes": 123
+      }
+    ],
+    "published_sha256s": [
+      {
+        "path": "qwen3_1_7b_w8_4k_ios.h16p.aimodelc/main-h16p.mlirb",
+        "sha256": "a7eefeef16708a324f9919890355eb92180ec85eef419ebd5822e8c8afd42f5f"
+      }
+    ],
+    "published_sha256s_file_sha256": "9999999999999999999999999999999999999999999999999999999999999999",
+    "repository": "massif/Qwen3-1.7B-CoreAI-ANE-W8-4K-h16p",
+    "revision": "466ebe2e5cec125fa113ea71503add41bba581a8",
+    "source_hash": "5e885ec407f1b2690df5098d38b1bed4a3e66f4352c859fb2bb79666bc0aef73"
+  },
+  "schema": "public-w8-trace-identity-v2",
+  "source": {
+    "amendment_file": "paper/ANE_V2_AMENDMENT_1.md",
+    "amendment_file_sha256": "1212121212121212121212121212121212121212121212121212121212121212",
+    "git_commit": "1234567890abcdef1234567890abcdef12345678",
+    "git_status_clean": true,
+    "package_resolved_file": "companion/CoreAIQwen17Companion.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved",
+    "package_resolved_file_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "project_file": "companion/CoreAIQwen17Companion.xcodeproj/project.pbxproj",
+    "project_file_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "protocol_file": "paper/EXPERIMENT_PROTOCOL_V1.md",
+    "protocol_file_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+    "source_files": [
+      {
+        "path": "companion/CoreAIQwen17Companion/CoreAIQwen17CompanionApp.swift",
+        "sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+      },
+      {
+        "path": "paper/ANE_V2_AMENDMENT_1.md",
+        "sha256": "1212121212121212121212121212121212121212121212121212121212121212"
+      },
+      {
+        "path": "paper/evidence/ane-v2/analyze_trace.py",
+        "sha256": "3333333333333333333333333333333333333333333333333333333333333333"
+      },
+      {
+        "path": "paper/evidence/ane-v2/canonicalize_xctrace.py",
+        "sha256": "4444444444444444444444444444444444444444444444444444444444444444"
+      },
+      {
+        "path": "paper/evidence/ane-v2/capture_trace.py",
+        "sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+      },
+      {
+        "path": "paper/evidence/ane-v2/download_public_w8.sh",
+        "sha256": "6666666666666666666666666666666666666666666666666666666666666666"
+      },
+      {
+        "path": "paper/evidence/ane-v2/export_trace.py",
+        "sha256": "7777777777777777777777777777777777777777777777777777777777777777"
+      },
+      {
+        "path": "paper/evidence/ane-v2/extract_app_records.py",
+        "sha256": "8888888888888888888888888888888888888888888888888888888888888888"
+      },
+      {
+        "path": "paper/evidence/ane-v2/prepare_identity.py",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      {
+        "path": "paper/evidence/ane-v2/seal_run_metadata.py",
+        "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      {
+        "path": "paper/evidence/ane-v2/validate_public_bundle.py",
+        "sha256": "dededededededededededededededededededededededededededededededede"
+      }
+    ]
+  },
+  "toolchain": {
+    "coreai_source_revision": "04a3fd6cfe9bfae9cf05b1f246cf915d930d1c0a",
+    "instruments_build": "27A5218g",
+    "instruments_version": "27.0",
+    "xcode_build": "27A5218g",
+    "xcode_version": "27.0"
+  }
+}

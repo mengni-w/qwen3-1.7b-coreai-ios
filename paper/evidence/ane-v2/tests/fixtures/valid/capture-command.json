@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "xcrun",
+    "xctrace",
+    "record",
+    "--template",
+    "${TRACE_TEMPLATE}",
+    "--device",
+    "${TRACE_DEVICE}",
+    "--attach",
+    "42",
+    "--time-limit",
+    "90s",
+    "--run-name",
+    "PUBLIC_W8_TRACE_CONFIRMATION_V1",
+    "--output",
+    "${TRACE_BUNDLE}",
+    "--no-prompt"
+  ],
+  "attached_pid": 42,
+  "ended_utc": "2026-08-28T12:01:30.000Z",
+  "instruments_build": "27A5218g",
+  "instruments_version": "27.0",
+  "return_code": 0,
+  "schema": "public-w8-trace-capture-command-v2",
+  "started_utc": "2026-08-28T12:00:00.000Z",
+  "template_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+  "xcode_build": "27A5218g",
+  "xcode_version": "27.0"
+}

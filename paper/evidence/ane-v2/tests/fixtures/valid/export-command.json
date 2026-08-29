@@ -1,0 +1,49 @@
+{
+  "commands": [
+    ["xcrun", "xctrace", "export", "--input", "${TRACE_BUNDLE}", "--toc", "--output", "${EXPORT_DIRECTORY}/trace-toc.xml"],
+    ["xcrun", "xctrace", "export", "--input", "${TRACE_BUNDLE}", "--xpath", "/trace-toc/run[@number=\"1\"]/data/table[@schema=\"os-signpost\"]", "--output", "${EXPORT_DIRECTORY}/signposts.xml"],
+    ["xcrun", "xctrace", "export", "--input", "${TRACE_BUNDLE}", "--xpath", "/trace-toc/run[@number=\"1\"]/data/table[@schema=\"mpsgraph-program\"]", "--output", "${EXPORT_DIRECTORY}/mpsgraph.xml"],
+    ["xcrun", "xctrace", "export", "--input", "${TRACE_BUNDLE}", "--xpath", "/trace-toc/run[@number=\"1\"]/data/table[@schema=\"ane-prediction\"]", "--output", "${EXPORT_DIRECTORY}/ane.xml"],
+    ["xcrun", "xctrace", "export", "--input", "${TRACE_BUNDLE}", "--xpath", "/trace-toc/run[@number=\"1\"]/data/table[@schema=\"process-info\"]", "--output", "${EXPORT_DIRECTORY}/process_info.xml"],
+    ["xcrun", "xctrace", "export", "--input", "${TRACE_BUNDLE}", "--xpath", "/trace-toc/run[@number=\"1\"]/data/table[@schema=\"odie-profile\"]", "--output", "${EXPORT_DIRECTORY}/odie_profile.xml"]
+  ],
+  "created_utc": "2026-08-28T12:02:00.000Z",
+  "exports": {
+    "ane": {
+      "path": "ane.xml",
+      "schema": "ane-prediction",
+      "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    },
+    "mpsgraph": {
+      "path": "mpsgraph.xml",
+      "schema": "mpsgraph-program",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    },
+    "odie_profile": {
+      "path": "odie_profile.xml",
+      "schema": "odie-profile",
+      "sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    },
+    "process_info": {
+      "path": "process_info.xml",
+      "schema": "process-info",
+      "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+    },
+    "signposts": {
+      "path": "signposts.xml",
+      "schema": "os-signpost",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  },
+  "instruments_build": "27A5218g",
+  "instruments_version": "27.0",
+  "run_number": 1,
+  "schema": "public-w8-trace-export-command-v2",
+  "toc": {
+    "path": "trace-toc.xml",
+    "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+  },
+  "trace_bundle_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+  "xcode_build": "27A5218g",
+  "xcode_version": "27.0"
+}

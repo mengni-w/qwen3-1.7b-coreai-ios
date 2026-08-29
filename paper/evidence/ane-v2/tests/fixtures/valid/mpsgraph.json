@@ -1,0 +1,56 @@
+{
+  "column_mapping_sha256": "8888888888888888888888888888888888888888888888888888888888888888",
+  "excluded_other_process_count": 1,
+  "full_table_sha256": "2020202020202020202020202020202020202020202020202020202020202020",
+  "native_identifier_name": "program-id",
+  "rows": [
+    {
+      "channel": "coreai",
+      "duration_ns": 100,
+      "native_identifier": "7",
+      "pid": 42,
+      "process": "TraceApp",
+      "program_label": "program-a",
+      "row_id": "m1",
+      "start_ns": 1100,
+      "state": "complete"
+    },
+    {
+      "channel": "coreai",
+      "duration_ns": 100,
+      "native_identifier": "7",
+      "pid": 42,
+      "process": "TraceApp",
+      "program_label": "program-a",
+      "row_id": "m2",
+      "start_ns": 1100,
+      "state": "complete"
+    },
+    {
+      "channel": "coreai",
+      "duration_ns": 50,
+      "native_identifier": "9",
+      "pid": 42,
+      "process": "TraceApp",
+      "program_label": "program-b",
+      "row_id": "m3",
+      "start_ns": 1300,
+      "state": "complete"
+    },
+    {
+      "channel": "coreai",
+      "duration_ns": 200,
+      "native_identifier": "8",
+      "pid": 42,
+      "process": "TraceApp",
+      "program_label": "warmup",
+      "row_id": "m5",
+      "start_ns": 900,
+      "state": "complete"
+    }
+  ],
+  "schema": "ane-v2-public-canonical-interval-table-v2",
+  "source_export_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "table_role": "mpsgraph_program",
+  "timestamp_unit": "ns"
+}

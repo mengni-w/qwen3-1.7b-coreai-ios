@@ -8,11 +8,13 @@
 /* Begin PBXBuildFile section */
 		BB0000000000000000000001 /* CoreAIQwen17CompanionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000011 /* CoreAIQwen17CompanionApp.swift */; };
 		BB0000000000000000000002 /* CoreAILM in Frameworks */ = {isa = PBXBuildFile; productRef = BB0000000000000000000091 /* CoreAILM */; };
+		BB0000000000000000000003 /* qwen3_1_7b_w8_4k_ios in Resources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000013 /* qwen3_1_7b_w8_4k_ios */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		BB0000000000000000000011 /* CoreAIQwen17CompanionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreAIQwen17CompanionApp.swift; sourceTree = "<group>"; };
 		BB0000000000000000000012 /* CoreAIQwen17Companion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoreAIQwen17Companion.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB0000000000000000000013 /* qwen3_1_7b_w8_4k_ios */ = {isa = PBXFileReference; lastKnownFileType = folder; path = qwen3_1_7b_w8_4k_ios; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,6 +31,7 @@
 			isa = PBXGroup;
 			children = (
 				BB0000000000000000000032 /* CoreAIQwen17Companion */,
+				BB0000000000000000000034 /* ModelBundle */,
 				BB0000000000000000000033 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -43,6 +46,12 @@
 			isa = PBXGroup;
 			children = (BB0000000000000000000012 /* CoreAIQwen17Companion.app */);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		BB0000000000000000000034 /* ModelBundle */ = {
+			isa = PBXGroup;
+			children = (BB0000000000000000000013 /* qwen3_1_7b_w8_4k_ios */);
+			path = ModelBundle;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -95,7 +104,7 @@
 		BB0000000000000000000022 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
-			files = ();
+			files = (BB0000000000000000000003 /* qwen3_1_7b_w8_4k_ios in Resources */);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
@@ -146,6 +155,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_ANETraceBuildConfiguration = "$(CONFIGURATION)";
 				INFOPLIST_KEY_CFBundleDisplayName = "Core AI Qwen 1.7B";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks");
@@ -164,6 +174,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_ANETraceBuildConfiguration = "$(CONFIGURATION)";
 				INFOPLIST_KEY_CFBundleDisplayName = "Core AI Qwen 1.7B";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks");
