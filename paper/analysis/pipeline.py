@@ -11,6 +11,7 @@ import json
 import os
 from pathlib import Path
 import re
+import random
 import shutil
 import statistics
 import subprocess
@@ -150,6 +151,232 @@ def ensure_download(url: str, target: Path, expected_hash: str, offline: bool) -
     os.replace(temporary, target)
 
 
+def load_unique_jsonl(path: Path) -> dict[str, dict]:
+    records: dict[str, dict] = {}
+    with path.open("r", encoding="utf-8") as handle:
+        for line_number, line in enumerate(handle, start=1):
+            if not line.strip():
+                continue
+            record = json.loads(line)
+            if not isinstance(record, dict) or not isinstance(record.get("id"), str):
+                raise PipelineError(f"Invalid result record at {path}:{line_number}")
+            sample_id = record["id"]
+            if sample_id in records:
+                raise PipelineError(f"Duplicate result ID in {path}: {sample_id}")
+            records[sample_id] = record
+    return records
+
+
+def validate_quality_inputs(
+    sample_path: Path,
+    result_specs: dict[str, tuple[Path, str]],
+) -> tuple[dict, dict[str, dict[str, dict]]]:
+    envelope = read_json(sample_path)
+    samples = envelope.get("samples")
+    if not isinstance(samples, list) or len(samples) != 300:
+        raise PipelineError("Frozen CMRC sample must contain exactly 300 rows")
+
+    sample_by_id: dict[str, dict] = {}
+    strata: dict[str, int] = {"short": 0, "medium": 0, "long": 0}
+    for sample in samples:
+        sample_id = sample.get("id")
+        if not isinstance(sample_id, str) or sample_id in sample_by_id:
+            raise PipelineError(f"Invalid or duplicate frozen sample ID: {sample_id}")
+        stratum = sample.get("stratum")
+        if stratum not in strata:
+            raise PipelineError(f"Unexpected CMRC stratum for {sample_id}: {stratum}")
+        strata[stratum] += 1
+        sample_by_id[sample_id] = sample
+    if strata != {"short": 100, "medium": 100, "long": 100}:
+        raise PipelineError(f"Frozen CMRC strata changed: {strata}")
+
+    records_by_label: dict[str, dict[str, dict]] = {}
+    expected_ids = set(sample_by_id)
+    for label, (path, expected_variant) in result_specs.items():
+        records = load_unique_jsonl(path)
+        observed_ids = set(records)
+        if observed_ids != expected_ids:
+            raise PipelineError(
+                f"Result ID set mismatch for {label}: "
+                f"missing={sorted(expected_ids - observed_ids)}, "
+                f"extra={sorted(observed_ids - expected_ids)}"
+            )
+        for sample_id, sample in sample_by_id.items():
+            record = records[sample_id]
+            if record.get("error") is not None:
+                raise PipelineError(f"Recorded generation error for {label}/{sample_id}")
+            if record.get("variant") != expected_variant:
+                raise PipelineError(
+                    f"Variant mismatch for {label}/{sample_id}: {record.get('variant')}"
+                )
+            for key in (
+                "datasetRowIndex",
+                "ordinal",
+                "stratum",
+                "contextCharacterCount",
+            ):
+                if record.get(key) != sample.get(key):
+                    raise PipelineError(
+                        f"Sample metadata mismatch for {label}/{sample_id}/{key}"
+                    )
+            if not isinstance(record.get("content"), str):
+                raise PipelineError(f"Missing generated text for {label}/{sample_id}")
+            input_tokens = record.get("inputTokens")
+            if not isinstance(input_tokens, int) or isinstance(input_tokens, bool) \
+                    or input_tokens <= 0:
+                raise PipelineError(
+                    f"Invalid input-token count for {label}/{sample_id}: {input_tokens}"
+                )
+            output_tokens = record.get("outputTokens")
+            if not isinstance(output_tokens, int) or isinstance(output_tokens, bool) \
+                    or not 0 <= output_tokens < 128:
+                raise PipelineError(
+                    f"Invalid or capped output-token count for {label}/{sample_id}: "
+                    f"{output_tokens}"
+                )
+            cached_tokens = record.get("cachedInputTokens")
+            if (
+                not isinstance(cached_tokens, int)
+                or isinstance(cached_tokens, bool)
+                or cached_tokens != 0
+            ):
+                raise PipelineError(f"Unexpected cached input for {label}/{sample_id}")
+            reasoning_tokens = record.get("reasoningTokens")
+            if (
+                not isinstance(reasoning_tokens, int)
+                or isinstance(reasoning_tokens, bool)
+                or reasoning_tokens != 0
+            ):
+                raise PipelineError(f"Unexpected reasoning output for {label}/{sample_id}")
+        records_by_label[label] = records
+
+    labels = list(records_by_label)
+    for sample_id in expected_ids:
+        input_counts = {
+            records_by_label[label][sample_id].get("inputTokens") for label in labels
+        }
+        if len(input_counts) != 1:
+            raise PipelineError(f"Input-token mismatch across profiles for {sample_id}")
+    return envelope, records_by_label
+
+
+def load_locked_scorer(path: Path) -> dict:
+    namespace = {"__name__": "locked_cmrc_scorer", "__file__": str(path)}
+    exec(compile(path.read_text(encoding="utf-8"), str(path), "exec"), namespace)
+    return namespace
+
+
+def stratified_bootstrap_interval(
+    differences_by_stratum: dict[str, list[float]],
+    *,
+    seed: int,
+) -> dict:
+    expected = {"short": 100, "medium": 100, "long": 100}
+    observed = {key: len(value) for key, value in differences_by_stratum.items()}
+    if observed != expected:
+        raise PipelineError(f"Paired bootstrap strata changed: {observed}")
+
+    generator = random.Random(seed)
+    means: list[float] = []
+    for _ in range(10_000):
+        selected: list[float] = []
+        for stratum in ("short", "medium", "long"):
+            values = differences_by_stratum[stratum]
+            selected.extend(values[generator.randrange(len(values))] for _ in values)
+        means.append(statistics.fmean(selected))
+    means.sort()
+    all_differences = [
+        value
+        for stratum in ("short", "medium", "long")
+        for value in differences_by_stratum[stratum]
+    ]
+    return {
+        "observedPoints": statistics.fmean(all_differences),
+        "lower95Points": linear_quantile(means, 0.025),
+        "upper95Points": linear_quantile(means, 0.975),
+        "resamples": len(means),
+        "seed": seed,
+        "method": "paired percentile bootstrap stratified by context-length band",
+        "quantileDefinition": "Hyndman-Fan type 7 linear interpolation",
+        "resampleUnit": "example within stratum",
+        "stratumSampleSizes": expected,
+    }
+
+
+def linear_quantile(values: list[float], probability: float) -> float:
+    if not values:
+        raise PipelineError("Cannot compute a quantile of an empty sequence")
+    if not 0.0 <= probability <= 1.0:
+        raise PipelineError(f"Invalid quantile probability: {probability}")
+    ordered = sorted(values)
+    if len(ordered) == 1:
+        return ordered[0]
+    position = (len(ordered) - 1) * probability
+    lower = int(position)
+    upper = min(lower + 1, len(ordered) - 1)
+    fraction = position - lower
+    return ordered[lower] + (ordered[upper] - ordered[lower]) * fraction
+
+
+def build_stratified_quality_analysis(
+    scorer_path: Path,
+    envelope: dict,
+    records_by_label: dict[str, dict[str, dict]],
+    published: dict,
+) -> dict:
+    scorer = load_locked_scorer(scorer_path)
+    samples = envelope["samples"]
+    scored = {
+        label: scorer["score_variant"](samples, records)
+        for label, records in records_by_label.items()
+    }
+    labels = list(scored)
+    if labels != ["W8_ANE", "INT4_GPU"]:
+        raise PipelineError(f"Unexpected profile order for paired analysis: {labels}")
+
+    left_by_id = {row["id"]: row for row in scored[labels[0]]["rows"]}
+    right_by_id = {row["id"]: row for row in scored[labels[1]]["rows"]}
+    f1_differences = {"short": [], "medium": [], "long": []}
+    em_differences = {"short": [], "medium": [], "long": []}
+    for sample in samples:
+        sample_id = sample["id"]
+        stratum = sample["stratum"]
+        left = left_by_id[sample_id]
+        right = right_by_id[sample_id]
+        f1_differences[stratum].append(100.0 * (left["f1"] - right["f1"]))
+        em_differences[stratum].append(100.0 * (left["em"] - right["em"]))
+
+    result = json.loads(json.dumps(published))
+    result["schemaVersion"] = 2
+    result["analysisProvenance"] = {
+        "status": "post-review reanalysis",
+        "publishedScoringReproducedByteIdentically": True,
+        "newModelOutputsCreated": False,
+        "newDeviceMeasurementsCreated": False,
+        "description": (
+            "Paired uncertainty was recomputed after manuscript review from the "
+            "unchanged published predictions and locked scorer."
+        ),
+    }
+    result["metric"] = (
+        "Documented Python 3 adaptation of the official CMRC2018 EM/F1 formula; "
+        "NLTK Treebank tokenization without sentence splitting"
+    )
+    result["comparison"]["f1DifferenceFirstMinusSecond"] = (
+        stratified_bootstrap_interval(f1_differences, seed=20260721)
+    )
+    result["comparison"]["emDifferenceFirstMinusSecond"] = (
+        stratified_bootstrap_interval(em_differences, seed=20260722)
+    )
+    result["comparison"]["signTest"] = {
+        "method": "exact two-sided paired sign test",
+        "tiesExcluded": True,
+        "f1PValue": result["comparison"]["f1WinSignTestPValue"],
+        "emPValue": result["comparison"]["emWinSignTestPValue"],
+    }
+    return result
+
+
 def rebuild_and_score_quality(
     lock: dict,
     comparison_repo: Path,
@@ -178,6 +405,20 @@ def rebuild_and_score_quality(
     if freeze_result["uniqueContexts"] != dataset["expectedUniqueContexts"]:
         raise PipelineError("CMRC context count changed during sample reconstruction")
 
+    result_specs = {
+        "W8_ANE": (
+            comparison_repo
+            / "benchmarks/results/raw/w8-ane-no-thinking-results.jsonl",
+            "W8_ANE",
+        ),
+        "INT4_GPU": (
+            comparison_repo
+            / "benchmarks/results/raw/int4-gpu-no-thinking-results.jsonl",
+            "INT4_GPU",
+        ),
+    }
+    envelope, records_by_label = validate_quality_inputs(sample_path, result_specs)
+
     score_output = bytes(
         run(
             [
@@ -202,8 +443,18 @@ def rebuild_and_score_quality(
             "Recomputed quality JSON is not byte-identical to the published result"
         )
 
+    published = read_json(recomputed_path)
+    analysis = build_stratified_quality_analysis(
+        comparison_repo / "benchmarks/tools/score_frozen_cmrc_py3.py",
+        envelope,
+        records_by_label,
+        published,
+    )
+    analysis_path = generated_dir / "quality-analysis-v2.json"
+    write_json(analysis_path, analysis)
+
     verification = {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "dataset": {
             "officialSourceSHA256": dataset["officialSourceSHA256"],
             "canonicalRowsSHA256": dataset["canonicalRowsSHA256"],
@@ -215,12 +466,26 @@ def rebuild_and_score_quality(
         "runtime": lock["runtime"],
         "publishedQualitySHA256": sha256(published_path),
         "recomputedQualitySHA256": sha256(recomputed_path),
+        "paperAnalysisSHA256": sha256(analysis_path),
         "byteIdenticalToPublished": True,
+        "paperAnalysisStatus": "post-review reanalysis",
+        "qualityInputValidation": {
+            "sampleIDsUnique": True,
+            "resultIDsUnique": True,
+            "resultIDSetsExact": True,
+            "recordedErrors": 0,
+            "maximumResponseTokenHits": 0,
+            "inputTokenCountsPositive": True,
+            "pairedInputTokenCountsEqual": True,
+            "reportedCachedInputTokensNonzero": 0,
+            "reasoningTokenCountsNonzero": 0,
+            "stratumSampleSizes": {"short": 100, "medium": 100, "long": 100},
+        },
         "newModelOutputsCreated": False,
         "newDeviceMeasurementsCreated": False,
     }
     write_json(generated_dir / "quality-verification.json", verification)
-    return read_json(recomputed_path)
+    return analysis
 
 
 def markdown_table(document: str, heading: str) -> list[list[str]]:
@@ -524,8 +789,9 @@ def generate_tables(
     write_json(tables_dir / "t4-w8-device-evidence.json", t4)
 
     t5 = {
-        "schemaVersion": 1,
-        "sourceQualitySHA256": sha256(generated_dir / "quality-recomputed.json"),
+        "schemaVersion": 2,
+        "publishedQualitySHA256": sha256(generated_dir / "quality-recomputed.json"),
+        "paperAnalysisSHA256": sha256(generated_dir / "quality-analysis-v2.json"),
         "metric": quality["metric"],
         "variants": quality["variants"],
         "comparison": quality["comparison"],
@@ -753,12 +1019,7 @@ def write_generated_manifest(generated_dir: Path) -> None:
     manifest_path = generated_dir / "MANIFEST.sha256"
     entries = []
     for path in sorted(generated_dir.rglob("*")):
-        relative = path.relative_to(generated_dir)
-        if (
-            path.is_file()
-            and path != manifest_path
-            and not any(part.startswith(".") for part in relative.parts)
-        ):
+        if path.is_file() and path != manifest_path:
             entries.append(f"{sha256(path)}  {path.relative_to(generated_dir).as_posix()}")
     manifest_path.write_text("\n".join(entries) + "\n", encoding="utf-8")
 
@@ -787,12 +1048,7 @@ def validate_generated_manifest(generated_dir: Path) -> None:
     actual = {
         path.relative_to(generated_dir).as_posix()
         for path in generated_dir.rglob("*")
-        if path.is_file()
-        and path != manifest_path
-        and not any(
-            part.startswith(".")
-            for part in path.relative_to(generated_dir).parts
-        )
+        if path.is_file() and path != manifest_path
     }
     if listed != actual:
         missing = sorted(actual - listed)

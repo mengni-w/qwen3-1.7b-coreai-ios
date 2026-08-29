@@ -31,15 +31,63 @@ class GeneratedEvidenceTests(unittest.TestCase):
             verification["dataset"]["frozenSampleSHA256"],
             "9fb9d896c96fc2ef0fa9961a5b65d2ac5b8bd09744f717a0a0ecb9f6c9fe05ff",
         )
+        self.assertEqual(
+            verification["qualityInputValidation"],
+            {
+                "sampleIDsUnique": True,
+                "resultIDsUnique": True,
+                "resultIDSetsExact": True,
+                "recordedErrors": 0,
+                "maximumResponseTokenHits": 0,
+                "inputTokenCountsPositive": True,
+                "pairedInputTokenCountsEqual": True,
+                "reportedCachedInputTokensNonzero": 0,
+                "reasoningTokenCountsNonzero": 0,
+                "stratumSampleSizes": {"short": 100, "medium": 100, "long": 100},
+            },
+        )
 
     def test_quality_headline_values(self):
-        quality = load_json("quality-recomputed.json")
+        quality = load_json("quality-analysis-v2.json")
         self.assertAlmostEqual(quality["variants"]["W8_ANE"]["summary"]["em"], 59.3333333333)
         self.assertAlmostEqual(quality["variants"]["W8_ANE"]["summary"]["f1"], 81.7024397444)
         self.assertAlmostEqual(quality["variants"]["INT4_GPU"]["summary"]["em"], 57.6666666667)
         self.assertAlmostEqual(quality["variants"]["INT4_GPU"]["summary"]["f1"], 81.4220630420)
         self.assertEqual(quality["comparison"]["pairedSamples"], 300)
         self.assertEqual(quality["comparison"]["identicalPredictions"], 187)
+
+    def test_quality_uses_stratified_paired_bootstrap(self):
+        quality = load_json("quality-analysis-v2.json")
+        self.assertEqual(
+            quality["analysisProvenance"],
+            {
+                "status": "post-review reanalysis",
+                "publishedScoringReproducedByteIdentically": True,
+                "newModelOutputsCreated": False,
+                "newDeviceMeasurementsCreated": False,
+                "description": (
+                    "Paired uncertainty was recomputed after manuscript review from the "
+                    "unchanged published predictions and locked scorer."
+                ),
+            },
+        )
+        comparison = quality["comparison"]
+        f1 = comparison["f1DifferenceFirstMinusSecond"]
+        em = comparison["emDifferenceFirstMinusSecond"]
+        self.assertEqual(
+            f1["method"],
+            "paired percentile bootstrap stratified by context-length band",
+        )
+        self.assertEqual(f1["stratumSampleSizes"], {"short": 100, "medium": 100, "long": 100})
+        self.assertEqual(
+            f1["quantileDefinition"],
+            "Hyndman-Fan type 7 linear interpolation",
+        )
+        self.assertAlmostEqual(f1["lower95Points"], -2.4659375225371143)
+        self.assertAlmostEqual(f1["upper95Points"], 2.956811987287845)
+        self.assertAlmostEqual(em["lower95Points"], -3.0)
+        self.assertAlmostEqual(em["upper95Points"], 6.333333333333333)
+        self.assertTrue(comparison["signTest"]["tiesExcluded"])
 
     def test_speed_samples_and_medians(self):
         speed = load_json("speed-normalized.json")
@@ -105,7 +153,7 @@ class GeneratedEvidenceTests(unittest.TestCase):
         admitted_text_suffixes = {".json", ".csv", ".svg", ".sha256"}
         for path in GENERATED.rglob("*"):
             relative = path.relative_to(GENERATED)
-            if not path.is_file() or any(part.startswith(".") for part in relative.parts):
+            if not path.is_file():
                 continue
             self.assertIn(
                 path.suffix,
@@ -129,12 +177,7 @@ class GeneratedEvidenceTests(unittest.TestCase):
         actual = {
             path.relative_to(GENERATED).as_posix()
             for path in GENERATED.rglob("*")
-            if path.is_file()
-            and path != manifest
-            and not any(
-                part.startswith(".")
-                for part in path.relative_to(GENERATED).parts
-            )
+            if path.is_file() and path != manifest
         }
         self.assertEqual(listed, actual)
 

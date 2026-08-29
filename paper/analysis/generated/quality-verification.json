@@ -10,11 +10,29 @@
   },
   "newDeviceMeasurementsCreated": false,
   "newModelOutputsCreated": false,
+  "paperAnalysisSHA256": "5fe4f49e892721e9841c697922250691705103619ada3941b2087269e58085c5",
+  "paperAnalysisStatus": "post-review reanalysis",
   "publishedQualitySHA256": "47bae909fdac3e80996b4042daff173931dec306c6f8a9977189792f4effa171",
+  "qualityInputValidation": {
+    "inputTokenCountsPositive": true,
+    "maximumResponseTokenHits": 0,
+    "pairedInputTokenCountsEqual": true,
+    "reasoningTokenCountsNonzero": 0,
+    "recordedErrors": 0,
+    "reportedCachedInputTokensNonzero": 0,
+    "resultIDSetsExact": true,
+    "resultIDsUnique": true,
+    "sampleIDsUnique": true,
+    "stratumSampleSizes": {
+      "long": 100,
+      "medium": 100,
+      "short": 100
+    }
+  },
   "recomputedQualitySHA256": "47bae909fdac3e80996b4042daff173931dec306c6f8a9977189792f4effa171",
   "runtime": {
     "nltk": "3.10.0",
     "python": "3.11.15"
   },
-  "schemaVersion": 1
+  "schemaVersion": 2
 }

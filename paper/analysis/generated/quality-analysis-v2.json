@@ -1,4 +1,11 @@
 {
+  "analysisProvenance": {
+    "description": "Paired uncertainty was recomputed after manuscript review from the unchanged published predictions and locked scorer.",
+    "newDeviceMeasurementsCreated": false,
+    "newModelOutputsCreated": false,
+    "publishedScoringReproducedByteIdentically": true,
+    "status": "post-review reanalysis"
+  },
   "comparison": {
     "emDifferenceFirstMinusSecond": {
       "lower95Points": -3.0,
@@ -53,10 +60,7 @@
       "tiesExcluded": true
     }
   },
-  "equivalenceEstablished": false,
   "metric": "Documented Python 3 adaptation of the official CMRC2018 EM/F1 formula; NLTK Treebank tokenization without sentence splitting",
-  "paperAnalysisSHA256": "5fe4f49e892721e9841c697922250691705103619ada3941b2087269e58085c5",
-  "publishedQualitySHA256": "47bae909fdac3e80996b4042daff173931dec306c6f8a9977189792f4effa171",
   "schemaVersion": 2,
   "variants": {
     "INT4_GPU": {

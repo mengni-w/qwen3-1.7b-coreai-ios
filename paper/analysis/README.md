@@ -13,9 +13,11 @@ new measurement.
 4. Runs the frozen sample builder and requires the historical 300-sample hash.
 5. Recomputes the published paired quality result under Python 3.11.15 and
    NLTK 3.10.0, then requires byte-for-byte identity with the published JSON.
-6. Parses every accepted speed sample from the fixed-hash report, recomputes
+6. Reanalyzes the unchanged paired predictions with a post-review,
+   context-length-stratified bootstrap and exact paired sign tests.
+7. Parses every accepted speed sample from the fixed-hash report, recomputes
    medians, and checks them against the report's headline table.
-7. Generates machine-readable inputs for Tables T2–T7 and Figures F3–F5.
+8. Generates machine-readable inputs for Tables T2–T7 and Figures F3–F5.
 
 The copyrighted dataset text and cloned repositories remain under the ignored
 `.analysis-work/` directory. Generated outputs contain aggregates and already
@@ -36,6 +38,10 @@ network access:
 ./analysis/run.sh --offline
 ```
 
+The launcher applies this offline contract to both `uv` and the analysis
+program. If the locked Python runtime or a locked wheel is absent, the command
+fails instead of downloading it.
+
 Run the committed-output checks with:
 
 ```sh
@@ -49,5 +55,4 @@ For an isolated review output, `--generated-dir` may name a direct child of
 `analysis/` whose name starts with `generated` (for example,
 `analysis/generated-review`). Relative paths are resolved from the repository
 root, even when the launcher is called elsewhere. The same resolved directory
-is passed to the tests, and its manifest must list exactly every generated
-non-hidden file.
+is passed to the tests, and its manifest must list exactly every generated file.

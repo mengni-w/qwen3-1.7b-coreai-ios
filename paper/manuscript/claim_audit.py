@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from pathlib import Path
 import re
 import sys
@@ -16,6 +17,7 @@ LEDGER = ROOT / "EVIDENCE_INDEX.md"
 AUDIT = ROOT / "manuscript" / "CLAIM_AUDIT.md"
 GENERATED = ROOT / "manuscript" / "generated"
 MANIFEST = GENERATED / "MANIFEST.sha256"
+QUALITY_ANALYSIS = ROOT / "analysis" / "generated" / "quality-analysis-v2.json"
 
 
 class AuditError(RuntimeError):
@@ -90,6 +92,51 @@ def verify_generated_manifest() -> None:
     )
 
 
+def verify_cmrc_headline_numbers(
+    manuscript: str,
+    quality_path: Path = QUALITY_ANALYSIS,
+) -> None:
+    require(quality_path.is_file(), "missing generated CMRC quality analysis")
+    try:
+        quality = json.loads(quality_path.read_text(encoding="utf-8"))
+        w8 = quality["variants"]["W8_ANE"]["summary"]
+        int4 = quality["variants"]["INT4_GPU"]["summary"]
+        comparison = quality["comparison"]
+        em_difference = comparison["emDifferenceFirstMinusSecond"]
+        f1_difference = comparison["f1DifferenceFirstMinusSecond"]
+    except (json.JSONDecodeError, KeyError, TypeError) as error:
+        raise AuditError(f"invalid generated CMRC quality analysis: {error}") from error
+
+    expected_fragments = {
+        "profile scores": (
+            f"Static-W8 scored {w8['em']:.2f} EM / {w8['f1']:.2f} F1 and "
+            f"Dynamic-INT4 scored {int4['em']:.2f} EM / {int4['f1']:.2f} F1"
+        ),
+        "exact-match counts": (
+            f"W8 produced {w8['exactMatchCount']} exact matches ({w8['em']:.2f} EM) "
+            f"and {w8['f1']:.2f} F1; INT4 produced {int4['exactMatchCount']} exact "
+            f"matches ({int4['em']:.2f} EM) and {int4['f1']:.2f} F1"
+        ),
+        "paired differences and intervals": (
+            f"{em_difference['observedPoints']:+.2f} EM points with a 95\\% stratified "
+            f"bootstrap interval of [{em_difference['lower95Points']:+.2f}, "
+            f"{em_difference['upper95Points']:+.2f}] and "
+            f"{f1_difference['observedPoints']:+.2f} F1 points with an interval of "
+            f"[{f1_difference['lower95Points']:+.2f}, "
+            f"{f1_difference['upper95Points']:+.2f}]"
+        ),
+        "paired sign tests": (
+            f"{comparison['emWinSignTestPValue']:.3f} for EM and "
+            f"{comparison['f1WinSignTestPValue']:.3f} for F1"
+        ),
+    }
+    for label, fragment in expected_fragments.items():
+        require(
+            fragment in manuscript,
+            f"manuscript CMRC {label} drift from generated analysis: expected {fragment!r}",
+        )
+
+
 def audit() -> None:
     for path in (MANUSCRIPT, BIBLIOGRAPHY, LEDGER, AUDIT):
         require(path.is_file(), f"missing required file: {path.relative_to(ROOT)}")
@@ -158,6 +205,8 @@ def audit() -> None:
         manuscript.count("not byte-identical") >= 1,
         "historical/public W8 identity disclosure is missing",
     )
+
+    verify_cmrc_headline_numbers(manuscript)
 
     lowered = manuscript.lower()
     forbidden_positive_patterns = {
