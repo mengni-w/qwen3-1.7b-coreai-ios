@@ -1,0 +1,20 @@
+{
+  "candidateSuccessfulCases": 10,
+  "elapsedSeconds": 6885.316418666975,
+  "finishedAtUnixSeconds": 1787993817.8170938,
+  "peakMemory": {
+    "peakResidentBytes": 6800375808,
+    "ruMaxRSSRaw": 6800375808,
+    "ruMaxRSSReportedUnit": "bytes"
+  },
+  "referenceSuccessfulCases": 10,
+  "runID": "c5ac8729-efb6-4a7f-bf39-5ffa13cdfb24",
+  "schema": "qwen3-coreai-ios-fidelity-worker-run-v1",
+  "startedAtUnixSeconds": 1787936389.8341079,
+  "status": "success",
+  "terminatedChildProcessPeakMemory": {
+    "peakResidentBytes": 526942208,
+    "ruMaxRSSRaw": 526942208,
+    "ruMaxRSSReportedUnit": "bytes"
+  }
+}

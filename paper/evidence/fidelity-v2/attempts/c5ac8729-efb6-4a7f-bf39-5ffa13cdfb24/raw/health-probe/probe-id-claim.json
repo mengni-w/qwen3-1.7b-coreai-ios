@@ -1,0 +1,8 @@
+{
+  "claimedAtUnixSeconds": 1787936273.389201,
+  "outputDirectoryUTF8SHA256": "2048a827b23b130fec12ff9ff58e934a2cf3506a7fcf3b1dd1f0301a86c9955f",
+  "probeID": "56642727-11dc-46b5-a01d-61c7df989fda",
+  "repositoryCommit": "69f96e56847d9692255de00e9f8f1e66183151f9",
+  "schema": "qwen3-coreai-ios-fidelity-health-probe-id-claim-v1",
+  "scope": "repository-git-common-directory"
+}

@@ -1,0 +1,66 @@
+{
+  "description": "Reference teacher-forced logits were retained only in an isolated temporary directory until the corresponding candidate comparison completed.",
+  "files": [
+    {
+      "caseID": "echo_mixed_holdout",
+      "fileBasename": "reference-echo_mixed_holdout.npy",
+      "retainedAfterRun": false,
+      "sha256": "ea8401e167ab8013d39d6439e1bb2be2f5f940296feff79d36a56e01cba9830d"
+    },
+    {
+      "caseID": "echo_zh_01",
+      "fileBasename": "reference-echo_zh_01.npy",
+      "retainedAfterRun": false,
+      "sha256": "571333a174d0d67c3d247dc0d521fe4be710949c996e90e06326f6ecb3f40717"
+    },
+    {
+      "caseID": "injection_holdout",
+      "fileBasename": "reference-injection_holdout.npy",
+      "retainedAfterRun": false,
+      "sha256": "d1d650a2073e81d0fd7b2379a4b09f9a0f46cde8abbc8dd75953e4acea4f0202"
+    },
+    {
+      "caseID": "retrieval_zh_01",
+      "fileBasename": "reference-retrieval_zh_01.npy",
+      "retainedAfterRun": false,
+      "sha256": "961eb20f5bf4cc720343a432dcd7baa755b0793b27fff5511b902c51431a8f26"
+    },
+    {
+      "caseID": "schema_zh_01",
+      "fileBasename": "reference-schema_zh_01.npy",
+      "retainedAfterRun": false,
+      "sha256": "0e3f18acdb319e0e9b8bc5c2adf955d840a18a867a2d231a7c46457f85d9c4b8"
+    },
+    {
+      "caseID": "selection_holdout",
+      "fileBasename": "reference-selection_holdout.npy",
+      "retainedAfterRun": false,
+      "sha256": "ca57bcc3a7993f4085fe8e1c0c24e5b3652606d2ed996eec6ca73f439c1b5f52"
+    },
+    {
+      "caseID": "semantic_en_01",
+      "fileBasename": "reference-semantic_en_01.npy",
+      "retainedAfterRun": false,
+      "sha256": "4b19aabe4d10818e0474f2e7d52936cfce5a2372c7b98bf941001f030cde0d50"
+    },
+    {
+      "caseID": "semantic_zh_01",
+      "fileBasename": "reference-semantic_zh_01.npy",
+      "retainedAfterRun": false,
+      "sha256": "70df92aa9ff771a450eac83b92d13788881fd287665cc73fe3b90842ab1efb2a"
+    },
+    {
+      "caseID": "semantic_zh_02",
+      "fileBasename": "reference-semantic_zh_02.npy",
+      "retainedAfterRun": false,
+      "sha256": "539d8a96e2357d9dde708d8f0cce689ce5cc8bbfc738238fa835d557dfb77f39"
+    },
+    {
+      "caseID": "semantic_zh_holdout",
+      "fileBasename": "reference-semantic_zh_holdout.npy",
+      "retainedAfterRun": false,
+      "sha256": "603fc0ff3940697e26505aab01e9148dea7d166ac44ea726c4f6921d4e7c46b2"
+    }
+  ],
+  "schema": "qwen3-coreai-ios-fidelity-ephemeral-logits-v1"
+}

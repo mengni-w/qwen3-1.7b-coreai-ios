@@ -1,0 +1,185 @@
+{
+  "apple": {
+    "modelIdentity": {
+      "computeDType": "float16",
+      "embeddingDType": "torch.float16",
+      "embeddingQuantizationDisabled": true,
+      "executionDevice": "cpu",
+      "implementation": "coreai_models.models.ios.qwen3.Qwen3ForCausalLMForiOS",
+      "role": "reference",
+      "transformerPalettization": false,
+      "transformerProjectionCount": 196,
+      "transformerProjectionDType": "torch.float16"
+    },
+    "vector": {
+      "allFinite": true,
+      "dtype": "torch.float16",
+      "dynamicRange": 33.03515625,
+      "elementCount": 151936,
+      "fp32EuclideanNorm": 1455.05712890625,
+      "maximum": 26.59375,
+      "minimum": -6.44140625,
+      "top1TokenID": 9370
+    }
+  },
+  "binary64Cosine": 0.9999970493198227,
+  "caseID": "semantic_zh_01",
+  "cosineFloor": 0.99,
+  "elapsedSeconds": 31.654943958041258,
+  "finishedAtUnixSeconds": 1787936305.0714219,
+  "huggingFace": {
+    "attentionImplementation": "eager",
+    "dtype": "torch.float16",
+    "implementation": "transformers.models.qwen3.modeling_qwen3.Qwen3ForCausalLM",
+    "vector": {
+      "allFinite": true,
+      "dtype": "torch.float16",
+      "dynamicRange": 33.015625,
+      "elementCount": 151936,
+      "fp32EuclideanNorm": 1457.89208984375,
+      "maximum": 26.59375,
+      "minimum": -6.421875,
+      "top1TokenID": 9370
+    }
+  },
+  "identities": {
+    "coreAIModels": {
+      "baseCommit": "04a3fd6cfe9bfae9cf05b1f246cf915d930d1c0a",
+      "paperPatchSHA256": "bc8f135d5637d629beac727e4d10b0b6e909ebcc77206c39c971d8967d4360d4",
+      "recipeSHA256": "dab03ae1dd6c6290a7964e05ebcda7fe027c2bb240174fcf034e64a376be9d72",
+      "repository": "https://github.com/apple/coreai-models.git",
+      "stablePatchID": "6f0edbaf41f5e7a546d7e948da2142a2ca90291f",
+      "stagedDiffSHA256": "bc8f135d5637d629beac727e4d10b0b6e909ebcc77206c39c971d8967d4360d4",
+      "uvLockSHA256": "64228831804cc3444dbb5dc310bff62fe6163b47beca1a3592b5d557dfe846fa"
+    },
+    "environmentLockSHA256": "c0f169ab66d52385d7d31456bbbdeb5e93103c5355b7510a87da61453d30ad47",
+    "evaluator": {
+      "amendmentCommit": "60b9be97f42b5e02215777bd5ef31af782f65764",
+      "evaluatorCommit": "69f96e56847d9692255de00e9f8f1e66183151f9",
+      "promptManifestCommit": "91f468bc6ee07e45dfce1d586aaf070fb8b4a6d5",
+      "protocolCommit": "87cb23e1a2872caa18a406aae249335eeac5b6a6",
+      "repositoryCommit": "69f96e56847d9692255de00e9f8f1e66183151f9",
+      "sourceFiles": [
+        {
+          "path": "paper/EXPERIMENT_PROTOCOL_V1.md",
+          "sha256": "b7d98264068aad19b950e96af04c52fa027e57afcf67062e06125c9a875cc6b2",
+          "sizeBytes": 14323
+        },
+        {
+          "path": "paper/FIDELITY_V2_AMENDMENT_1.md",
+          "sha256": "07eab8874485e8954ee959d611de302de122ad04c1e5c0fcca6f1e957ab368d3",
+          "sizeBytes": 7870
+        },
+        {
+          "path": "paper/evidence/fidelity-v2/README.md",
+          "sha256": "73cbd07de903706e7e84f28e1dd202b833492c7675bee3b6a59f976990d0b13e",
+          "sizeBytes": 12898
+        },
+        {
+          "path": "paper/evidence/fidelity-v2/environment.lock.json",
+          "sha256": "c0f169ab66d52385d7d31456bbbdeb5e93103c5355b7510a87da61453d30ad47",
+          "sizeBytes": 1140
+        },
+        {
+          "path": "paper/evidence/fidelity-v2/evaluator/__init__.py",
+          "sha256": "cd3798fb738490c36438b1c74c07f94faba4b59090fd7f218730a71f85a309c7",
+          "sizeBytes": 108
+        },
+        {
+          "path": "paper/evidence/fidelity-v2/evaluator/cli.py",
+          "sha256": "756319a8be8d484f56f07cc399c260034496cca92961e0d7928841576fc08d0a",
+          "sizeBytes": 20706
+        },
+        {
+          "path": "paper/evidence/fidelity-v2/evaluator/contract.py",
+          "sha256": "90ebfa96fab99fe5f942cda0bd37b56a40347028413ac4f2025c5d423b42c6c6",
+          "sizeBytes": 18125
+        },
+        {
+          "path": "paper/evidence/fidelity-v2/evaluator/health.py",
+          "sha256": "ebfefe92691ac16d4d87e1f209ca7d4e71c73f0591a4d11645a1855774b47796",
+          "sizeBytes": 13907
+        },
+        {
+          "path": "paper/evidence/fidelity-v2/evaluator/metrics.py",
+          "sha256": "1b1d2667c94b51ee66e9af733dfc6605e0d8572e6831312c074ed5436d2142dc",
+          "sizeBytes": 7278
+        },
+        {
+          "path": "paper/evidence/fidelity-v2/evaluator/runtime.py",
+          "sha256": "926068e7a38f21edbbf5956db496c55e86283071bf8fbabe189d00d5ed27fae2",
+          "sizeBytes": 71767
+        },
+        {
+          "path": "paper/evidence/fidelity-v2/prompt-manifest.json",
+          "sha256": "59eedc731dab284755a59fc60b548a034a2a657ed8c9998413d58419b5ac1a95",
+          "sizeBytes": 4488
+        },
+        {
+          "path": "paper/evidence/fidelity-v2/run_fidelity_v2.py",
+          "sha256": "3f8d729bd42b22fa590562f17f6703a66fc6611cc3cf922379108116a6ddd82b",
+          "sizeBytes": 327
+        },
+        {
+          "path": "paper/evidence/fidelity-v2/spawn_bootstrap/sitecustomize.py",
+          "sha256": "c2a2775e304e75fc587081e0e416584360616253d661f04b9a9377c0ab3b6e9d",
+          "sizeBytes": 192
+        },
+        {
+          "path": "paper/evidence/fidelity-v2/tests/__init__.py",
+          "sha256": "780e05b30ac1b6d1abc08f837b2f508dee4ae507d3c581f7e4d3a7ddbc5bfd14",
+          "sizeBytes": 53
+        },
+        {
+          "path": "paper/evidence/fidelity-v2/tests/test_authoring_integration.py",
+          "sha256": "25c8b5e04d463b45ff57fd9df590e164f920745b56b324ab1f65b165455a3146",
+          "sizeBytes": 2459
+        },
+        {
+          "path": "paper/evidence/fidelity-v2/tests/test_cli.py",
+          "sha256": "61cdf04a5058eb8c8448d2615fc2f522bdaa00efb4198bf7f02b4b274edee646",
+          "sizeBytes": 5054
+        },
+        {
+          "path": "paper/evidence/fidelity-v2/tests/test_contract.py",
+          "sha256": "d7b20020698f8406fb0b55276b7ef049392cb49720d0d131b01fa2027bb28d7a",
+          "sizeBytes": 14679
+        },
+        {
+          "path": "paper/evidence/fidelity-v2/tests/test_metrics.py",
+          "sha256": "a16aab37d6cd4683ce0877caed0ce8cff9e3dfbcb3dbd4b9729f8c1c354c3103",
+          "sizeBytes": 5793
+        },
+        {
+          "path": "paper/evidence/fidelity-v2/tests/test_runtime.py",
+          "sha256": "9b0127f1e057a9b0c00020d6f02ad8de9405085feef10421abe160c94f042179",
+          "sizeBytes": 5457
+        },
+        {
+          "path": "patches/qwen3-1.7b-coreai-main.patch",
+          "sha256": "bc8f135d5637d629beac727e4d10b0b6e909ebcc77206c39c971d8967d4360d4",
+          "sizeBytes": 10282
+        },
+        {
+          "path": "recipes/qwen3_1_7b_w8_per_tensor.yaml",
+          "sha256": "dab03ae1dd6c6290a7964e05ebcda7fe027c2bb240174fcf034e64a376be9d72",
+          "sizeBytes": 276
+        }
+      ]
+    },
+    "sourceModelCanonicalSHA256": "0208857e10f0cc7888036473b1abc93b8a3bc725f1434b778a9bfebc93e88b16"
+  },
+  "inputTokenIDsSHA256": "c0b5d506d7861b5298fd9f1a5fa38b7c27a7b5809bbdd4204b9229ee9e5407b3",
+  "peakMemory": {
+    "peakResidentBytes": 7331282944,
+    "ruMaxRSSRaw": 7331282944,
+    "ruMaxRSSReportedUnit": "bytes"
+  },
+  "prefixTokenCount": 16,
+  "probeID": "56642727-11dc-46b5-a01d-61c7df989fda",
+  "sameTop1": true,
+  "schema": "qwen3-coreai-ios-fidelity-health-probe-v1",
+  "serializedInputManifestSHA256": "7268adc42ea9135dbfe27d30b2f0f47fa4bbe4049051b25a48974d64a036c23c",
+  "startedAtUnixSeconds": 1787936273.417755,
+  "status": "success"
+}

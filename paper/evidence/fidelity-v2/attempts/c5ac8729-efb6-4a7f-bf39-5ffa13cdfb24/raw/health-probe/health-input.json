@@ -1,0 +1,25 @@
+{
+  "caseID": "semantic_zh_01",
+  "inputTokenIDs": [
+    151644,
+    8948,
+    198,
+    105043,
+    384,
+    16,
+    43589,
+    104603,
+    72881,
+    64559,
+    102977,
+    1773,
+    91680,
+    60548,
+    20002,
+    101882
+  ],
+  "inputTokenIDsSHA256": "c0b5d506d7861b5298fd9f1a5fa38b7c27a7b5809bbdd4204b9229ee9e5407b3",
+  "prefixTokenCount": 16,
+  "schema": "qwen3-coreai-ios-fidelity-health-input-v1",
+  "tokenEncoding": "u64be-count-followed-by-u32be-token-ids"
+}

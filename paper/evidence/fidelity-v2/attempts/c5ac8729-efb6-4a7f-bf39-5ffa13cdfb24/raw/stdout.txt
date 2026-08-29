@@ -1,0 +1,44 @@
+REFERENCE_MODEL_LOAD_BEGIN
+REFERENCE_MODEL_LOAD_END
+REFERENCE_BEGIN case=semantic_zh_01
+REFERENCE_END case=semantic_zh_01 status=success
+REFERENCE_BEGIN case=semantic_zh_02
+REFERENCE_END case=semantic_zh_02 status=success
+REFERENCE_BEGIN case=semantic_en_01
+REFERENCE_END case=semantic_en_01 status=success
+REFERENCE_BEGIN case=echo_zh_01
+REFERENCE_END case=echo_zh_01 status=success
+REFERENCE_BEGIN case=retrieval_zh_01
+REFERENCE_END case=retrieval_zh_01 status=success
+REFERENCE_BEGIN case=schema_zh_01
+REFERENCE_END case=schema_zh_01 status=success
+REFERENCE_BEGIN case=semantic_zh_holdout
+REFERENCE_END case=semantic_zh_holdout status=success
+REFERENCE_BEGIN case=echo_mixed_holdout
+REFERENCE_END case=echo_mixed_holdout status=success
+REFERENCE_BEGIN case=selection_holdout
+REFERENCE_END case=selection_holdout status=success
+REFERENCE_BEGIN case=injection_holdout
+REFERENCE_END case=injection_holdout status=success
+CANDIDATE_MODEL_LOAD_AND_PALETTIZE_BEGIN
+CANDIDATE_MODEL_LOAD_AND_PALETTIZE_END
+CANDIDATE_BEGIN case=semantic_zh_01
+CANDIDATE_END case=semantic_zh_01 status=success
+CANDIDATE_BEGIN case=semantic_zh_02
+CANDIDATE_END case=semantic_zh_02 status=success
+CANDIDATE_BEGIN case=semantic_en_01
+CANDIDATE_END case=semantic_en_01 status=success
+CANDIDATE_BEGIN case=echo_zh_01
+CANDIDATE_END case=echo_zh_01 status=success
+CANDIDATE_BEGIN case=retrieval_zh_01
+CANDIDATE_END case=retrieval_zh_01 status=success
+CANDIDATE_BEGIN case=schema_zh_01
+CANDIDATE_END case=schema_zh_01 status=success
+CANDIDATE_BEGIN case=semantic_zh_holdout
+CANDIDATE_END case=semantic_zh_holdout status=success
+CANDIDATE_BEGIN case=echo_mixed_holdout
+CANDIDATE_END case=echo_mixed_holdout status=success
+CANDIDATE_BEGIN case=selection_holdout
+CANDIDATE_END case=selection_holdout status=success
+CANDIDATE_BEGIN case=injection_holdout
+CANDIDATE_END case=injection_holdout status=success

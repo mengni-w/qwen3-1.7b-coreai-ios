@@ -1,0 +1,22 @@
+{
+  "schema": "qwen3-coreai-ios-fidelity-publication-transform-v1",
+  "runID": "c5ac8729-efb6-4a7f-bf39-5ffa13cdfb24",
+  "sourceEvaluatorManifest": {
+    "publishedPath": "raw/EVALUATOR_MANIFEST.sha256",
+    "sha256": "99d64dcdee03ec562982dbb80fac47ebdec9c44655fd46c01db069635acd89be"
+  },
+  "pathOnlyTransforms": [
+    {
+      "from": "stdout.log",
+      "to": "stdout.txt",
+      "sha256": "3bb072cf79894e3e463cd4f36fb5dcfed18cc4968b9b24a8b63a22c5b573c469"
+    },
+    {
+      "from": "stderr.log",
+      "to": "stderr.txt",
+      "sha256": "8da2bfcde8a450152f5a95bb82d202a00afc59ec04f90503a659ac63feba9443"
+    }
+  ],
+  "contentChanged": false,
+  "reason": "The repository ignores files ending in .log."
+}

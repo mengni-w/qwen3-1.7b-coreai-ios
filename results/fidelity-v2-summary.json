@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "status": "successful_corrected_formal_attempt",
+  "run_id": "c5ac8729-efb6-4a7f-bf39-5ffa13cdfb24",
+  "model": "Qwen3-1.7B",
+  "claim_boundary": "Conversion fidelity of the disclosed W8 authoring recipe under ten frozen inputs; not compiled-device logits, downstream capability, ANE performance, or general benchmark quality.",
+  "mechanism": {
+    "implementation": "coreai_models.models.ios.qwen3.Qwen3ForCausalLMForiOS",
+    "transformer_projection_weights": "W8 per-tensor K-means palettization",
+    "transformer_projection_count": 196,
+    "tied_embedding": "Apple iOS symmetric per-tensor INT8",
+    "compute_dtype": "float16",
+    "evaluation_representation": "enabled fake-palettized PyTorch authoring model",
+    "execution_device": "cpu",
+    "maximum_total_context_tokens": 1024,
+    "maximum_new_tokens": 64,
+    "decode": "greedy",
+    "numerical_parity_environment": {
+      "USE_HF_IMPL": "true"
+    }
+  },
+  "source": {
+    "repository": "Qwen/Qwen3-1.7B",
+    "revision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+    "source_model_canonical_sha256": "0208857e10f0cc7888036473b1abc93b8a3bc725f1434b778a9bfebc93e88b16",
+    "coreai_models_repository": "https://github.com/apple/coreai-models.git",
+    "coreai_models_commit": "04a3fd6cfe9bfae9cf05b1f246cf915d930d1c0a",
+    "recipe_sha256": "dab03ae1dd6c6290a7964e05ebcda7fe027c2bb240174fcf034e64a376be9d72"
+  },
+  "protocol": {
+    "protocol_commit": "87cb23e1a2872caa18a406aae249335eeac5b6a6",
+    "prompt_manifest_commit": "91f468bc6ee07e45dfce1d586aaf070fb8b4a6d5",
+    "amendment_commit": "60b9be97f42b5e02215777bd5ef31af782f65764",
+    "evaluator_commit": "69f96e56847d9692255de00e9f8f1e66183151f9",
+    "metric_dtype": "IEEE-754 binary64",
+    "aggregation": "case-level arithmetic macro; not token weighted",
+    "nll_delta_direction": "candidate_minus_reference"
+  },
+  "health_probe": {
+    "probe_id": "56642727-11dc-46b5-a01d-61c7df989fda",
+    "status": "success",
+    "same_top1": true,
+    "binary64_cosine": 0.9999970493198227,
+    "manifest_sha256": "d926f7d79be1220bf08e9d851f6df5d0f714ccf47b4358acc3c0dc0b1438a448"
+  },
+  "formal_process": {
+    "exit_code": 0,
+    "orchestrator_interrupted": false,
+    "termination_actions": [],
+    "started_at_unix_seconds": 1787936389.396873,
+    "finished_at_unix_seconds": 1787993818.611926,
+    "reported_monotonic_elapsed_seconds": 6886.557158500073,
+    "worker_peak_resident_bytes": 6800375808,
+    "sampled_process_tree_peak_aggregate_resident_bytes": 10437558272,
+    "sampled_process_tree_peak_semantics": "maximum sampled sum of RSS for the worker and all observed descendants; distinct from ru_maxrss"
+  },
+  "evaluations": {
+    "tuning": {
+      "case_count": 6,
+      "successful_case_count": 6,
+      "mean_cosine": 0.9972995580522954,
+      "minimum_cosine": 0.9634192756433698,
+      "top1_agreement": 0.9895833333333334,
+      "mean_nll_delta": 0.0041901005215974
+    },
+    "holdout": {
+      "case_count": 4,
+      "successful_case_count": 4,
+      "mean_cosine": 0.9968972864500013,
+      "minimum_cosine": 0.953391227144109,
+      "top1_agreement": 0.9696691176470589,
+      "mean_nll_delta": 0.008879966197800114
+    }
+  },
+  "evidence": {
+    "attempt_directory": "paper/evidence/fidelity-v2/attempts/c5ac8729-efb6-4a7f-bf39-5ffa13cdfb24",
+    "original_evaluator_manifest_sha256": "99d64dcdee03ec562982dbb80fac47ebdec9c44655fd46c01db069635acd89be",
+    "published_raw_manifest_sha256": "21389f1306fc1f7a82f7422905612759db7afd383cbe3e84534aaee916285b51",
+    "attempt_public_manifest_sha256": "52b1400d86bd0bcdc96239262653a9af30b6ed69bdc53708df9d449de66f40cb",
+    "model_run_record_count": 20,
+    "case_comparison_record_count": 10,
+    "ephemeral_reference_logits_retained": false
+  },
+  "historical_relationship": {
+    "supersedes_historical_mismatched_fidelity_values": true,
+    "failed_preceding_attempt_run_id": "37756da4-cfc7-445a-ae6c-7241cfd77037",
+    "failed_preceding_attempt_included_in_aggregation": false
+  }
+}

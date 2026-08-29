@@ -11,6 +11,22 @@ The evaluator does not load a compiled `.aimodel`, measure device behavior, or
 approximate Apple’s compression numerically. It imports the pinned
 `coreai-models` source and invokes `coreai-opt`'s `KMeansPalettizer` directly.
 
+## Published attempts and current result
+
+- `attempts/37756da4-cfc7-445a-ae6c-7241cfd77037` preserves the interrupted,
+  all-zero-reference implementation failure. It is not a fidelity result.
+- `attempts/c5ac8729-efb6-4a7f-bf39-5ffa13cdfb24` is the corrected formal
+  attempt. It completed 10/10 reference cases, 10/10 candidate cases, and
+  10/10 comparisons successfully.
+- `results/fidelity-v2-summary.json` is the machine-readable public summary
+  derived only from the sealed corrected attempt.
+
+The corrected holdout macro is mean cosine `0.9968972864500013`, minimum
+cosine `0.9533912271441090`, top-1 agreement `0.9696691176470589`, and mean
+NLL delta `0.008879966197800114` in the registered candidate-minus-reference
+direction. These are conversion-fidelity measurements under frozen inputs,
+not a downstream capability result.
+
 ## Execution boundary
 
 The official run must occur only after this evaluator has been reviewed and

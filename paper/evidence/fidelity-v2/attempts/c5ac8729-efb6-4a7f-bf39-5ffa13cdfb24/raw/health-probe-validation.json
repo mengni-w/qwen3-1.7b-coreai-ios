@@ -1,0 +1,8 @@
+{
+  "binary64Cosine": 0.9999970493198227,
+  "healthProbeManifestSHA256": "d926f7d79be1220bf08e9d851f6df5d0f714ccf47b4358acc3c0dc0b1438a448",
+  "probeID": "56642727-11dc-46b5-a01d-61c7df989fda",
+  "sameTop1": true,
+  "schema": "qwen3-coreai-ios-fidelity-health-validation-v1",
+  "status": "success"
+}

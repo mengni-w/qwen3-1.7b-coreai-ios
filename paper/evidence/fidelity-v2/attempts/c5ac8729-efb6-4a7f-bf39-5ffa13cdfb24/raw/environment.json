@@ -1,0 +1,641 @@
+{
+  "controls": {
+    "decode": "greedy",
+    "deterministicAlgorithms": true,
+    "doSample": false,
+    "executionDevice": "cpu",
+    "maxNewTokens": 64,
+    "maxTotalContextTokens": 1024,
+    "numericLibraryThreadEnvironment": {
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1"
+    },
+    "numericalParityEnvironment": {
+      "USE_HF_IMPL": "true"
+    },
+    "seed": 0,
+    "targetDType": "float16",
+    "torchInteropThreads": 1,
+    "torchThreads": 1,
+    "truncation": false
+  },
+  "coreAIModels": {
+    "baseCommit": "04a3fd6cfe9bfae9cf05b1f246cf915d930d1c0a",
+    "paperPatchSHA256": "bc8f135d5637d629beac727e4d10b0b6e909ebcc77206c39c971d8967d4360d4",
+    "recipeSHA256": "dab03ae1dd6c6290a7964e05ebcda7fe027c2bb240174fcf034e64a376be9d72",
+    "repository": "https://github.com/apple/coreai-models.git",
+    "stablePatchID": "6f0edbaf41f5e7a546d7e948da2142a2ca90291f",
+    "stagedDiffSHA256": "bc8f135d5637d629beac727e4d10b0b6e909ebcc77206c39c971d8967d4360d4",
+    "uvLockSHA256": "64228831804cc3444dbb5dc310bff62fe6163b47beca1a3592b5d557dfe846fa"
+  },
+  "distributions": {
+    "Jinja2": "3.1.6",
+    "PyYAML": "6.0.3",
+    "coreai-core": "1.0.0b2",
+    "coreai-models": "0.1.0",
+    "coreai-opt": "0.2.1",
+    "coreai-torch": "0.4.1",
+    "coremltools": "9.0",
+    "huggingface-hub": "0.36.2",
+    "numpy": "2.3.5",
+    "psutil": "7.2.2",
+    "safetensors": "0.7.0",
+    "sentencepiece": "0.2.1",
+    "tokenizers": "0.23.0rc0",
+    "torch": "2.9.0",
+    "transformers": "4.57.6"
+  },
+  "evaluator": {
+    "amendmentCommit": "60b9be97f42b5e02215777bd5ef31af782f65764",
+    "evaluatorCommit": "69f96e56847d9692255de00e9f8f1e66183151f9",
+    "promptManifestCommit": "91f468bc6ee07e45dfce1d586aaf070fb8b4a6d5",
+    "protocolCommit": "87cb23e1a2872caa18a406aae249335eeac5b6a6",
+    "repositoryCommit": "69f96e56847d9692255de00e9f8f1e66183151f9",
+    "sourceFiles": [
+      {
+        "path": "paper/EXPERIMENT_PROTOCOL_V1.md",
+        "sha256": "b7d98264068aad19b950e96af04c52fa027e57afcf67062e06125c9a875cc6b2",
+        "sizeBytes": 14323
+      },
+      {
+        "path": "paper/FIDELITY_V2_AMENDMENT_1.md",
+        "sha256": "07eab8874485e8954ee959d611de302de122ad04c1e5c0fcca6f1e957ab368d3",
+        "sizeBytes": 7870
+      },
+      {
+        "path": "paper/evidence/fidelity-v2/README.md",
+        "sha256": "73cbd07de903706e7e84f28e1dd202b833492c7675bee3b6a59f976990d0b13e",
+        "sizeBytes": 12898
+      },
+      {
+        "path": "paper/evidence/fidelity-v2/environment.lock.json",
+        "sha256": "c0f169ab66d52385d7d31456bbbdeb5e93103c5355b7510a87da61453d30ad47",
+        "sizeBytes": 1140
+      },
+      {
+        "path": "paper/evidence/fidelity-v2/evaluator/__init__.py",
+        "sha256": "cd3798fb738490c36438b1c74c07f94faba4b59090fd7f218730a71f85a309c7",
+        "sizeBytes": 108
+      },
+      {
+        "path": "paper/evidence/fidelity-v2/evaluator/cli.py",
+        "sha256": "756319a8be8d484f56f07cc399c260034496cca92961e0d7928841576fc08d0a",
+        "sizeBytes": 20706
+      },
+      {
+        "path": "paper/evidence/fidelity-v2/evaluator/contract.py",
+        "sha256": "90ebfa96fab99fe5f942cda0bd37b56a40347028413ac4f2025c5d423b42c6c6",
+        "sizeBytes": 18125
+      },
+      {
+        "path": "paper/evidence/fidelity-v2/evaluator/health.py",
+        "sha256": "ebfefe92691ac16d4d87e1f209ca7d4e71c73f0591a4d11645a1855774b47796",
+        "sizeBytes": 13907
+      },
+      {
+        "path": "paper/evidence/fidelity-v2/evaluator/metrics.py",
+        "sha256": "1b1d2667c94b51ee66e9af733dfc6605e0d8572e6831312c074ed5436d2142dc",
+        "sizeBytes": 7278
+      },
+      {
+        "path": "paper/evidence/fidelity-v2/evaluator/runtime.py",
+        "sha256": "926068e7a38f21edbbf5956db496c55e86283071bf8fbabe189d00d5ed27fae2",
+        "sizeBytes": 71767
+      },
+      {
+        "path": "paper/evidence/fidelity-v2/prompt-manifest.json",
+        "sha256": "59eedc731dab284755a59fc60b548a034a2a657ed8c9998413d58419b5ac1a95",
+        "sizeBytes": 4488
+      },
+      {
+        "path": "paper/evidence/fidelity-v2/run_fidelity_v2.py",
+        "sha256": "3f8d729bd42b22fa590562f17f6703a66fc6611cc3cf922379108116a6ddd82b",
+        "sizeBytes": 327
+      },
+      {
+        "path": "paper/evidence/fidelity-v2/spawn_bootstrap/sitecustomize.py",
+        "sha256": "c2a2775e304e75fc587081e0e416584360616253d661f04b9a9377c0ab3b6e9d",
+        "sizeBytes": 192
+      },
+      {
+        "path": "paper/evidence/fidelity-v2/tests/__init__.py",
+        "sha256": "780e05b30ac1b6d1abc08f837b2f508dee4ae507d3c581f7e4d3a7ddbc5bfd14",
+        "sizeBytes": 53
+      },
+      {
+        "path": "paper/evidence/fidelity-v2/tests/test_authoring_integration.py",
+        "sha256": "25c8b5e04d463b45ff57fd9df590e164f920745b56b324ab1f65b165455a3146",
+        "sizeBytes": 2459
+      },
+      {
+        "path": "paper/evidence/fidelity-v2/tests/test_cli.py",
+        "sha256": "61cdf04a5058eb8c8448d2615fc2f522bdaa00efb4198bf7f02b4b274edee646",
+        "sizeBytes": 5054
+      },
+      {
+        "path": "paper/evidence/fidelity-v2/tests/test_contract.py",
+        "sha256": "d7b20020698f8406fb0b55276b7ef049392cb49720d0d131b01fa2027bb28d7a",
+        "sizeBytes": 14679
+      },
+      {
+        "path": "paper/evidence/fidelity-v2/tests/test_metrics.py",
+        "sha256": "a16aab37d6cd4683ce0877caed0ce8cff9e3dfbcb3dbd4b9729f8c1c354c3103",
+        "sizeBytes": 5793
+      },
+      {
+        "path": "paper/evidence/fidelity-v2/tests/test_runtime.py",
+        "sha256": "9b0127f1e057a9b0c00020d6f02ad8de9405085feef10421abe160c94f042179",
+        "sizeBytes": 5457
+      },
+      {
+        "path": "patches/qwen3-1.7b-coreai-main.patch",
+        "sha256": "bc8f135d5637d629beac727e4d10b0b6e909ebcc77206c39c971d8967d4360d4",
+        "sizeBytes": 10282
+      },
+      {
+        "path": "recipes/qwen3_1_7b_w8_per_tensor.yaml",
+        "sha256": "dab03ae1dd6c6290a7964e05ebcda7fe027c2bb240174fcf034e64a376be9d72",
+        "sizeBytes": 276
+      }
+    ]
+  },
+  "hardware": {
+    "architecture": "arm64",
+    "machine": "arm64",
+    "model": "Mac17,3",
+    "physicalMemoryBytes": "25769803776",
+    "processorBrand": "Apple M5"
+  },
+  "installedDistributionSnapshot": [
+    {
+      "name": "accelerate",
+      "version": "1.13.0"
+    },
+    {
+      "name": "annotated-types",
+      "version": "0.7.0"
+    },
+    {
+      "name": "anyio",
+      "version": "4.13.0"
+    },
+    {
+      "name": "attrs",
+      "version": "26.1.0"
+    },
+    {
+      "name": "cattrs",
+      "version": "26.1.0"
+    },
+    {
+      "name": "certifi",
+      "version": "2026.5.20"
+    },
+    {
+      "name": "charset-normalizer",
+      "version": "3.4.7"
+    },
+    {
+      "name": "coreai-core",
+      "version": "1.0.0b2"
+    },
+    {
+      "name": "coreai-models",
+      "version": "0.1.0"
+    },
+    {
+      "name": "coreai-opt",
+      "version": "0.2.1"
+    },
+    {
+      "name": "coreai-torch",
+      "version": "0.4.1"
+    },
+    {
+      "name": "coremltools",
+      "version": "9.0"
+    },
+    {
+      "name": "coverage",
+      "version": "7.14.1"
+    },
+    {
+      "name": "diffusers",
+      "version": "0.37.1"
+    },
+    {
+      "name": "execnet",
+      "version": "2.1.2"
+    },
+    {
+      "name": "filelock",
+      "version": "3.29.1"
+    },
+    {
+      "name": "fsspec",
+      "version": "2026.4.0"
+    },
+    {
+      "name": "h11",
+      "version": "0.16.0"
+    },
+    {
+      "name": "hf-xet",
+      "version": "1.5.1"
+    },
+    {
+      "name": "httpcore",
+      "version": "1.0.9"
+    },
+    {
+      "name": "httpx",
+      "version": "0.28.1"
+    },
+    {
+      "name": "huggingface_hub",
+      "version": "0.36.2"
+    },
+    {
+      "name": "idna",
+      "version": "3.18"
+    },
+    {
+      "name": "importlib_metadata",
+      "version": "9.0.0"
+    },
+    {
+      "name": "iniconfig",
+      "version": "2.3.0"
+    },
+    {
+      "name": "Jinja2",
+      "version": "3.1.6"
+    },
+    {
+      "name": "markdown-it-py",
+      "version": "4.2.0"
+    },
+    {
+      "name": "MarkupSafe",
+      "version": "3.0.3"
+    },
+    {
+      "name": "mdurl",
+      "version": "0.1.2"
+    },
+    {
+      "name": "ml_dtypes",
+      "version": "0.5.4"
+    },
+    {
+      "name": "mpmath",
+      "version": "1.3.0"
+    },
+    {
+      "name": "mypy",
+      "version": "1.14.1"
+    },
+    {
+      "name": "mypy_extensions",
+      "version": "1.1.0"
+    },
+    {
+      "name": "networkx",
+      "version": "3.6.1"
+    },
+    {
+      "name": "numpy",
+      "version": "2.3.5"
+    },
+    {
+      "name": "packaging",
+      "version": "26.2"
+    },
+    {
+      "name": "pillow",
+      "version": "12.2.0"
+    },
+    {
+      "name": "pluggy",
+      "version": "1.6.0"
+    },
+    {
+      "name": "protobuf",
+      "version": "7.35.0"
+    },
+    {
+      "name": "psutil",
+      "version": "7.2.2"
+    },
+    {
+      "name": "pyaml",
+      "version": "26.2.1"
+    },
+    {
+      "name": "pydantic",
+      "version": "2.14.0a1"
+    },
+    {
+      "name": "pydantic_core",
+      "version": "2.47.0"
+    },
+    {
+      "name": "Pygments",
+      "version": "2.20.0"
+    },
+    {
+      "name": "pytest",
+      "version": "8.4.0"
+    },
+    {
+      "name": "pytest-asyncio",
+      "version": "0.24.0"
+    },
+    {
+      "name": "pytest-cov",
+      "version": "7.1.0"
+    },
+    {
+      "name": "pytest-rerunfailures",
+      "version": "15.1"
+    },
+    {
+      "name": "pytest-xdist",
+      "version": "3.6.1"
+    },
+    {
+      "name": "PyYAML",
+      "version": "6.0.3"
+    },
+    {
+      "name": "regex",
+      "version": "2026.5.9"
+    },
+    {
+      "name": "requests",
+      "version": "2.34.2"
+    },
+    {
+      "name": "rich",
+      "version": "14.3.4"
+    },
+    {
+      "name": "ruff",
+      "version": "0.15.12"
+    },
+    {
+      "name": "safetensors",
+      "version": "0.7.0"
+    },
+    {
+      "name": "scipy",
+      "version": "1.18.0rc1"
+    },
+    {
+      "name": "sentencepiece",
+      "version": "0.2.1"
+    },
+    {
+      "name": "setuptools",
+      "version": "82.0.1"
+    },
+    {
+      "name": "StrEnum",
+      "version": "0.4.15"
+    },
+    {
+      "name": "sympy",
+      "version": "1.14.0"
+    },
+    {
+      "name": "tokenizers",
+      "version": "0.23.0rc0"
+    },
+    {
+      "name": "torch",
+      "version": "2.9.0"
+    },
+    {
+      "name": "torchao",
+      "version": "0.17.0"
+    },
+    {
+      "name": "tqdm",
+      "version": "4.68.1"
+    },
+    {
+      "name": "transformers",
+      "version": "4.57.6"
+    },
+    {
+      "name": "typing-inspection",
+      "version": "0.4.2"
+    },
+    {
+      "name": "typing_extensions",
+      "version": "4.15.0"
+    },
+    {
+      "name": "urllib3",
+      "version": "2.7.0"
+    },
+    {
+      "name": "yuvio",
+      "version": "1.6"
+    },
+    {
+      "name": "zipp",
+      "version": "4.1.0"
+    }
+  ],
+  "operatingSystem": {
+    "kernelRelease": "25.5.0",
+    "macVersion": "26.5.2",
+    "platform": "macOS-26.5.2-arm64-arm-64bit"
+  },
+  "python": {
+    "executableBasename": "python",
+    "implementation": "CPython",
+    "usesPinnedCoreAIModelsDotVenv": true,
+    "version": "3.12.13"
+  },
+  "runID": "c5ac8729-efb6-4a7f-bf39-5ffa13cdfb24",
+  "schema": "qwen3-coreai-ios-fidelity-environment-v1",
+  "sourceModel": {
+    "acquisition": {
+      "method": "huggingface_hub.snapshot_download",
+      "requestedRepository": "Qwen/Qwen3-1.7B",
+      "requestedRevision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e"
+    },
+    "canonicalSHA256": "0208857e10f0cc7888036473b1abc93b8a3bc725f1434b778a9bfebc93e88b16",
+    "files": [
+      {
+        "path": ".gitattributes",
+        "sha256": "34448b82c17d60fec9b65b1f093c115ddbaadc04beb1b0140b6bfed2e012a930",
+        "sizeBytes": 1570
+      },
+      {
+        "path": "LICENSE",
+        "sha256": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e",
+        "sizeBytes": 11343
+      },
+      {
+        "path": "README.md",
+        "sha256": "257e52c419dac2258852643f18af6c974f21f8c6c1b6f371b6cca6201cf29091",
+        "sizeBytes": 13963
+      },
+      {
+        "path": "config.json",
+        "sha256": "1ddb5b89ebc90dcb417a45c213d818577e65976454d29385c8f6140771d95197",
+        "sizeBytes": 726
+      },
+      {
+        "path": "generation_config.json",
+        "sha256": "2325da0f15bb848e018c5ae071b7943332e9f871d6b60e2ed22ca97d4cb993d2",
+        "sizeBytes": 239
+      },
+      {
+        "path": "merges.txt",
+        "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+        "sizeBytes": 1671853
+      },
+      {
+        "path": "model-00001-of-00002.safetensors",
+        "sha256": "169ad53ec313c3a34b06c0809216e4fc072cce444a5d4ff2b59690d064130ed5",
+        "sizeBytes": 3441185608
+      },
+      {
+        "path": "model-00002-of-00002.safetensors",
+        "sha256": "912becff8d60672aa8628ef08c05898d9adf17c2ad4ae3caf99b065622fdeff9",
+        "sizeBytes": 622329984
+      },
+      {
+        "path": "model.safetensors.index.json",
+        "sha256": "0d660e94b165eb912669a5249dff44b83188c4777a07ddb9611fb78d91b0578d",
+        "sizeBytes": 25605
+      },
+      {
+        "path": "tokenizer.json",
+        "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+        "sizeBytes": 11422654
+      },
+      {
+        "path": "tokenizer_config.json",
+        "sha256": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101",
+        "sizeBytes": 9732
+      },
+      {
+        "path": "vocab.json",
+        "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+        "sizeBytes": 2776833
+      }
+    ],
+    "repository": "Qwen/Qwen3-1.7B",
+    "revision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+    "schema": "qwen3-coreai-ios-source-model-lock-v1"
+  },
+  "sourceModelPermissions": {
+    "payloads": [
+      {
+        "label": ".gitattributes",
+        "modeOctal": "0444"
+      },
+      {
+        "label": "LICENSE",
+        "modeOctal": "0444"
+      },
+      {
+        "label": "README.md",
+        "modeOctal": "0444"
+      },
+      {
+        "label": "config.json",
+        "modeOctal": "0444"
+      },
+      {
+        "label": "generation_config.json",
+        "modeOctal": "0444"
+      },
+      {
+        "label": "merges.txt",
+        "modeOctal": "0444"
+      },
+      {
+        "label": "model-00001-of-00002.safetensors",
+        "modeOctal": "0444"
+      },
+      {
+        "label": "model-00002-of-00002.safetensors",
+        "modeOctal": "0444"
+      },
+      {
+        "label": "model.safetensors.index.json",
+        "modeOctal": "0444"
+      },
+      {
+        "label": "tokenizer.json",
+        "modeOctal": "0444"
+      },
+      {
+        "label": "tokenizer_config.json",
+        "modeOctal": "0444"
+      },
+      {
+        "label": "vocab.json",
+        "modeOctal": "0444"
+      }
+    ],
+    "sourceLock": {
+      "label": "source-model lock",
+      "modeOctal": "0444"
+    },
+    "sourceRoot": {
+      "label": "source-model root",
+      "modeOctal": "0555"
+    }
+  },
+  "startedAtUnixSeconds": 1787936389.8341079,
+  "syntheticAuthoringSmoke": {
+    "recipeSHA256": "dab03ae1dd6c6290a7964e05ebcda7fe027c2bb240174fcf034e64a376be9d72",
+    "representation": "KMeansPalettizer.prepare",
+    "schema": "qwen3-coreai-ios-fidelity-synthetic-authoring-smoke-v1",
+    "spawnDeterminism": {
+      "observedSpawnProcessCount": 2,
+      "probeRecordsCanonicalSHA256": "7a81d62e0610f6331386aab9793eb8f94fd1be5626d980c5ef3ebaaafa3f93b0",
+      "requestedWorkerCount": 2,
+      "state": {
+        "numericThreadEnvironment": {
+          "MKL_NUM_THREADS": "1",
+          "NUMEXPR_NUM_THREADS": "1",
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "VECLIB_MAXIMUM_THREADS": "1"
+        },
+        "numericalParityEnvironment": {
+          "USE_HF_IMPL": "true"
+        },
+        "numpyRandomStateSHA256": "f7a502f4c477741c433ed2f037b6124bb5d5254266b741d22d002cedc3eec51e",
+        "pythonHashSeed": "0",
+        "pythonRandomStateSHA256": "d6c9a7bf243a1a6354991df096c14a8395587a0b4571f57c21ba5d08bfce0ba2",
+        "torchDeterministicAlgorithmsEnabled": true,
+        "torchDeterministicWarnOnly": false,
+        "torchInitialSeed": 0,
+        "torchInteropThreads": 1,
+        "torchThreads": 1
+      }
+    },
+    "status": "success",
+    "targetModules": [
+      "first",
+      "second"
+    ]
+  },
+  "tokenizer": {
+    "chatTemplateUTF8SHA256": "a55ee1b1660128b7098723e0abcd92caa0788061051c62d51cbe87d9cf1974d8",
+    "class": "transformers.models.qwen2.tokenization_qwen2_fast.Qwen2TokenizerFast",
+    "eosTokenID": 151645
+  }
+}

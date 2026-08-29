@@ -1,0 +1,40 @@
+{
+  "schema": "qwen3-coreai-ios-fidelity-environment-lock-v1",
+  "platform": {
+    "architecture": "arm64",
+    "operatingSystem": "macOS",
+    "pythonMajorMinor": "3.12"
+  },
+  "coreAIModels": {
+    "baseCommit": "04a3fd6cfe9bfae9cf05b1f246cf915d930d1c0a",
+    "paperPatchSHA256": "bc8f135d5637d629beac727e4d10b0b6e909ebcc77206c39c971d8967d4360d4",
+    "upstreamUVLockSHA256": "64228831804cc3444dbb5dc310bff62fe6163b47beca1a3592b5d557dfe846fa"
+  },
+  "numericThreadEnvironment": {
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "numericalParityEnvironment": {
+    "USE_HF_IMPL": "true"
+  },
+  "distributions": {
+    "Jinja2": "3.1.6",
+    "PyYAML": "6.0.3",
+    "coreai-core": "1.0.0b2",
+    "coreai-models": "0.1.0",
+    "coreai-opt": "0.2.1",
+    "coreai-torch": "0.4.1",
+    "coremltools": "9.0",
+    "huggingface-hub": "0.36.2",
+    "numpy": "2.3.5",
+    "psutil": "7.2.2",
+    "safetensors": "0.7.0",
+    "sentencepiece": "0.2.1",
+    "tokenizers": "0.23.0rc0",
+    "torch": "2.9.0",
+    "transformers": "4.57.6"
+  }
+}

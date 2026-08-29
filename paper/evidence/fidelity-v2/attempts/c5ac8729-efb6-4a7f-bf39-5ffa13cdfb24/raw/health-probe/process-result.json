@@ -1,0 +1,13 @@
+{
+  "elapsedSeconds": 31.657009541988373,
+  "exitCode": 0,
+  "finishedAtUnixSeconds": 1787936305.073477,
+  "peakMemory": {
+    "peakResidentBytes": 7331282944,
+    "ruMaxRSSRaw": 7331282944,
+    "ruMaxRSSReportedUnit": "bytes"
+  },
+  "probeID": "56642727-11dc-46b5-a01d-61c7df989fda",
+  "schema": "qwen3-coreai-ios-fidelity-health-process-result-v1",
+  "startedAtUnixSeconds": 1787936273.41774
+}

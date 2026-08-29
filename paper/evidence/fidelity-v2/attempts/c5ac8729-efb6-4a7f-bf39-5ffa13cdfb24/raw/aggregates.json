@@ -1,0 +1,33 @@
+{
+  "direction": "candidate_minus_reference",
+  "metricDType": "IEEE-754 binary64",
+  "schema": "qwen3-coreai-ios-fidelity-aggregates-v1",
+  "splits": [
+    {
+      "aggregation": "case-level arithmetic macro; not token weighted",
+      "caseCount": 6,
+      "failedCaseIDs": [],
+      "meanCosine": 0.9972995580522954,
+      "meanNLLDelta": 0.0041901005215974,
+      "minimumCosine": 0.9634192756433698,
+      "nllDeltaDirection": "candidate_minus_reference",
+      "split": "tuning",
+      "status": "success",
+      "successfulCaseCount": 6,
+      "top1Agreement": 0.9895833333333334
+    },
+    {
+      "aggregation": "case-level arithmetic macro; not token weighted",
+      "caseCount": 4,
+      "failedCaseIDs": [],
+      "meanCosine": 0.9968972864500013,
+      "meanNLLDelta": 0.008879966197800114,
+      "minimumCosine": 0.953391227144109,
+      "nllDeltaDirection": "candidate_minus_reference",
+      "split": "holdout",
+      "status": "success",
+      "successfulCaseCount": 4,
+      "top1Agreement": 0.9696691176470589
+    }
+  ]
+}
