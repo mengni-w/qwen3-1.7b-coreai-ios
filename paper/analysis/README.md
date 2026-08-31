@@ -8,7 +8,9 @@ new measurement.
 
 1. Fetches the two public evidence repositories at their exact commits.
 2. Verifies every admitted input against `source-lock.json`, including the
-   corrected formal `results/fidelity-v2-summary.json` in this repository.
+   corrected formal `results/fidelity-v2-summary.json` and the post-review
+   compatibility summary, sanitized event records, and event manifest in this
+   repository.
 3. Downloads the official CMRC2018 development file at its exact commit and
    refuses any source whose SHA-256 differs.
 4. Runs the frozen sample builder and requires the historical 300-sample hash.
@@ -21,7 +23,10 @@ new measurement.
 8. Generates T3 from the corrected formal fidelity-v2 result. The older
    `quality-summary.json` remains available only as historical model-selection
    evidence; its W8 fidelity values are superseded.
-9. Generates machine-readable inputs for Tables T2–T7 and Figures F3–F5.
+9. Cross-checks the compatibility summary against the sanitized load and
+   device-transition records, including the reboot-request/reconnect boundary.
+10. Generates machine-readable inputs for Tables T2–T8 and Figures F3–F5. T8
+    preserves the compatibility record's load-only and non-causal boundaries.
 
 The copyrighted dataset text and cloned repositories remain under the ignored
 `.analysis-work/` directory. Generated outputs contain aggregates and already

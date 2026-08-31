@@ -1,0 +1,15 @@
+\begin{table}[H]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{@{}p{0.20\textwidth}p{0.25\textwidth}p{0.08\textwidth}X@{}}
+\toprule
+Artifact & Producer; compiled-main SHA & Loads & Observation \\
+\midrule
+Earlier public AOT & coreai-build-3600.75.3; a7eefeef1670... & 2 & Both stopped during ANECCompileOffline; the second followed a full-reboot request and observed reconnection \\
+Current-toolchain candidate & coreai-build-3600.83.1; 09f609775baa... & 1 & Load 41.932 s; peak process RSS 2,737.0 MiB; unload completed; exit 0 \\
+\bottomrule
+\end{tabularx}
+\caption{Supplementary load-only compatibility observations on one iPhone 15 Pro running iOS 27 build 24A5424a. The candidate result is not a cold-start benchmark, generation test, or Instruments trace; cache state was uncontrolled, and artifact bytes and compiler producer both changed. \evidence{CL-28,CL-29}}
+\label{tab:w8-compatibility}
+\end{table}

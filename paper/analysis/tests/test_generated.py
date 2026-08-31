@@ -8,6 +8,15 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 REPOSITORY_ROOT = ROOT.parent
 FIDELITY_V2_SUMMARY = REPOSITORY_ROOT / "results/fidelity-v2-summary.json"
+W8_COMPATIBILITY_EVIDENCE = (
+    REPOSITORY_ROOT / "results/w8-aot-compatibility-evidence.json"
+)
+W8_COMPATIBILITY_EVENTS = (
+    ROOT / "evidence" / "w8-compatibility" / "sanitized-load-events.jsonl"
+)
+W8_COMPATIBILITY_EVIDENCE_DIR = ROOT / "evidence" / "w8-compatibility"
+W8_COMPATIBILITY_MANIFEST = W8_COMPATIBILITY_EVIDENCE_DIR / "MANIFEST.sha256"
+SOURCE_LOCK = ROOT / "analysis/source-lock.json"
 GENERATED = Path(
     os.environ.get("ANALYSIS_GENERATED_DIR", ROOT / "analysis/generated")
 ).resolve()
@@ -80,14 +89,158 @@ class GeneratedEvidenceTests(unittest.TestCase):
             source["evaluations"]["holdout"],
         )
         provenance = load_json("provenance.json")
+        source_lock = json.loads(SOURCE_LOCK.read_text(encoding="utf-8"))
+        self.assertEqual(provenance["localFileSHA256"], source_lock["localFiles"])
+        for relative_path, expected_hash in source_lock["localFiles"].items():
+            self.assertEqual(
+                hashlib.sha256((REPOSITORY_ROOT / relative_path).read_bytes()).hexdigest(),
+                expected_hash,
+            )
+
+    def test_w8_compatibility_table_preserves_load_only_boundaries(self):
+        compatibility = load_json("tables/t8-w8-compatibility.json")
+        old = compatibility["oldPublicArtifact"]
+        current = compatibility["currentCandidate"]
+        self.assertEqual(old["attempts"], 2)
+        self.assertEqual(old["failureStage"], "ANECCompileOffline")
+        self.assertTrue(
+            old["afterFullRebootRequestAndReconnectAttemptIncluded"]
+        )
+        self.assertFalse(old["completedRebootDirectlyVerified"])
+        self.assertEqual(old["producer"], "coreai-build-3600.75.3")
+        self.assertEqual(current["attempts"], 1)
+        self.assertEqual(current["producer"], "coreai-build-3600.83.1")
+        self.assertAlmostEqual(current["loadSeconds"], 41.931619875)
+        self.assertAlmostEqual(current["peakProcessResidentMiB"], 2737.046875)
+        self.assertEqual(current["unloadStatus"], "completed")
+        self.assertEqual(current["exitCode"], 0)
         self.assertEqual(
-            provenance["localFileSHA256"],
+            compatibility["claimBoundary"],
             {
-                "results/fidelity-v2-summary.json": hashlib.sha256(
-                    FIDELITY_V2_SUMMARY.read_bytes()
-                ).hexdigest()
+                "loadOnly": True,
+                "generationPerformed": False,
+                "instrumentsTracePerformed": False,
+                "coldStartBenchmarkClaimed": False,
+                "causeIsolated": False,
+                "performanceComparisonClaimed": False,
             },
         )
+        exports = compatibility["repeatedAuthoringExports"]
+        self.assertFalse(exports["rawByteEquality"])
+        self.assertNotEqual(
+            exports["firstMainMLIRBSHA256"],
+            exports["secondMainMLIRBSHA256"],
+        )
+
+    def test_w8_compatibility_sanitized_events_match_summary(self):
+        summary = json.loads(W8_COMPATIBILITY_EVIDENCE.read_text(encoding="utf-8"))
+        observation_ids = [
+            observation["id"]
+            for observation in summary["loadCompatibilityObservations"]
+        ]
+        self.assertEqual(len(observation_ids), len(set(observation_ids)))
+        self.assertEqual(
+            set(observation_ids),
+            {
+                "public-w8-old-producer-load-1",
+                "public-w8-old-producer-load-2-after-reboot",
+                "current-producer-w8-fresh-aot-load-1",
+            },
+        )
+        records = {
+            record["id"]: record
+            for record in (
+                json.loads(line)
+                for line in W8_COMPATIBILITY_EVENTS.read_text(
+                    encoding="utf-8"
+                ).splitlines()
+                if line.strip()
+            )
+        }
+        self.assertEqual(
+            set(records),
+            {
+                "public-w8-old-producer-load-1",
+                "full-reboot-request-and-reconnect-before-public-w8-load-2",
+                "public-w8-old-producer-load-2-after-reboot",
+                "current-producer-w8-fresh-aot-load-1",
+            },
+        )
+        public = summary["sanitization"]["publicEventEvidence"]
+        self.assertTrue(
+            summary["sanitization"]["sanitizedEventEvidenceIncluded"]
+        )
+        self.assertFalse(
+            summary["sanitization"]["unsanitizedOriginalCapturesIncluded"]
+        )
+        self.assertEqual(public["recordCount"], 4)
+        self.assertEqual(
+            public["sha256"],
+            hashlib.sha256(W8_COMPATIBILITY_EVENTS.read_bytes()).hexdigest(),
+        )
+        self.assertEqual(
+            public["manifestPath"],
+            "paper/evidence/w8-compatibility/MANIFEST.sha256",
+        )
+        self.assertEqual(
+            public["manifestSHA256"],
+            hashlib.sha256(W8_COMPATIBILITY_MANIFEST.read_bytes()).hexdigest(),
+        )
+        actual_evidence_files = {
+            path.relative_to(W8_COMPATIBILITY_EVIDENCE_DIR).as_posix()
+            for path in W8_COMPATIBILITY_EVIDENCE_DIR.rglob("*")
+            if path.is_file() and path != W8_COMPATIBILITY_MANIFEST
+        }
+        self.assertEqual(
+            actual_evidence_files,
+            {"README.md", "sanitized-load-events.jsonl"},
+        )
+        manifest_entries = {}
+        for line in W8_COMPATIBILITY_MANIFEST.read_text(encoding="utf-8").splitlines():
+            expected_hash, relative = line.split("  ", 1)
+            manifest_entries[relative] = expected_hash
+        self.assertEqual(
+            set(manifest_entries),
+            {"README.md", "sanitized-load-events.jsonl"},
+        )
+        for relative, expected_hash in manifest_entries.items():
+            self.assertEqual(
+                hashlib.sha256(
+                    (W8_COMPATIBILITY_EVIDENCE_DIR / relative).read_bytes()
+                ).hexdigest(),
+                expected_hash,
+            )
+        expected_environment = {
+            "productType": "iPhone16,1",
+            "reality": "physical",
+            "operatingSystemVersion": "27.0",
+            "operatingSystemBuild": "24A5424a",
+        }
+        for record_id in (
+            "public-w8-old-producer-load-1",
+            "public-w8-old-producer-load-2-after-reboot",
+            "current-producer-w8-fresh-aot-load-1",
+        ):
+            self.assertEqual(records[record_id]["deviceRef"], "test-device-1")
+            self.assertEqual(records[record_id]["environment"], expected_environment)
+        transition = records[
+            "full-reboot-request-and-reconnect-before-public-w8-load-2"
+        ]
+        self.assertEqual(transition["deviceRef"], "test-device-1")
+        self.assertEqual(transition["request"]["hostOutcome"], "timeout")
+        self.assertTrue(
+            transition["subsequentObservation"]["lastConnectionChanged"]
+        )
+        self.assertTrue(
+            transition["subsequentObservation"]["tunnelSessionChanged"]
+        )
+        self.assertFalse(
+            transition["evidenceBoundary"]["completedRebootDirectlyVerified"]
+        )
+        candidate = records["current-producer-w8-fresh-aot-load-1"]
+        self.assertFalse(candidate["protocol"]["timedPerformanceSample"])
+        self.assertFalse(candidate["protocol"]["aneExecutionMeasured"])
+        self.assertIn("source harness", candidate["sourceHarness"]["labelBoundary"])
 
     def test_quality_uses_stratified_paired_bootstrap(self):
         quality = load_json("quality-analysis-v2.json")
@@ -154,6 +307,7 @@ class GeneratedEvidenceTests(unittest.TestCase):
             "tables/t5-paired-quality.json",
             "tables/t6-size-rss.json",
             "tables/t7-workload-performance.json",
+            "tables/t8-w8-compatibility.json",
         ]
         for relative_path in expected:
             with self.subTest(relative_path=relative_path):

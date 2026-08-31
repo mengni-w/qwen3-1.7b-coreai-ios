@@ -2,9 +2,11 @@
 
 ## Qwen3-1.7B on iPhone with Apple Core AI
 
-- **Index version:** 1.0
-- **Audit date:** 2026-08-28
-- **Governing protocol:** [`REPORT_PROTOCOL_V1.md`](REPORT_PROTOCOL_V1.md)
+- **Index version:** 1.1
+- **Audit date:** 2026-08-29
+- **Governing protocols:** [`REPORT_PROTOCOL_V1.md`](REPORT_PROTOCOL_V1.md) and
+  the post-review compatibility amendment in
+  [`REPORT_PROTOCOL_V2.md`](REPORT_PROTOCOL_V2.md)
 - **Purpose:** Claim-to-evidence control for the technical report
 
 ## 1. Operating rule
@@ -14,9 +16,11 @@ this index. Every admitted claim must resolve to a versioned source and a
 specific evidence object. Narrative summaries may explain a result, but they
 cannot replace the primary evidence that establishes it.
 
-This index does not authorize new experiments. It admits only completed,
-already public evidence plus deterministic verification or reanalysis of that
-evidence.
+This index does not authorize new experiments. Protocol v1 admits the
+retrospective public evidence and deterministic reanalysis used for the main
+study. Protocol v2 separately admits one completed post-review, load-only W8
+compatibility diagnostic; it does not retroactively make that diagnostic part
+of the original study design.
 
 ## 2. Evidence classes
 
@@ -141,6 +145,46 @@ Admitted objects and audited SHA-256 values:
 | `paper/evidence/fidelity-v2/attempts/c5ac8729-efb6-4a7f-bf39-5ffa13cdfb24/raw/case-comparisons.jsonl` | `R` | `be19235ff92a84b4c3b52d9dc278b577f41fcb40355ed7ff4e4d7bfa4f61262f` |
 | `results/fidelity-v2-summary.json` | `D` | `fa2ef349a04d26cdb09686f9eb53c925b9c72c68ca7a04b1f89bbc96fcdd6cca` |
 
+### S-W8-COMPAT-2026-08 — Post-review W8 load compatibility diagnostic
+
+- Classes: `A`, `D`, `M`
+- Governing documents: [`REPORT_PROTOCOL_V2.md`](REPORT_PROTOCOL_V2.md) and
+  [`W8_COMPATIBILITY_OBSERVATION_1.md`](W8_COMPATIBILITY_OBSERVATION_1.md)
+- Device class: physical iPhone 15 Pro (`iPhone16,1`)
+- Runtime: iOS 27.0 build `24A5424a`
+- Application toolchain: Xcode build `27A5252f`; iPhoneOS SDK build
+  `24A5422a`
+- Evidence object: `results/w8-aot-compatibility-evidence.json`
+- Evidence SHA-256:
+  `baf1e717e445a56108350066cac983ad1cd0f0941af0467da7260bbc341ca68d`
+- Public event-level evidence:
+  `paper/evidence/w8-compatibility/sanitized-load-events.jsonl`
+- Evidence form: manually sanitized structured extracts classified as `D`, not
+  unsanitized raw captures; source digests identify the retained private
+  originals but do not independently prove the extraction mapping
+- Event evidence SHA-256:
+  `2b3ee7024446cdf7aae01adefb616f74f641876fbf31807b1a2f94e0d294de1d`
+- Event manifest SHA-256:
+  `3c9c72d44f6e0878ac425a9c5e302fa3cd4648c35ed28fed25bd249a1c0fcfe5`
+- Scope: two failed load-only invocations of the earlier public AOT. The second
+  followed a full-reboot request and the same device's subsequent observed
+  reconnection; one no-retry load-and-unload invocation of a current-toolchain
+  candidate; two authoring exports using different output directories.
+- Limit: this source contains no generation result, Instruments trace,
+  cold-start benchmark, or controlled single-factor comparison across iOS or
+  compiler versions.
+
+Admitted objects and audited SHA-256 values:
+
+| Object | Class | SHA-256 |
+| --- | --- | --- |
+| `paper/REPORT_PROTOCOL_V2.md` | `M` | `b54284270c9f9fff14beadb8f5dca01d012b0585f887c0f6f30a729bc076587f` |
+| `paper/W8_COMPATIBILITY_OBSERVATION_1.md` | `M` | `f5405f6adf8a2556f2ad95ee0291426dadd885e0de9f540f31e2d9f34dd67a79` |
+| `results/w8-aot-compatibility-evidence.json` | `D` | `baf1e717e445a56108350066cac983ad1cd0f0941af0467da7260bbc341ca68d` |
+| `paper/evidence/w8-compatibility/sanitized-load-events.jsonl` | `D` | `2b3ee7024446cdf7aae01adefb616f74f641876fbf31807b1a2f94e0d294de1d` |
+| `paper/evidence/w8-compatibility/README.md` | `M` | `81b6d1bdc1689eae24c0e6f9db4c5e5a624d246042cde0f752d77dc8fd1c84b7` |
+| `paper/evidence/w8-compatibility/MANIFEST.sha256` | `M` | `3c9c72d44f6e0878ac425a9c5e302fa3cd4648c35ed28fed25bd249a1c0fcfe5` |
+
 ### S-W8-HF — Public W8/ANE resource directory
 
 - Classes: `A`, `D`, `N`
@@ -152,7 +196,7 @@ Admitted objects and audited SHA-256 values:
 - Access at audit: public, ungated, enabled
 - Compiled `main-h16p.mlirb` SHA-256:
   `a7eefeef16708a324f9919890355eb92180ec85eef419ebd5822e8c8afd42f5f`
-- Public source `.aimodel` identity:
+- Public authoring `main.mlirb` identity recorded by the AOT metadata:
   `5e885ec407f1b2690df5098d38b1bed4a3e66f4352c859fb2bb79666bc0aef73`
 - Use: downloadable public artifact and exact-public-artifact six-case device
   validation.
@@ -282,7 +326,7 @@ Admitted public objects:
 ### A-W8-HISTORICAL
 
 - Role: W8 side of the paired quality, speed, size, and memory comparison
-- Source `.aimodel` identity:
+- Authoring `main.mlirb` identity recorded by the AOT metadata:
   `66325b4cc0657e1f89a7a0a92f37899d01ddc37d168295dbbad0d71bef7f75e3`
 - Compiled main SHA-256:
   `0c2dfcfeaae195386f1e61c05e0cf2b4a1ce6ecda1c321803afc0019b1d886d7`
@@ -294,14 +338,36 @@ Admitted public objects:
 
 ### A-W8-PUBLIC
 
-- Role: currently downloadable W8/ANE artifact
-- Source `.aimodel` identity:
+- Role: W8/ANE artifact published in July 2026 and used for the separately
+  recorded six-case public-artifact suite
+- Authoring `main.mlirb` identity recorded by the AOT metadata:
   `5e885ec407f1b2690df5098d38b1bed4a3e66f4352c859fb2bb79666bc0aef73`
 - Compiled main SHA-256:
   `a7eefeef16708a324f9919890355eb92180ec85eef419ebd5822e8c8afd42f5f`
 - Configuration: same frozen W8 mechanism as A-W8-HISTORICAL
 - Evidence scope: exact-public-artifact six-case physical-device validation
-- Boundary: not byte-identical to A-W8-HISTORICAL
+- Boundary: not byte-identical to A-W8-HISTORICAL; its earlier six-case record
+  does not establish compatibility with every later Core AI runtime
+
+### A-W8-CURRENT-CANDIDATE
+
+- Role: post-review current-toolchain compatibility candidate
+- Authoring `main.mlirb` identity:
+  `13ba3f73fcb7e090cd6ba1ca14b6b8903516ab608d451e94b9cdd750cfceda2c`
+- Compiled main SHA-256:
+  `09f609775baa56b11ff3c91bfcb07b145930297289634fdc5514b2a5ab4dc7ca`
+- Complete AOT file-list fingerprint:
+  `182336f4654bb735bcad35e45f7832756c34469931ad96d872532dca727ebd8d`
+- Load-record artifact-manifest SHA-256:
+  `cca1e77d41e6f157e10f89e1f05c51e96966be92e7590e550e844e4178c09581`
+- Producer: `coreai-build-3600.83.1`
+- Configuration: same frozen W8 recipe and pinned base-model revision, with a
+  separately identified authoring export and AOT result
+- Evidence scope: one load-and-immediate-unload observation only
+- Distribution boundary: this index does not assign a public Hub revision
+  until an exact uploaded commit has been verified
+- Claim boundary: no generation, quality, speed-comparison, cold-start, or ANE
+  trace result is attached to this candidate
 
 ### A-INT4-PUBLIC
 
@@ -366,9 +432,13 @@ Admitted public objects:
   collected without errors, Ruff passed, and the dry-run resolved the frozen
   W8 configuration.”
 - Evidence: S-W8-GIT `results/upstream-validation.json`, patch, recipe, and
-  `REPRODUCTION.md`
-- Required qualifier: the full export was not repeated on that later Apple
-  commit because the relevant LLM authoring path was unchanged
+  `REPRODUCTION.md`; S-W8-COMPAT-2026-08 for the later export and AOT record
+- Additional admitted wording: “A post-review run subsequently repeated the
+  full export and AOT compilation at the same pinned Apple commit using Xcode
+  27 Beta 6.”
+- Required qualifier: the later output is a separately identified artifact;
+  it does not retroactively replace the historical A/B binary or the earlier
+  public rebuild
 - Forbidden inference: the 2026-07 patch necessarily applies to Apple current
   main without a fresh compatibility check
 
@@ -428,13 +498,15 @@ Admitted public objects:
 
 - Status: `READY`
 - Admitted wording: “The exact public W8 rebuild A-W8-PUBLIC separately passed
-  a six-case device suite on iPhone 15 Pro / iOS 27.”
+  a six-case device suite in the earlier recorded iPhone 15 Pro / iOS 27
+  environment.”
 - Evidence: S-W8-HF `evidence/public-release-device-validation.json`
 - Admitted values: six of six cases, fresh load `46.176 s`, structured-output
   TTFT `1.213 s`, long-context TTFT `5.709 s`, peak RSS `2,766.4 MiB`, RSS
   after unload `197.3 MiB`
 - Required qualifier: this was a single public-artifact validation suite, not
-  the historical A/B series
+  the historical A/B series, and it does not imply compatibility with every
+  later Core AI runtime
 
 ### CL-11 — INT4 dynamic GPU route
 
@@ -563,15 +635,15 @@ Admitted public objects:
 ### CL-22 — Historical/public W8 provenance boundary
 
 - Status: `MANDATORY DISCLOSURE`
-- Required wording: “The current public W8 payload uses the same frozen
-  mechanism but is not byte-identical to the W8 binary used in the historical
-  A/B run. The historical results remain auditable through raw predictions,
-  protocols, results, and recorded hashes; the public rebuild has a separate
-  device-validation record.”
-- Evidence: A-W8-HISTORICAL, A-W8-PUBLIC, S-W8-GIT, S-W8-HF, S-COMP-GIT
+- Required wording: “The historical A/B payload, the July 2026 public rebuild,
+  and the current-toolchain candidate are separate artifact identities. The
+  public rebuild and candidate use the frozen W8 mechanism but neither may be
+  silently substituted for the historical binary.”
+- Evidence: A-W8-HISTORICAL, A-W8-PUBLIC, A-W8-CURRENT-CANDIDATE, S-W8-GIT,
+  S-W8-HF, S-W8-COMPAT-2026-08, S-COMP-GIT
 - Placement: Methods, Reproducibility, and Limitations
 - Forbidden action: silently substitute A-W8-PUBLIC for A-W8-HISTORICAL in A/B
-  claims
+  claims, or attach the candidate's load result to either earlier artifact
 
 ### CL-23 — Public reproducibility materials exist
 
@@ -628,10 +700,38 @@ Admitted public objects:
 - Required qualifier: it does not directly measure summarization,
   classification, safety, or a product bookmark-analysis contract
 
+### CL-28 — Current-runtime W8 load compatibility observation
+
+- Status: `READY WITH CAUSAL BOUNDARY`
+- Admitted wording: “On iOS 27 build `24A5424a`, A-W8-PUBLIC stopped during
+  `ANECCompileOffline` in two load-only invocations. The second followed a full
+  reboot request and the same device's subsequent observed reconnection;
+  A-W8-CURRENT-CANDIDATE completed one load in `41.932 s`, reached `2,737.0 MiB`
+  peak process RSS, unloaded, and exited normally.”
+- Evidence: S-W8-COMPAT-2026-08 and A-W8-CURRENT-CANDIDATE
+- Required qualifier: both the exported bytes and compiler producer changed,
+  so the contrast does not isolate an iOS, compiler, artifact, or memory cause
+- Additional boundary: no generation or Instruments trace was performed; the
+  load duration is not a generation-speed result or cold-start benchmark
+- Reboot boundary: the host command timed out while waiting for the device;
+  neither a boot-session identifier nor device uptime was captured
+
+### CL-29 — Authoring export byte identity
+
+- Status: `READY WITH SEMANTIC BOUNDARY`
+- Admitted wording: “Two exports made from the same locked inputs and recipe,
+  differing only in output directory, produced different authoring `main.mlirb`
+  SHA-256 digests: `13ba3f73…eda2c` and `12349a9a…c946`; their sizes differed by
+  four bytes.”
+- Evidence: S-W8-COMPAT-2026-08 repeated-authoring-export record
+- Interpretation: every export is assigned its own artifact identity
+- Forbidden inference: byte inequality establishes a recipe, weight,
+  graph-structure, numerical-fidelity, or generation-quality difference
+
 ## 6. Non-admitted claims
 
-The following claims are not supported by Protocol v1 and must not appear as
-findings:
+The following claims are not supported by Protocol v1 or v2 and must not
+appear as findings:
 
 - first Qwen3-1.7B Core AI conversion of any kind;
 - first Qwen3-1.7B model on Apple Silicon;
@@ -643,7 +743,12 @@ findings:
 - universal iPhone compatibility;
 - production background-execution reliability as a paper result;
 - Apple acceptance, adoption, endorsement, or commitment to merge;
-- a technical explanation for Apple PR #196's regression.
+- a technical explanation for Apple PR #196's regression;
+- a causal claim that an iOS upgrade caused the current old-AOT failures;
+- a causal claim that `coreai-build-3600.83.1` fixed a compiler defect;
+- a claim that A-W8-CURRENT-CANDIDATE has passed generation or an ANE trace;
+- a claim that its `41.932 s` load is a cold-start benchmark;
+- path-independent byte reproducibility from the two-run export check.
 
 A carefully dated novelty statement may describe this work as a reproducible,
 high-fidelity static iOS onboarding with measured ANE participation, provided
@@ -660,6 +765,7 @@ the related-work audit is refreshed immediately before submission.
 | T5 | Paired CMRC quality and uncertainty | raw JSONL, scorer, `quality-comparison.json` | CL-12–CL-14 | Recompute from raw files; compare byte-for-byte with published JSON |
 | T6 | Bundle size and RSS | artifact manifests and fixed-hash speed report | CL-15, CL-16 | Parse source values into normalized JSON; never hand-copy into manuscript |
 | T7 | Workload latency and throughput | fixed-hash `docs/speed-result.md` | CL-17–CL-20 | Deterministically extract all accepted sample rows, then derive medians |
+| T8 | Post-review W8 load compatibility | `results/w8-aot-compatibility-evidence.json` | CL-28, CL-29 | Generate from the hash-locked load-only and repeated-export records; preserve the causal boundary |
 
 ## 8. Figure evidence map
 
@@ -697,7 +803,7 @@ Required before manuscript numbers are frozen:
   to the published quality JSON.
 - [x] Wrote and tested a deterministic extractor for the fixed-hash speed
   report; all accepted sample rows and disclosed exclusions were retained.
-- [x] Generated normalized, machine-readable inputs for Tables T2–T7.
+- [x] Generated normalized, machine-readable inputs for Tables T2–T8.
 - [x] Generated Figures F3–F5 from the normalized inputs and visually inspected
   the rendered SVGs.
 - [x] Refreshed Apple and related-work status on 2026-08-28 and froze the
@@ -705,12 +811,15 @@ Required before manuscript numbers are frozen:
 - [x] Ran the final sentence-level claim audit recorded in
   `manuscript/CLAIM_AUDIT.md`; the mechanical audit also passed.
 
-These verification steps do not create new model outputs or device
-measurements.
+The Protocol v1 reconstruction pipeline performs no model inference or device
+measurement. The separately labeled Protocol v2 compatibility diagnostic did
+create one new authoring/AOT candidate and one new load-only device
+observation; it remains outside the historical A/B and speed datasets.
 
 ## 10. Amendment rule
 
 Corrections to URLs, hashes, or evidence descriptions may update this index in
 Git with an explicit commit message. Admitting a new dataset, model output,
-device measurement, artifact, or central claim requires a protocol amendment
-before the new evidence is viewed as part of the report.
+device measurement, artifact, or central claim requires an explicit protocol
+amendment. Protocol v2 is a retrospective post-review amendment and must not
+be described as preregistration.

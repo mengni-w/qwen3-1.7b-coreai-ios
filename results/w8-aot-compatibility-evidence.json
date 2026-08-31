@@ -1,0 +1,317 @@
+{
+  "schemaVersion": 1,
+  "documentStatus": "publication-ready-evidence-summary",
+  "purpose": "Untimed W8 AOT load-compatibility evidence; this document contains no generation-speed result.",
+  "classificationPolicy": {
+    "observed": "Directly recorded by the export, compilation, device-load, or host-observation process.",
+    "inference": "An interpretation constrained by the observations and not a controlled causal result."
+  },
+  "testEnvironment": {
+    "classification": "observed",
+    "device": {
+      "productType": "iPhone16,1",
+      "marketingClass": "iPhone 15 Pro",
+      "reality": "physical"
+    },
+    "operatingSystem": {
+      "version": "27.0",
+      "build": "24A5424a"
+    },
+    "applicationBuildToolchain": {
+      "xcodeBuild": "27A5252f",
+      "iphoneOSSDKBuild": "24A5422a"
+    }
+  },
+  "currentToolchainArtifactGeneration": {
+    "classification": "observed",
+    "lockedInputs": {
+      "baseModel": "Qwen/Qwen3-1.7B",
+      "baseModelRevision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+      "appleCoreAIModelsCommit": "04a3fd6cfe9bfae9cf05b1f246cf915d930d1c0a",
+      "appliedPatchSHA256": "bc8f135d5637d629beac727e4d10b0b6e909ebcc77206c39c971d8967d4360d4",
+      "frozenRecipeSHA256": "dab03ae1dd6c6290a7964e05ebcda7fe027c2bb240174fcf034e64a376be9d72"
+    },
+    "resolvedConfiguration": {
+      "platform": "iOS",
+      "maximumContextLength": 4096,
+      "computePrecision": "float16",
+      "weightCompression": "W8 per tensor",
+      "palettizationClusterDimension": 1,
+      "palettizedLayerCount": 196,
+      "embeddingQuantizationEnabled": true
+    },
+    "repeatedAuthoringExports": {
+      "controlledDifference": "output directory only",
+      "first": {
+        "mainMLIRBSHA256": "13ba3f73fcb7e090cd6ba1ca14b6b8903516ab608d451e94b9cdd750cfceda2c",
+        "mainMLIRBBytes": 1739655751,
+        "elapsedSeconds": 174.24
+      },
+      "second": {
+        "mainMLIRBSHA256": "12349a9ad32bf2a1d2f9a6f201ffec3125c28c027786fa9925dc34669d8bc946",
+        "mainMLIRBBytes": 1739655747,
+        "elapsedSeconds": 191.72
+      },
+      "rawByteEquality": false,
+      "sizeDifferenceBytes": 4,
+      "observedConclusion": "The two exports, which used different output directories, were not byte-identical; this check does not isolate the source of the difference."
+    },
+    "neuralEngineAOT": {
+      "status": "completed",
+      "producer": "coreai-build-3600.83.1",
+      "sourceHashSHA256": "13ba3f73fcb7e090cd6ba1ca14b6b8903516ab608d451e94b9cdd750cfceda2c",
+      "compiledMainSHA256": "09f609775baa56b11ff3c91bfcb07b145930297289634fdc5514b2a5ab4dc7ca",
+      "compiledMainBytes": 313287157,
+      "completeArtifactFileListFingerprintSHA256": "182336f4654bb735bcad35e45f7832756c34469931ad96d872532dca727ebd8d",
+      "elapsedSeconds": 204.45
+    }
+  },
+  "loadCompatibilityObservations": [
+    {
+      "id": "public-w8-old-producer-load-1",
+      "classification": "observed",
+      "artifact": {
+        "repository": "massif/Qwen3-1.7B-CoreAI-ANE-W8-4K-h16p",
+        "revision": "466ebe2e5cec125fa113ea71503add41bba581a8",
+        "sourceHashSHA256": "5e885ec407f1b2690df5098d38b1bed4a3e66f4352c859fb2bb79666bc0aef73",
+        "compiledMainSHA256": "a7eefeef16708a324f9919890355eb92180ec85eef419ebd5822e8c8afd42f5f",
+        "artifactManifestSHA256": "0c7b6048e98b49911f5fc8b758667179045a5b8dbef295da0522bae222af86e3",
+        "producer": "coreai-build-3600.75.3"
+      },
+      "protocol": {
+        "operation": "load followed by immediate unload",
+        "generationPerformed": false,
+        "timedPerformanceSample": false,
+        "instrumentsTracePerformed": false,
+        "afterFullRebootRequestAndReconnectObservation": false
+      },
+      "result": {
+        "status": "failed-during-model-load",
+        "failureStage": "ANECCompileOffline",
+        "osStatus": 0,
+        "aneCompileStatus": 1,
+        "errorList": [
+          "CompilationFailure"
+        ],
+        "heapAllocationAssertion": {
+          "operation": "newHeapWithDescriptor",
+          "returnedNil": true,
+          "requestedBytes": 651558912,
+          "manualPlacement": 1
+        },
+        "terminationSignal": 6,
+        "terminalDiagnosticRecordCount": 0,
+        "generationSampleCount": 0
+      }
+    },
+    {
+      "id": "public-w8-old-producer-load-2-after-reboot",
+      "classification": "observed",
+      "artifact": {
+        "repository": "massif/Qwen3-1.7B-CoreAI-ANE-W8-4K-h16p",
+        "revision": "466ebe2e5cec125fa113ea71503add41bba581a8",
+        "sourceHashSHA256": "5e885ec407f1b2690df5098d38b1bed4a3e66f4352c859fb2bb79666bc0aef73",
+        "compiledMainSHA256": "a7eefeef16708a324f9919890355eb92180ec85eef419ebd5822e8c8afd42f5f",
+        "artifactManifestSHA256": "0c7b6048e98b49911f5fc8b758667179045a5b8dbef295da0522bae222af86e3",
+        "producer": "coreai-build-3600.75.3"
+      },
+      "protocol": {
+        "operation": "load followed by immediate unload",
+        "generationPerformed": false,
+        "timedPerformanceSample": false,
+        "instrumentsTracePerformed": false,
+        "afterFullRebootRequestAndReconnectObservation": true,
+        "rebootBoundaryEvidence": {
+          "preRequestDeviceListSHA256": "44c989461ef496e214388c7b1b27112f5343b46f8794d8a10de5fb94764e71b8",
+          "rebootCommandStdoutSHA256": "3a5deeeb5d5e2c832de057da44525ac6e4bdf91bc3153dbee84703c4f4269638",
+          "rebootCommandResultSHA256": "775fea3055cf58f3481a8c469ac689a7704e3b4d75d98c8d7ce4a3627c9131a5",
+          "postRequestDeviceListSHA256": "0973970acef6db8d9625bb0fc5d1769259a234dfe19ab47a7d36e03edd680536",
+          "subsequentInstallResultSHA256": "a10835532e686b3035d22aa6ab9011cd9ad01643bd456977a7bac9a96f08d14f",
+          "requestedStyle": "full",
+          "waitForDevice": true,
+          "timeoutSeconds": 300,
+          "commandOutcome": "timeout-while-waiting-for-device",
+          "subsequentDeviceObservation": {
+            "productType": "iPhone16,1",
+            "reality": "physical",
+            "operatingSystemBuild": "24A5424a",
+            "bootState": "booted",
+            "connectionState": "connected",
+            "lastConnectionDeltaSeconds": 720,
+            "tunnelSessionChanged": true,
+            "subsequentInstallOutcome": "success"
+          },
+          "completedRebootDirectlyVerified": false,
+          "missingDirectProof": [
+            "boot-session identifier",
+            "device uptime"
+          ],
+          "qualification": "The command result records a full-reboot request and a timeout while waiting for the device. The subsequent inventory records the same device booted and connected before install and launch; this is not an independently instrumented boot transition."
+        }
+      },
+      "result": {
+        "status": "failed-during-model-load",
+        "failureStage": "ANECCompileOffline",
+        "osStatus": 0,
+        "aneCompileStatus": 1,
+        "errorList": [
+          "CompilationFailure"
+        ],
+        "heapAllocationAssertion": {
+          "operation": "newHeapWithDescriptor",
+          "returnedNil": true,
+          "requestedBytes": 651902976,
+          "manualPlacement": 1
+        },
+        "terminationSignal": 6,
+        "terminalDiagnosticRecordCount": 0,
+        "generationSampleCount": 0
+      }
+    },
+    {
+      "id": "current-producer-w8-fresh-aot-load-1",
+      "classification": "observed",
+      "artifact": {
+        "artifactLocationAtObservation": "local-candidate",
+        "repository": null,
+        "revision": "sha256:09f609775baa56b11ff3c91bfcb07b145930297289634fdc5514b2a5ab4dc7ca",
+        "sourceHashSHA256": "13ba3f73fcb7e090cd6ba1ca14b6b8903516ab608d451e94b9cdd750cfceda2c",
+        "compiledMainSHA256": "09f609775baa56b11ff3c91bfcb07b145930297289634fdc5514b2a5ab4dc7ca",
+        "artifactManifestSHA256": "cca1e77d41e6f157e10f89e1f05c51e96966be92e7590e550e844e4178c09581",
+        "producer": "coreai-build-3600.83.1"
+      },
+      "protocol": {
+        "operation": "load followed by immediate unload",
+        "plannedLaunchCount": 1,
+        "completedLaunchCount": 1,
+        "retryPerformed": false,
+        "generationPerformed": false,
+        "timedPerformanceSample": false,
+        "instrumentsTracePerformed": false,
+        "aneExecutionMeasured": false
+      },
+      "result": {
+        "status": "passed",
+        "loadSeconds": 41.931619875,
+        "memoryAfterUnload": {
+          "peakProcessResidentMiB": 2737.046875,
+          "processResidentMiB": 236.96875
+        },
+        "unloadStatus": "completed",
+        "terminalDiagnosticRecordCount": 1,
+        "explicitANECompileOfflineFailureObserved": false,
+        "termination": {
+          "type": "normal-exit",
+          "exitCode": 0,
+          "coreDumpCreated": false
+        },
+        "generationSampleCount": 0
+      }
+    }
+  ],
+  "observedSynthesis": [
+    "The public W8 artifact produced by coreai-build-3600.75.3 failed during ANECCompileOffline in two load-only invocations in the fixed device and OS environment. The second followed a full-reboot request, a timeout while waiting for the device, and a subsequent observation that the same phone was again booted and connected before install and launch.",
+    "Both explicit failures reported a nil heap allocation for requests of approximately 651.6 to 651.9 MB and terminated with signal 6 before a terminal diagnostic record was emitted.",
+    "The W8 AOT produced by coreai-build-3600.83.1 completed its single load-and-immediate-unload invocation in 41.931619875 seconds, emitted one passing record, and exited with code 0.",
+    "The same passing record reported 2737.046875 MiB peak process resident memory and 236.96875 MiB process resident memory after unload.",
+    "Two authoring exports made with the same locked inputs and parameters, differing only in output directory, produced different raw main.mlirb hashes and sizes that differed by four bytes.",
+    "No compatibility invocation performed generation or contributed a speed sample."
+  ],
+  "interpretation": {
+    "classification": "inference",
+    "supported": [
+      "The current-producer AOT identified by compiledMainSHA256 09f609775baa56b11ff3c91bfcb07b145930297289634fdc5514b2a5ab4dc7ca can load and unload in the tested device and OS environment.",
+      "The outcome difference between the old public artifact and the current-producer candidate is consistent with an artifact/runtime compatibility boundary and justifies collecting replacement measurements with the loadable candidate."
+    ],
+    "limitations": [
+      "The old public artifact and the passing candidate differ in both authoring-model byte identity and compiler producer, so the observations do not isolate either change as causal.",
+      "The repeated exports used different output directories and produced different raw bytes. This check does not determine whether the difference arose from path metadata or another source; a main.mlirb hash mismatch alone therefore does not establish a recipe, weight, graph-structure, or numerical mismatch.",
+      "There is no controlled same-artifact comparison across operating-system builds, no compiler-by-operating-system matrix, and only one load invocation of the current-producer candidate.",
+      "A nil heap-allocation assertion records the immediate failure mechanism but does not establish that system-wide physical memory was insufficient.",
+      "The measured load duration is a diagnostic field and must not be reported as a generation-speed sample."
+    ],
+    "notSupported": [
+      "A causal claim that an operating-system upgrade produced the old-artifact failures",
+      "A causal claim that changing only the Core AI compiler producer restored compatibility",
+      "A claim that every artifact produced by coreai-build-3600.75.3 is incompatible with iOS build 24A5424a",
+      "A claim that total device memory was insufficient",
+      "A claim that the passing candidate is byte-identical to the historical public authoring model"
+    ]
+  },
+  "checksumFieldSemantics": {
+    "sourceHashSHA256": "SHA-256 identity of the authoring-model main.mlirb recorded by the AOT metadata; it is not the digest of the compiled main file.",
+    "compiledMainSHA256": "SHA-256 of the compiled .aimodelc main-h16p.mlirb; the candidate main.hash contained the same digest bytes.",
+    "artifactManifestSHA256": "SHA-256 of the benchmark artifact manifest that enumerates artifact files, sizes, and per-file hashes; it is not a whole-directory byte digest.",
+    "completeArtifactFileListFingerprintSHA256": "Reported SHA-256 fingerprint of the complete AOT directory file list and its file identities; it is distinct from compiledMainSHA256.",
+    "appliedPatchSHA256": "SHA-256 of the patch applied to the locked Apple coreai-models source tree.",
+    "frozenRecipeSHA256": "SHA-256 of the exact frozen export recipe."
+  },
+  "sanitization": {
+    "classification": "observed",
+    "statement": "The public event-level evidence omits unique device identifiers, device nicknames, serial numbers, ECIDs, UDIDs, network addresses, application-container paths, process identifiers, audit tokens, signing-team identifiers, signing identities, private Apple developer-account identifiers, and absolute wall-clock timestamps.",
+    "sanitizedEventEvidenceIncluded": true,
+    "unsanitizedOriginalCapturesIncluded": false,
+    "publicEventEvidence": {
+      "path": "paper/evidence/w8-compatibility/sanitized-load-events.jsonl",
+      "sha256": "2b3ee7024446cdf7aae01adefb616f74f641876fbf31807b1a2f94e0d294de1d",
+      "recordCount": 4,
+      "manifestPath": "paper/evidence/w8-compatibility/MANIFEST.sha256",
+      "manifestSHA256": "3c9c72d44f6e0878ac425a9c5e302fa3cd4648c35ed28fed25bd249a1c0fcfe5",
+      "originalCaptures": "retained privately because they contain persistent device identifiers and ephemeral application paths; the sourceEvidenceDigests values identify those retained originals but do not independently prove the manual extraction mapping"
+    }
+  },
+  "sourceEvidenceDigests": [
+    {
+      "logicalName": "current-toolchain-rebuild-report",
+      "sha256": "f190513782e857a4f9c11e57c1eb2e50f7433e4084a185b5f09d0f19683bc7b9"
+    },
+    {
+      "logicalName": "current-producer-load-console-capture",
+      "sha256": "3ae74b14551ea278591db86c2428e384a80c07683b8118e90d8a285c7541d2c4"
+    },
+    {
+      "logicalName": "current-producer-load-host-result",
+      "sha256": "e130896762113bef16efabe4edb20d0cf57760c16c901bc158c072500d9464d3"
+    },
+    {
+      "logicalName": "current-producer-candidate-identity",
+      "sha256": "b0d36a287c3e5502eb6d36531d165a88701a1573f4901a577cf0f2230080887f"
+    },
+    {
+      "logicalName": "old-public-load-1-console-capture",
+      "sha256": "dd43bf640af6563629252a18ea58a8fb6bc4930f30f9c65e8aa850605a139a23"
+    },
+    {
+      "logicalName": "old-public-load-1-host-result",
+      "sha256": "d9457ef505460e0571001f0200a186da09d0ae8e1a33d20fd736752e328f2b55"
+    },
+    {
+      "logicalName": "old-public-load-2-console-capture",
+      "sha256": "ef5f5ce0b6cde99b4a13a7e5c0009dc10c649a311948731a4d2f6ef9f8090fa8"
+    },
+    {
+      "logicalName": "old-public-load-2-host-result",
+      "sha256": "60e77e615744d925812101decaa90cb9aab8f76d6003734dd743c095e1794430"
+    },
+    {
+      "logicalName": "old-public-load-2-pre-reboot-device-list",
+      "sha256": "44c989461ef496e214388c7b1b27112f5343b46f8794d8a10de5fb94764e71b8"
+    },
+    {
+      "logicalName": "old-public-load-2-reboot-command-result",
+      "sha256": "775fea3055cf58f3481a8c469ac689a7704e3b4d75d98c8d7ce4a3627c9131a5"
+    },
+    {
+      "logicalName": "old-public-load-2-reboot-command-stdout",
+      "sha256": "3a5deeeb5d5e2c832de057da44525ac6e4bdf91bc3153dbee84703c4f4269638"
+    },
+    {
+      "logicalName": "old-public-load-2-post-reboot-device-list",
+      "sha256": "0973970acef6db8d9625bb0fc5d1769259a234dfe19ab47a7d36e03edd680536"
+    },
+    {
+      "logicalName": "old-public-load-2-subsequent-install-result",
+      "sha256": "a10835532e686b3035d22aa6ab9011cd9ad01643bd456977a7bac9a96f08d14f"
+    }
+  ]
+}

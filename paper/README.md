@@ -22,6 +22,9 @@ in isolation.
 
 - [`REPORT_PROTOCOL_V1.md`](REPORT_PROTOCOL_V1.md) freezes the claims,
   evidence map, provenance boundaries, and writing workflow.
+- [`REPORT_PROTOCOL_V2.md`](REPORT_PROTOCOL_V2.md) separately governs the
+  post-review W8 load-compatibility observation; it is not presented as
+  preregistration or part of the historical comparison.
 - [`EVIDENCE_INDEX.md`](EVIDENCE_INDEX.md) maps every admitted manuscript claim
   to a versioned source, exact evidence object, allowed wording, and limit.
 - [`analysis/README.md`](analysis/README.md) documents the deterministic
@@ -30,6 +33,9 @@ in isolation.
 - [`evidence/fidelity-v2/README.md`](evidence/fidelity-v2/README.md) documents
   the corrected formal authoring-model fidelity run; its public summary is the
   sole numerical source for manuscript Table T3.
+- [`evidence/w8-compatibility/README.md`](evidence/w8-compatibility/README.md)
+  documents the sanitized event-level records for the post-review load-only
+  diagnostic and their boundary to the private source captures.
 - [`manuscript/qwen3-coreai-report.tex`](manuscript/qwen3-coreai-report.tex) is
   the English technical report; [`manuscript/README.md`](manuscript/README.md)
   documents its reproducible build and visual-review gates.
@@ -37,8 +43,9 @@ in isolation.
   sentence-level claim-to-evidence review.
 - [`manuscript/output/pdf/qwen3-coreai-report.pdf`](manuscript/output/pdf/qwen3-coreai-report.pdf)
   is the compiled report PDF.
-- The report reuses completed public experiments. Protocol v1 schedules no new
-  physical-device experiment.
+- The main comparison reuses completed public experiments. A later, separately
+  labeled load-only diagnostic is recorded in
+  [`W8_COMPATIBILITY_OBSERVATION_1.md`](W8_COMPATIBILITY_OBSERVATION_1.md).
 - No e1/Marker product source belongs in this repository.
 
 ## Explicit scope boundary

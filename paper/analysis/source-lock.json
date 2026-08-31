@@ -6,7 +6,13 @@
     "nltk": "3.10.0"
   },
   "localFiles": {
-    "results/fidelity-v2-summary.json": "fa2ef349a04d26cdb09686f9eb53c925b9c72c68ca7a04b1f89bbc96fcdd6cca"
+    "results/fidelity-v2-summary.json": "fa2ef349a04d26cdb09686f9eb53c925b9c72c68ca7a04b1f89bbc96fcdd6cca",
+    "results/w8-aot-compatibility-evidence.json": "baf1e717e445a56108350066cac983ad1cd0f0941af0467da7260bbc341ca68d",
+    "paper/REPORT_PROTOCOL_V2.md": "b54284270c9f9fff14beadb8f5dca01d012b0585f887c0f6f30a729bc076587f",
+    "paper/W8_COMPATIBILITY_OBSERVATION_1.md": "f5405f6adf8a2556f2ad95ee0291426dadd885e0de9f540f31e2d9f34dd67a79",
+    "paper/evidence/w8-compatibility/sanitized-load-events.jsonl": "2b3ee7024446cdf7aae01adefb616f74f641876fbf31807b1a2f94e0d294de1d",
+    "paper/evidence/w8-compatibility/README.md": "81b6d1bdc1689eae24c0e6f9db4c5e5a624d246042cde0f752d77dc8fd1c84b7",
+    "paper/evidence/w8-compatibility/MANIFEST.sha256": "3c9c72d44f6e0878ac425a9c5e302fa3cd4648c35ed28fed25bd249a1c0fcfe5"
   },
   "dataset": {
     "id": "hfl/cmrc2018",

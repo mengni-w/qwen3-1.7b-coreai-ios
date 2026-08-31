@@ -29,6 +29,7 @@ EXPECTED_GENERATED_FILES = {
         (5, "paired-quality"),
         (6, "size-rss"),
         (7, "workload-performance"),
+        (8, "w8-compatibility"),
     )),
     *(f"figures/f{i}-{name}.pdf" for i, name in (
         (1, "static-pipeline"),
@@ -360,6 +361,58 @@ def generate_tables() -> None:
             "Workload medians after one warm-up and three accepted samples. Near-4K decode rate is omitted because only nine visible tokens remained.",
             "tab:workload-performance",
             "CL-17,CL-18,CL-19,CL-20",
+            body,
+        ),
+    )
+
+    t8 = read_json(EVIDENCE / "tables" / "t8-w8-compatibility.json")
+    old = t8["oldPublicArtifact"]
+    current = t8["currentCandidate"]
+    compatibility_rows = [
+        (
+            "Earlier public AOT",
+            f'{old["producer"]}; {old["compiledMainSHA256"][:12]}...',
+            str(old["attempts"]),
+            (
+                "Both stopped during ANECCompileOffline; the second followed a "
+                "full-reboot request and observed reconnection"
+            ),
+        ),
+        (
+            "Current-toolchain candidate",
+            f'{current["producer"]}; {current["compiledMainSHA256"][:12]}...',
+            str(current["attempts"]),
+            (
+                f'Load {current["loadSeconds"]:.3f} s; peak process RSS '
+                f'{current["peakProcessResidentMiB"]:,.1f} MiB; unload completed; exit 0'
+            ),
+        ),
+    ]
+    body = "\n".join(
+        [
+            r"\begin{tabularx}{\textwidth}{@{}p{0.20\textwidth}p{0.25\textwidth}p{0.08\textwidth}X@{}}",
+            r"\toprule",
+            r"Artifact & Producer; compiled-main SHA & Loads & Observation \\",
+            r"\midrule",
+            *[
+                f"{tex(artifact)} & {tex(identity)} & {tex(attempts)} & {tex(observation)} \\\\"
+                for artifact, identity, attempts, observation in compatibility_rows
+            ],
+            r"\bottomrule",
+            r"\end{tabularx}",
+        ]
+    )
+    write(
+        out / "t8-w8-compatibility.tex",
+        table_document(
+            (
+                "Supplementary load-only compatibility observations on one iPhone 15 Pro "
+                "running iOS 27 build 24A5424a. The candidate result is not a cold-start "
+                "benchmark, generation test, or Instruments trace; cache state was "
+                "uncontrolled, and artifact bytes and compiler producer both changed."
+            ),
+            "tab:w8-compatibility",
+            "CL-28,CL-29",
             body,
         ),
     )

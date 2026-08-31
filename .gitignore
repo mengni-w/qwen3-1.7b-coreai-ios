@@ -27,3 +27,5 @@ ModelBundle/
 *.trace
 *.xcresult
 *.log
+
+paper/manuscript/output/arxiv/

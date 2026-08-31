@@ -19,24 +19,17 @@
 | W8 tuning (6 cases) | 0.997300 | 0.963419 | 98.96% | 0.004190 | pass |
 | W8 holdout (4 cases) | 0.996897 | 0.953391 | 96.97% | 0.008880 | pass |
 
-The W8 mechanism was selected through a quality gate, not a successful
-generation smoke. Uniform and mixed W4/W8 candidates were evaluated and
-rejected; the historical selection record reports representative candidate
-mean cosine values from 0.856886 to 0.981232. The final mechanism was then
-locked.
+Candidate selection used authoring-model fidelity metrics rather than
+generation-only smoke tests. Uniform and mixed W4/W8 candidates were rejected;
+representative mean-cosine values ranged from 0.856886 to 0.981232. All ten
+frozen inputs were evaluated for both the reference and W8 models. The reported
+metrics supersede the older W8 values in `results/quality-summary.json`.
 
-The table reports the corrected formal fidelity-v2 run. It evaluated the fixed
-mechanism on six tuning and four holdout inputs and completed all ten reference,
-candidate, and comparison cases. The older `results/quality-summary.json`
-remains selection history, but its W8 metrics are superseded by
-`results/fidelity-v2-summary.json`.
+These are authoring-model logits/NLL comparisons under frozen inputs, not
+compiled-device logits or a downstream capability benchmark. Full WikiText-2
+perplexity was not evaluated.
 
-These are authoring-model logits/NLL comparisons under frozen inputs. They are
-not compiled-device logits or a substitute for a complete public benchmark
-suite. Full WikiText-2 perplexity was not completed and is intentionally not
-presented as a pass.
-
-## Standalone physical-device suite
+## Standalone physical-device suite (A-W8-HISTORICAL)
 
 Four complete six-case suites passed. The final suite included:
 
@@ -57,7 +50,7 @@ Final standalone measurements:
 - minimum observed process-available memory: 837.9 MiB;
 - hard failures across the four complete suites: zero.
 
-## Product-runtime confirmation
+## Historical product-runtime confirmation (A-W8-HISTORICAL)
 
 The frozen artifact later completed a product-runtime acceptance suite using a
 single shared engine and real `LanguageModelSession` calls:
@@ -81,7 +74,7 @@ The product runtime is not distributed here. These results are supporting
 evidence for the same frozen model artifact, not a claim that the companion
 implements a production service.
 
-## AOT and execution
+## Historical AOT and trace evidence (A-W8-HISTORICAL)
 
 - 34 AOT functions;
 - static-shape, chunked execution;
@@ -92,3 +85,16 @@ implements a production service.
 
 The supported conclusion is Neural Engine participation. Exclusive ANE
 execution is not claimed.
+
+## Supplementary load compatibility observation (A-W8-PUBLIC vs A-W8-CURRENT-CANDIDATE)
+
+On iOS 27 build `24A5424a`, `A-W8-PUBLIC` failed during
+`ANECCompileOffline` in both load-only attempts. The second followed a reboot
+request whose completion was not independently verified.
+
+`A-W8-CURRENT-CANDIDATE` completed one load in 41.932 seconds, reached 2,737.0
+MiB peak process RSS, unloaded, and exited normally. No generation or trace was
+performed, and a cold-cache state was not established. Because both the
+artifact bytes and compiler producer changed, these outcomes do not identify
+whether the OS/runtime, compiler, export, or memory state caused the failures.
+The machine-readable record is `results/w8-aot-compatibility-evidence.json`.

@@ -1,10 +1,18 @@
 {
+  "incorporatesPostReviewAuthoringArtifactEvidence": true,
+  "incorporatesPostReviewDeviceEvidence": true,
   "localFileSHA256": {
-    "results/fidelity-v2-summary.json": "fa2ef349a04d26cdb09686f9eb53c925b9c72c68ca7a04b1f89bbc96fcdd6cca"
+    "paper/REPORT_PROTOCOL_V2.md": "b54284270c9f9fff14beadb8f5dca01d012b0585f887c0f6f30a729bc076587f",
+    "paper/W8_COMPATIBILITY_OBSERVATION_1.md": "f5405f6adf8a2556f2ad95ee0291426dadd885e0de9f540f31e2d9f34dd67a79",
+    "paper/evidence/w8-compatibility/MANIFEST.sha256": "3c9c72d44f6e0878ac425a9c5e302fa3cd4648c35ed28fed25bd249a1c0fcfe5",
+    "paper/evidence/w8-compatibility/README.md": "81b6d1bdc1689eae24c0e6f9db4c5e5a624d246042cde0f752d77dc8fd1c84b7",
+    "paper/evidence/w8-compatibility/sanitized-load-events.jsonl": "2b3ee7024446cdf7aae01adefb616f74f641876fbf31807b1a2f94e0d294de1d",
+    "results/fidelity-v2-summary.json": "fa2ef349a04d26cdb09686f9eb53c925b9c72c68ca7a04b1f89bbc96fcdd6cca",
+    "results/w8-aot-compatibility-evidence.json": "baf1e717e445a56108350066cac983ad1cd0f0941af0467da7260bbc341ca68d"
   },
-  "newDeviceMeasurementsCreated": false,
-  "newModelOutputsCreated": false,
-  "pipelineSHA256": "b5ca8c5b99c714da084728912ce88b05f14ef0b06e60aec8e6633139b46c0de6",
+  "pipelinePerformedDeviceMeasurement": false,
+  "pipelinePerformedModelInference": false,
+  "pipelineSHA256": "0714b7aba33e02d7e45c9cb2edfa02eac0850f3fec2a41ca9035bc1ae5b5a5bb",
   "publicStatusLockSHA256": "12b0ed2caf30e1f75e109bac404b8106d5b26ff6242d51588e7dd7fb10595f69",
   "repositoryCommits": {
     "comparison": "34a4c08a9282bd076b8b5fe154c5507e6a8b3774",
@@ -15,5 +23,5 @@
     "python": "3.11.15"
   },
   "schemaVersion": 1,
-  "sourceLockSHA256": "ef9784fdbff411411ca82131ca7e799b535257a54bbea147fa2c3d9f0d400350"
+  "sourceLockSHA256": "eb436929ccde86ca9d371b53d975697f05930b25388ce221abd955763f376fd8"
 }

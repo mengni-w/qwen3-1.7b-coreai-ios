@@ -19,6 +19,13 @@ GENERATED = ROOT / "manuscript" / "generated"
 MANIFEST = GENERATED / "MANIFEST.sha256"
 QUALITY_ANALYSIS = ROOT / "analysis" / "generated" / "quality-analysis-v2.json"
 FIDELITY_TABLE = ROOT / "analysis" / "generated" / "tables" / "t3-w8-fidelity.json"
+COMPATIBILITY_TABLE = (
+    ROOT / "analysis" / "generated" / "tables" / "t8-w8-compatibility.json"
+)
+COMPATIBILITY_TEX = GENERATED / "tables" / "t8-w8-compatibility.tex"
+SOURCE_LOCK = ROOT / "analysis" / "source-lock.json"
+REPORT_PROTOCOL_V2 = ROOT / "REPORT_PROTOCOL_V2.md"
+W8_COMPATIBILITY_OBSERVATION = ROOT / "W8_COMPATIBILITY_OBSERVATION_1.md"
 
 
 class AuditError(RuntimeError):
@@ -75,6 +82,7 @@ def verify_generated_manifest() -> None:
             (5, "paired-quality"),
             (6, "size-rss"),
             (7, "workload-performance"),
+            (8, "w8-compatibility"),
         )),
         *(f"figures/f{i}-{name}.pdf" for i, name in (
             (1, "static-pipeline"),
@@ -167,9 +175,104 @@ def verify_fidelity_headline_numbers(
     )
 
 
+def verify_w8_compatibility_claims(
+    manuscript: str,
+    compatibility_path: Path = COMPATIBILITY_TABLE,
+) -> None:
+    require(compatibility_path.is_file(), "missing generated W8 compatibility table")
+    require(COMPATIBILITY_TEX.is_file(), "missing rendered W8 compatibility table")
+    visible_text = (
+        manuscript + "\n" + COMPATIBILITY_TEX.read_text(encoding="utf-8")
+    )
+    try:
+        compatibility = json.loads(compatibility_path.read_text(encoding="utf-8"))
+        old = compatibility["oldPublicArtifact"]
+        current = compatibility["currentCandidate"]
+        repeated = compatibility["repeatedAuthoringExports"]
+        boundary = compatibility["claimBoundary"]
+    except (json.JSONDecodeError, KeyError, TypeError) as error:
+        raise AuditError(f"invalid generated W8 compatibility table: {error}") from error
+
+    require(old["attempts"] == 2, "compatibility evidence must retain two old-AOT attempts")
+    require(
+        old["failureStage"] == "ANECCompileOffline",
+        "compatibility evidence has an unexpected old-AOT failure stage",
+    )
+    require(
+        old["afterFullRebootRequestAndReconnectAttemptIncluded"] is True,
+        "compatibility evidence omits the reboot-request/reconnect boundary",
+    )
+    require(
+        old["completedRebootDirectlyVerified"] is False,
+        "compatibility evidence overstates direct verification of reboot completion",
+    )
+    require(current["attempts"] == 1, "candidate compatibility evidence must remain one load")
+    require(
+        boundary == {
+            "loadOnly": True,
+            "generationPerformed": False,
+            "instrumentsTracePerformed": False,
+            "coldStartBenchmarkClaimed": False,
+            "causeIsolated": False,
+            "performanceComparisonClaimed": False,
+        },
+        "compatibility claim boundary drift",
+    )
+    require(repeated["rawByteEquality"] is False, "repeat exports became byte-identical")
+
+    expected_fragments = {
+        "old producer": old["producer"],
+        "current producer": current["producer"],
+        "current source hash": current["sourceHashSHA256"],
+        "current compiled-main hash": current["compiledMainSHA256"],
+        "first repeated-export hash": repeated["firstMainMLIRBSHA256"],
+        "second repeated-export hash": repeated["secondMainMLIRBSHA256"],
+        "load duration": f'{current["loadSeconds"]:.3f} s',
+        "peak process RSS": f'{current["peakProcessResidentMiB"]:,.1f} MiB',
+    }
+    for label, fragment in expected_fragments.items():
+        require(
+            fragment in visible_text,
+            f"manuscript W8 compatibility {label} drift: expected {fragment!r}",
+        )
+
+    lowered = visible_text.lower()
+    for phrase in (
+        "load-only",
+        "precludes causal attribution",
+        "no generation or instruments trace",
+        "not a cold-start benchmark",
+        "full-reboot request",
+        "timed out while waiting for the device",
+    ):
+        require(phrase in lowered, f"compatibility limitation is missing: {phrase}")
+
+
 def audit() -> None:
-    for path in (MANUSCRIPT, BIBLIOGRAPHY, LEDGER, AUDIT):
+    for path in (
+        MANUSCRIPT,
+        BIBLIOGRAPHY,
+        LEDGER,
+        AUDIT,
+        SOURCE_LOCK,
+        REPORT_PROTOCOL_V2,
+        W8_COMPATIBILITY_OBSERVATION,
+    ):
         require(path.is_file(), f"missing required file: {path.relative_to(ROOT)}")
+
+    source_lock = json.loads(SOURCE_LOCK.read_text(encoding="utf-8"))
+    for relative, path in (
+        ("paper/REPORT_PROTOCOL_V2.md", REPORT_PROTOCOL_V2),
+        (
+            "paper/W8_COMPATIBILITY_OBSERVATION_1.md",
+            W8_COMPATIBILITY_OBSERVATION,
+        ),
+    ):
+        require(relative in source_lock["localFiles"], f"source lock omits {relative}")
+        require(
+            source_lock["localFiles"][relative] == sha256(path),
+            f"source lock drift: {relative}",
+        )
 
     manuscript = MANUSCRIPT.read_text(encoding="utf-8")
     bibliography = BIBLIOGRAPHY.read_text(encoding="utf-8")
@@ -218,7 +321,8 @@ def audit() -> None:
         "t4-w8-device-evidence",
         "t5-paired-quality",
         "t6-size-rss",
-        "t7-workload-performance",
+            "t7-workload-performance",
+            "t8-w8-compatibility",
     )
     for name in required_inputs:
         require(name in manuscript, f"manuscript omits generated table: {name}")
@@ -238,6 +342,7 @@ def audit() -> None:
 
     verify_cmrc_headline_numbers(manuscript)
     verify_fidelity_headline_numbers(manuscript)
+    verify_w8_compatibility_claims(manuscript)
 
     lowered = manuscript.lower()
     forbidden_positive_patterns = {

@@ -1,0 +1,61 @@
+{
+  "claimBoundary": {
+    "causeIsolated": false,
+    "coldStartBenchmarkClaimed": false,
+    "generationPerformed": false,
+    "instrumentsTracePerformed": false,
+    "loadOnly": true,
+    "performanceComparisonClaimed": false
+  },
+  "currentCandidate": {
+    "artifactManifestSHA256": "cca1e77d41e6f157e10f89e1f05c51e96966be92e7590e550e844e4178c09581",
+    "attempts": 1,
+    "compiledMainSHA256": "09f609775baa56b11ff3c91bfcb07b145930297289634fdc5514b2a5ab4dc7ca",
+    "completeArtifactFileListFingerprintSHA256": "182336f4654bb735bcad35e45f7832756c34469931ad96d872532dca727ebd8d",
+    "exitCode": 0,
+    "loadSeconds": 41.931619875,
+    "peakProcessResidentMiB": 2737.046875,
+    "processResidentAfterUnloadMiB": 236.96875,
+    "producer": "coreai-build-3600.83.1",
+    "sourceHashSHA256": "13ba3f73fcb7e090cd6ba1ca14b6b8903516ab608d451e94b9cdd750cfceda2c",
+    "unloadStatus": "completed"
+  },
+  "environment": {
+    "applicationBuildToolchain": {
+      "iphoneOSSDKBuild": "24A5422a",
+      "xcodeBuild": "27A5252f"
+    },
+    "classification": "observed",
+    "device": {
+      "marketingClass": "iPhone 15 Pro",
+      "productType": "iPhone16,1",
+      "reality": "physical"
+    },
+    "operatingSystem": {
+      "build": "24A5424a",
+      "version": "27.0"
+    }
+  },
+  "oldPublicArtifact": {
+    "afterFullRebootRequestAndReconnectAttemptIncluded": true,
+    "artifactManifestSHA256": "0c7b6048e98b49911f5fc8b758667179045a5b8dbef295da0522bae222af86e3",
+    "attempts": 2,
+    "compiledMainSHA256": "a7eefeef16708a324f9919890355eb92180ec85eef419ebd5822e8c8afd42f5f",
+    "completedRebootDirectlyVerified": false,
+    "failureStage": "ANECCompileOffline",
+    "producer": "coreai-build-3600.75.3",
+    "revision": "466ebe2e5cec125fa113ea71503add41bba581a8",
+    "sourceHashSHA256": "5e885ec407f1b2690df5098d38b1bed4a3e66f4352c859fb2bb79666bc0aef73"
+  },
+  "repeatedAuthoringExports": {
+    "firstMainMLIRBSHA256": "13ba3f73fcb7e090cd6ba1ca14b6b8903516ab608d451e94b9cdd750cfceda2c",
+    "rawByteEquality": false,
+    "secondMainMLIRBSHA256": "12349a9ad32bf2a1d2f9a6f201ffec3125c28c027786fa9925dc34669d8bc946",
+    "sizeDifferenceBytes": 4
+  },
+  "schemaVersion": 1,
+  "source": {
+    "path": "results/w8-aot-compatibility-evidence.json",
+    "sha256": "baf1e717e445a56108350066cac983ad1cd0f0941af0467da7260bbc341ca68d"
+  }
+}

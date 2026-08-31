@@ -24,6 +24,11 @@ ANALYSIS_DIR = ROOT / "analysis"
 LOCK_PATH = ANALYSIS_DIR / "source-lock.json"
 PUBLIC_STATUS_PATH = ANALYSIS_DIR / "public-status-v1.json"
 DEFAULT_GENERATED_DIR = ANALYSIS_DIR / "generated"
+W8_COMPATIBILITY_EVIDENCE_DIR = ROOT / "evidence" / "w8-compatibility"
+W8_COMPATIBILITY_EVENTS_PATH = (
+    W8_COMPATIBILITY_EVIDENCE_DIR / "sanitized-load-events.jsonl"
+)
+W8_COMPATIBILITY_MANIFEST_PATH = W8_COMPATIBILITY_EVIDENCE_DIR / "MANIFEST.sha256"
 
 
 class PipelineError(RuntimeError):
@@ -166,6 +171,42 @@ def load_unique_jsonl(path: Path) -> dict[str, dict]:
                 raise PipelineError(f"Duplicate result ID in {path}: {sample_id}")
             records[sample_id] = record
     return records
+
+
+def validate_w8_compatibility_evidence_manifest() -> None:
+    expected_files = {"README.md", "sanitized-load-events.jsonl"}
+    actual_files = {
+        path.relative_to(W8_COMPATIBILITY_EVIDENCE_DIR).as_posix()
+        for path in W8_COMPATIBILITY_EVIDENCE_DIR.rglob("*")
+        if path.is_file() and path != W8_COMPATIBILITY_MANIFEST_PATH
+    }
+    if actual_files != expected_files:
+        raise PipelineError(
+            "W8 compatibility evidence inventory changed: "
+            f"unexpected={sorted(actual_files - expected_files)}, "
+            f"missing={sorted(expected_files - actual_files)}"
+        )
+
+    listed: dict[str, str] = {}
+    for line_number, line in enumerate(
+        W8_COMPATIBILITY_MANIFEST_PATH.read_text(encoding="utf-8").splitlines(),
+        start=1,
+    ):
+        match = re.fullmatch(r"([0-9a-f]{64})  ([^/]+)", line)
+        if match is None:
+            raise PipelineError(
+                f"Malformed W8 compatibility manifest line {line_number}"
+            )
+        expected_hash, relative = match.groups()
+        if relative in listed:
+            raise PipelineError(
+                f"Duplicate W8 compatibility manifest path: {relative}"
+            )
+        listed[relative] = expected_hash
+    if set(listed) != expected_files:
+        raise PipelineError("W8 compatibility manifest inventory changed")
+    for relative, expected_hash in listed.items():
+        require_hash(W8_COMPATIBILITY_EVIDENCE_DIR / relative, expected_hash)
 
 
 def validate_quality_inputs(
@@ -724,11 +765,276 @@ def generate_tables(
     w8_artifact = read_json(w8_repo / "results/artifact-summary.json")
     historical_w8_quality = read_json(w8_repo / "results/quality-summary.json")
     w8_fidelity = read_json(REPOSITORY_ROOT / "results/fidelity-v2-summary.json")
+    w8_compatibility = read_json(
+        REPOSITORY_ROOT / "results/w8-aot-compatibility-evidence.json"
+    )
+    w8_compatibility_events = load_unique_jsonl(W8_COMPATIBILITY_EVENTS_PATH)
+    validate_w8_compatibility_evidence_manifest()
     w8_device = read_json(w8_repo / "results/device-runtime-summary.json")
     int4_artifact = read_json(
         comparison_repo / "benchmarks/results/artifact-summary.json"
     )
     public_w8 = read_json(public_w8_validation)
+
+    if w8_compatibility.get("schemaVersion") != 1:
+        raise PipelineError("Unsupported W8 compatibility evidence schema")
+    expected_event_ids = {
+        "public-w8-old-producer-load-1",
+        "full-reboot-request-and-reconnect-before-public-w8-load-2",
+        "public-w8-old-producer-load-2-after-reboot",
+        "current-producer-w8-fresh-aot-load-1",
+    }
+    if set(w8_compatibility_events) != expected_event_ids:
+        raise PipelineError("Sanitized W8 compatibility event set changed")
+    public_events = w8_compatibility["sanitization"]["publicEventEvidence"]
+    if (
+        w8_compatibility["sanitization"]["sanitizedEventEvidenceIncluded"]
+        is not True
+        or w8_compatibility["sanitization"][
+            "unsanitizedOriginalCapturesIncluded"
+        ]
+        is not False
+        or public_events["path"]
+        != "paper/evidence/w8-compatibility/sanitized-load-events.jsonl"
+        or public_events["sha256"] != sha256(W8_COMPATIBILITY_EVENTS_PATH)
+        or public_events["recordCount"] != len(w8_compatibility_events)
+        or public_events["manifestPath"]
+        != "paper/evidence/w8-compatibility/MANIFEST.sha256"
+        or public_events["manifestSHA256"]
+        != sha256(W8_COMPATIBILITY_MANIFEST_PATH)
+    ):
+        raise PipelineError("Sanitized W8 compatibility evidence metadata drift")
+    required_observations = {
+        "public-w8-old-producer-load-1",
+        "public-w8-old-producer-load-2-after-reboot",
+        "current-producer-w8-fresh-aot-load-1",
+    }
+    observation_items = w8_compatibility["loadCompatibilityObservations"]
+    observation_ids = [item["id"] for item in observation_items]
+    if len(observation_ids) != len(set(observation_ids)):
+        raise PipelineError("W8 compatibility observation IDs are not unique")
+    if set(observation_ids) != required_observations:
+        raise PipelineError("W8 compatibility observation set changed")
+    observations = {item["id"]: item for item in observation_items}
+    old_first = observations["public-w8-old-producer-load-1"]
+    old_second = observations["public-w8-old-producer-load-2-after-reboot"]
+    current = observations["current-producer-w8-fresh-aot-load-1"]
+    if old_first["artifact"] != old_second["artifact"]:
+        raise PipelineError("Old-public W8 attempts do not identify one artifact")
+    raw_old_first = w8_compatibility_events["public-w8-old-producer-load-1"]
+    raw_old_second = w8_compatibility_events[
+        "public-w8-old-producer-load-2-after-reboot"
+    ]
+    raw_current = w8_compatibility_events["current-producer-w8-fresh-aot-load-1"]
+    transition = w8_compatibility_events[
+        "full-reboot-request-and-reconnect-before-public-w8-load-2"
+    ]
+    source_digest_items = w8_compatibility["sourceEvidenceDigests"]
+    source_digest_names = [item["logicalName"] for item in source_digest_items]
+    if len(source_digest_names) != len(set(source_digest_names)):
+        raise PipelineError("W8 source-evidence logical names are not unique")
+    expected_source_digest_names = {
+        "current-toolchain-rebuild-report",
+        "current-producer-load-console-capture",
+        "current-producer-load-host-result",
+        "current-producer-candidate-identity",
+        "old-public-load-1-console-capture",
+        "old-public-load-1-host-result",
+        "old-public-load-2-console-capture",
+        "old-public-load-2-host-result",
+        "old-public-load-2-pre-reboot-device-list",
+        "old-public-load-2-reboot-command-result",
+        "old-public-load-2-reboot-command-stdout",
+        "old-public-load-2-post-reboot-device-list",
+        "old-public-load-2-subsequent-install-result",
+    }
+    if set(source_digest_names) != expected_source_digest_names:
+        raise PipelineError("W8 source-evidence digest inventory changed")
+    source_digests = {
+        item["logicalName"]: item["sha256"] for item in source_digest_items
+    }
+    if any(
+        re.fullmatch(r"[0-9a-f]{64}", digest) is None
+        for digest in source_digests.values()
+    ):
+        raise PipelineError("W8 source-evidence digest is not canonical SHA-256")
+    event_source_digests = {
+        "old-public-load-1-console-capture": raw_old_first[
+            "sourceCaptureSHA256"
+        ],
+        "old-public-load-1-host-result": raw_old_first[
+            "sourceHostResultSHA256"
+        ],
+        "old-public-load-2-console-capture": raw_old_second[
+            "sourceCaptureSHA256"
+        ],
+        "old-public-load-2-host-result": raw_old_second[
+            "sourceHostResultSHA256"
+        ],
+        "current-producer-load-console-capture": raw_current[
+            "sourceCaptureSHA256"
+        ],
+        "current-producer-load-host-result": raw_current[
+            "sourceHostResultSHA256"
+        ],
+        "old-public-load-2-pre-reboot-device-list": transition[
+            "sourceDigests"
+        ]["preRequestDeviceListSHA256"],
+        "old-public-load-2-reboot-command-result": transition[
+            "sourceDigests"
+        ]["rebootCommandHostResultSHA256"],
+        "old-public-load-2-reboot-command-stdout": transition[
+            "sourceDigests"
+        ]["rebootCommandStdoutSHA256"],
+        "old-public-load-2-post-reboot-device-list": transition[
+            "sourceDigests"
+        ]["postRequestDeviceListSHA256"],
+        "old-public-load-2-subsequent-install-result": transition[
+            "sourceDigests"
+        ]["subsequentInstallHostResultSHA256"],
+    }
+    if any(
+        source_digests[name] != digest
+        for name, digest in event_source_digests.items()
+    ):
+        raise PipelineError("Sanitized W8 source-evidence digest mapping drift")
+    summary_environment = w8_compatibility["testEnvironment"]
+    expected_event_environment = {
+        "productType": summary_environment["device"]["productType"],
+        "reality": summary_environment["device"]["reality"],
+        "operatingSystemVersion": summary_environment["operatingSystem"]["version"],
+        "operatingSystemBuild": summary_environment["operatingSystem"]["build"],
+    }
+    for raw in (raw_old_first, raw_old_second, raw_current):
+        if raw["deviceRef"] != "test-device-1":
+            raise PipelineError("Sanitized W8 device binding drift")
+        if raw["environment"] != expected_event_environment:
+            raise PipelineError("Sanitized W8 environment binding drift")
+    for summary, raw in (
+        (old_first, raw_old_first),
+        (old_second, raw_old_second),
+        (current, raw_current),
+    ):
+        for field in (
+            "revision",
+            "sourceHashSHA256",
+            "compiledMainSHA256",
+            "artifactManifestSHA256",
+            "producer",
+        ):
+            if summary["artifact"][field] != raw["artifact"][field]:
+                raise PipelineError(
+                    f"Sanitized W8 compatibility artifact drift: {summary['id']}/{field}"
+                )
+        if summary["protocol"]["generationPerformed"] is not False:
+            raise PipelineError("W8 compatibility summary contains generation")
+        if raw["protocol"]["generationPerformed"] is not False:
+            raise PipelineError("Sanitized W8 compatibility event contains generation")
+        if summary["protocol"]["timedPerformanceSample"] is not False:
+            raise PipelineError("W8 compatibility summary contains a timing sample")
+        if raw["protocol"]["timedPerformanceSample"] is not False:
+            raise PipelineError("Sanitized W8 event contains a timing sample")
+        if summary["protocol"]["instrumentsTracePerformed"] is not False:
+            raise PipelineError("W8 compatibility summary contains an Instruments trace")
+        if raw["protocol"]["instrumentsTracePerformed"] is not False:
+            raise PipelineError("Sanitized W8 event contains an Instruments trace")
+    for summary, raw in (
+        (old_first, raw_old_first),
+        (old_second, raw_old_second),
+    ):
+        result = summary["result"]
+        event = raw["consoleEvent"]
+        if (
+            result["failureStage"] != event["failureStage"]
+            or result["osStatus"] != event["osStatus"]
+            or result["aneCompileStatus"] != event["aneCompileStatus"]
+            or result["heapAllocationAssertion"] != event["heapAllocationAssertion"]
+            or result["terminationSignal"]
+            != raw["hostTermination"]["terminatingSignal"]
+        ):
+            raise PipelineError(f"Sanitized W8 failure event drift: {summary['id']}")
+    if (
+        raw_current["consoleEvent"]["status"] != "passed"
+        or raw_current["consoleEvent"]["loadSeconds"]
+        != current["result"]["loadSeconds"]
+        or raw_current["consoleEvent"]["memoryAfterUnload"]["peakResidentMiB"]
+        != current["result"]["memoryAfterUnload"]["peakProcessResidentMiB"]
+        or raw_current["consoleEvent"]["unloadStatus"]
+        != current["result"]["unloadStatus"]
+        or raw_current["hostTermination"]["exitCode"]
+        != current["result"]["termination"]["exitCode"]
+        or raw_current["protocol"]["timedPerformanceSample"] is not False
+        or raw_current["protocol"]["aneExecutionMeasured"] is not False
+        or current["protocol"]["timedPerformanceSample"] is not False
+        or current["protocol"]["instrumentsTracePerformed"] is not False
+        or raw_current["protocol"]["instrumentsTracePerformed"] is not False
+        or current["protocol"]["aneExecutionMeasured"] is not False
+        or current["protocol"]["plannedLaunchCount"] != 1
+        or current["protocol"]["completedLaunchCount"] != 1
+        or current["protocol"]["retryPerformed"] is not False
+        or raw_current["protocol"]["plannedLaunchCount"]
+        != current["protocol"]["plannedLaunchCount"]
+        or raw_current["protocol"]["completedLaunchCount"]
+        != current["protocol"]["completedLaunchCount"]
+        or raw_current["protocol"]["retryPerformed"]
+        != current["protocol"]["retryPerformed"]
+    ):
+        raise PipelineError("Sanitized current-toolchain W8 load event drift")
+    if (
+        transition["linkedLoadRecordID"] != old_second["id"]
+        or transition["deviceRef"] != "test-device-1"
+        or transition["request"]["requestedStyle"] != "full"
+        or transition["request"]["hostOutcome"] != "timeout"
+        or transition["subsequentObservation"]["postBootState"] != "booted"
+        or transition["subsequentObservation"]["postConnectionState"]
+        != "connected"
+        or transition["evidenceBoundary"]["completedRebootDirectlyVerified"]
+        is not False
+        or old_second["protocol"][
+            "afterFullRebootRequestAndReconnectObservation"
+        ]
+        is not True
+    ):
+        raise PipelineError("Sanitized W8 reboot-request boundary drift")
+    if any(
+        item["protocol"]["generationPerformed"]
+        for item in (old_first, old_second, current)
+    ):
+        raise PipelineError("Load-only compatibility evidence contains generation")
+    if any(
+        item["result"].get("failureStage") != "ANECCompileOffline"
+        for item in (old_first, old_second)
+    ):
+        raise PipelineError("Unexpected old-public W8 failure stage")
+    if current["result"]["status"] != "passed":
+        raise PipelineError("Current-toolchain W8 compatibility load did not pass")
+    generation = w8_compatibility["currentToolchainArtifactGeneration"]
+    repeated_exports = generation["repeatedAuthoringExports"]
+    current_aot = generation["neuralEngineAOT"]
+    if not (
+        repeated_exports["first"]["mainMLIRBSHA256"]
+        == current_aot["sourceHashSHA256"]
+        == current["artifact"]["sourceHashSHA256"]
+    ):
+        raise PipelineError("Current W8 authoring-model identity binding drift")
+    if (
+        current_aot["compiledMainSHA256"]
+        != current["artifact"]["compiledMainSHA256"]
+        or current_aot["producer"] != current["artifact"]["producer"]
+    ):
+        raise PipelineError("Current W8 AOT identity binding drift")
+    export_hashes_equal = (
+        repeated_exports["first"]["mainMLIRBSHA256"]
+        == repeated_exports["second"]["mainMLIRBSHA256"]
+    )
+    if repeated_exports["rawByteEquality"] != export_hashes_equal:
+        raise PipelineError("Repeated W8 export equality field drift")
+    observed_size_difference = abs(
+        repeated_exports["first"]["mainMLIRBBytes"]
+        - repeated_exports["second"]["mainMLIRBBytes"]
+    )
+    if repeated_exports["sizeDifferenceBytes"] != observed_size_difference:
+        raise PipelineError("Repeated W8 export size-difference field drift")
 
     t2 = {
         "schemaVersion": 1,
@@ -859,6 +1165,70 @@ def generate_tables(
         "p95Claimed": False,
     }
     write_json(tables_dir / "t7-workload-performance.json", t7)
+
+    t8 = {
+        "schemaVersion": 1,
+        "source": {
+            "path": "results/w8-aot-compatibility-evidence.json",
+            "sha256": sha256(
+                REPOSITORY_ROOT / "results/w8-aot-compatibility-evidence.json"
+            ),
+        },
+        "environment": w8_compatibility["testEnvironment"],
+        "oldPublicArtifact": {
+            "revision": old_first["artifact"]["revision"],
+            "sourceHashSHA256": old_first["artifact"]["sourceHashSHA256"],
+            "compiledMainSHA256": old_first["artifact"]["compiledMainSHA256"],
+            "artifactManifestSHA256": old_first["artifact"][
+                "artifactManifestSHA256"
+            ],
+            "producer": old_first["artifact"]["producer"],
+            "attempts": 2,
+            "failureStage": "ANECCompileOffline",
+            "afterFullRebootRequestAndReconnectAttemptIncluded": old_second[
+                "protocol"
+            ]["afterFullRebootRequestAndReconnectObservation"],
+            "completedRebootDirectlyVerified": old_second["protocol"][
+                "rebootBoundaryEvidence"
+            ]["completedRebootDirectlyVerified"],
+        },
+        "currentCandidate": {
+            "sourceHashSHA256": current["artifact"]["sourceHashSHA256"],
+            "compiledMainSHA256": current["artifact"]["compiledMainSHA256"],
+            "artifactManifestSHA256": current["artifact"][
+                "artifactManifestSHA256"
+            ],
+            "completeArtifactFileListFingerprintSHA256": generation[
+                "neuralEngineAOT"
+            ]["completeArtifactFileListFingerprintSHA256"],
+            "producer": current["artifact"]["producer"],
+            "attempts": current["protocol"]["completedLaunchCount"],
+            "loadSeconds": current["result"]["loadSeconds"],
+            "peakProcessResidentMiB": current["result"]["memoryAfterUnload"][
+                "peakProcessResidentMiB"
+            ],
+            "processResidentAfterUnloadMiB": current["result"][
+                "memoryAfterUnload"
+            ]["processResidentMiB"],
+            "unloadStatus": current["result"]["unloadStatus"],
+            "exitCode": current["result"]["termination"]["exitCode"],
+        },
+        "repeatedAuthoringExports": {
+            "firstMainMLIRBSHA256": repeated_exports["first"]["mainMLIRBSHA256"],
+            "secondMainMLIRBSHA256": repeated_exports["second"]["mainMLIRBSHA256"],
+            "rawByteEquality": repeated_exports["rawByteEquality"],
+            "sizeDifferenceBytes": repeated_exports["sizeDifferenceBytes"],
+        },
+        "claimBoundary": {
+            "loadOnly": True,
+            "generationPerformed": False,
+            "instrumentsTracePerformed": False,
+            "coldStartBenchmarkClaimed": False,
+            "causeIsolated": False,
+            "performanceComparisonClaimed": False,
+        },
+    }
+    write_json(tables_dir / "t8-w8-compatibility.json", t8)
     t7_rows: list[list[object]] = []
     for workload_id, workload in speed["workloads"].items():
         for variant, medians in workload["medians"].items():
@@ -1192,8 +1562,10 @@ def main() -> int:
             name: spec["commit"] for name, spec in lock["repositories"].items()
         },
         "localFileSHA256": lock["localFiles"],
-        "newModelOutputsCreated": False,
-        "newDeviceMeasurementsCreated": False,
+        "pipelinePerformedModelInference": False,
+        "pipelinePerformedDeviceMeasurement": False,
+        "incorporatesPostReviewAuthoringArtifactEvidence": True,
+        "incorporatesPostReviewDeviceEvidence": True,
     }
     write_json(generated_dir / "provenance.json", provenance)
     write_generated_manifest(generated_dir)
