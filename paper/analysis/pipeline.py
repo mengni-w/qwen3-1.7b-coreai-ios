@@ -898,8 +898,7 @@ def _validate_public_speed_bundle_inventory(
                 f"Speed-v2 evidence rejected: public file is not UTF-8 text: {relative}"
             ) from error
         _require_evidence(
-            re.search(r"/Users/|/(?:private/)?var/folders/|/tmp/", public_text)
-            is None,
+            re.search(r"/Users/|/(?:private/)?var/folders/", public_text) is None,
             f"private local path appears in public evidence: {relative}",
         )
         indexed[relative] = dict(entry)
@@ -1518,7 +1517,22 @@ def extract_speed_v2(
     summary_entry = _require_index_binding(indexed, summary_relative, summary_path)
     summary = read_json_strict(summary_path)
     _require_evidence(summary.get("runID") == run_id, "analyzer run ID mismatch")
-    _require_evidence(host.get("analysis") == summary, "host and public analyzer outputs differ")
+    host_analysis = host.get("analysis")
+    _require_evidence(isinstance(host_analysis, dict), "host analyzer record is missing")
+    _require_evidence(host_analysis.get("status") == "passed", "host analyzer did not pass")
+    _require_evidence(host_analysis.get("exitStatus") == 0, "host analyzer exit status changed")
+    _require_evidence(
+        host_analysis.get("summaryPresent") is True,
+        "host analyzer summary was not present",
+    )
+    _require_evidence(
+        host_analysis.get("summary") == "speed-v2-summary.json",
+        "host analyzer summary path changed",
+    )
+    _require_evidence(
+        host_analysis.get("summarySHA256") == summary_entry["sha256"],
+        "host analyzer summary hash differs from public evidence",
+    )
     storage = _validate_speed_v2_summary(summary, expected)
     if accepted is not None:
         _require_evidence(

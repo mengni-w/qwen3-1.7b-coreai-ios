@@ -246,7 +246,8 @@ class PublicationBundle:
         self.seal()
 
     def write_records(self) -> None:
-        write_json(self.root / "public/results/speed-v2-summary.json", self.summary)
+        summary_path = self.root / "public/results/speed-v2-summary.json"
+        write_json(summary_path, self.summary)
         host = {
             "schemaVersion": 4,
             "experiment": pipeline.SPEED_V2_ANALYSIS,
@@ -261,7 +262,13 @@ class PublicationBundle:
                 {"physicalBlock": block, "profile": profile}
                 for block, profile in pipeline.SPEED_V2_BLOCK_SCHEDULE
             ],
-            "analysis": self.summary,
+            "analysis": {
+                "exitStatus": 0,
+                "status": "passed",
+                "summary": "speed-v2-summary.json",
+                "summaryPresent": True,
+                "summarySHA256": sha256(summary_path),
+            },
         }
         write_json(self.root / "public/host/host-run-record.json", host)
 
@@ -411,6 +418,23 @@ class SpeedV2AdmissionTests(unittest.TestCase):
         self.bundle.seal()
         with self.assertRaisesRegex(pipeline.PipelineError, "private local path"):
             self.extract()
+
+    def test_host_analyzer_summary_hash_must_match_public_summary(self):
+        host_path = self.root / "public/host/host-run-record.json"
+        host = json.loads(host_path.read_text(encoding="utf-8"))
+        host["analysis"]["summarySHA256"] = "0" * 64
+        write_json(host_path, host)
+        self.bundle.seal()
+        with self.assertRaisesRegex(pipeline.PipelineError, "summary hash"):
+            self.extract()
+
+    def test_generic_tmp_path_inside_public_file_is_allowed(self):
+        (self.root / "public/README.md").write_text(
+            "build description at /tmp/speed-v2-example/build.xcbuilddata\n",
+            encoding="utf-8",
+        )
+        self.bundle.seal()
+        self.extract()
 
     def test_nonfinite_json_value_is_rejected(self):
         self.bundle.summary["profiles"]["W8_ANE"]["workloads"]["business_medium"][
