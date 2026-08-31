@@ -614,10 +614,30 @@
     "root_metadata_version": "0.2",
     "source_hash": "13ba3f73fcb7e090cd6ba1ca14b6b8903516ab608d451e94b9cdd750cfceda2c"
   },
-  "schema": "public-w8-trace-identity-v3",
+  "runtime": {
+    "base_revision": "04a3fd6cfe9bfae9cf05b1f246cf915d930d1c0a",
+    "patch_file": "paper/evidence/ane-v2/coreai-models-xcode27-beta6-compat.patch",
+    "patch_sha256": "100d8e3e0c865aa3a94e0bc96f5f202fc6581e1df029053a0f72e69198919044",
+    "patched_files": [
+      {
+        "base_sha256": "9a672d0b3c8faa200a7326a5c38df74740bd31c8f96bce12232fdc41f967ca23",
+        "patched_sha256": "fd6f9b7c7344faf9bb6e3333dc06fb9a8466f886f1d994458afb939d0762ead6",
+        "path": "swift/Sources/CoreAILanguageModels/LanguageModel/CoreAILanguageModel.swift"
+      },
+      {
+        "base_sha256": "78a426a821bd1dd4eff4a5eda1c77a72444270ec5ed2a49538113887b8c48a99",
+        "patched_sha256": "0938e55c0a5b8dc1430bb2ea87ed78795df6255a6c1c331cd55853dd09c07a1d",
+        "path": "swift/Sources/CoreAILanguageModels/VLM/CoreAIVisionLanguageModel.swift"
+      }
+    ],
+    "repository": "https://github.com/apple/coreai-models.git"
+  },
+  "schema": "public-w8-trace-identity-v4",
   "source": {
-    "amendment_file": "paper/ANE_V2_AMENDMENT_2.md",
-    "amendment_file_sha256": "1313131313131313131313131313131313131313131313131313131313131313",
+    "amendment_file": "paper/ANE_V2_AMENDMENT_3.md",
+    "amendment_file_sha256": "1414141414141414141414141414141414141414141414141414141414141414",
+    "artifact_amendment_file": "paper/ANE_V2_AMENDMENT_2.md",
+    "artifact_amendment_file_sha256": "1313131313131313131313131313131313131313131313131313131313131313",
     "git_commit": "1234567890abcdef1234567890abcdef12345678",
     "git_status_clean": true,
     "package_resolved_file": "companion/CoreAIQwen17Companion.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved",
@@ -642,6 +662,10 @@
         "sha256": "1313131313131313131313131313131313131313131313131313131313131313"
       },
       {
+        "path": "paper/ANE_V2_AMENDMENT_3.md",
+        "sha256": "1414141414141414141414141414141414141414141414141414141414141414"
+      },
+      {
         "path": "paper/evidence/ane-v2/analyze_trace.py",
         "sha256": "3333333333333333333333333333333333333333333333333333333333333333"
       },
@@ -652,6 +676,10 @@
       {
         "path": "paper/evidence/ane-v2/capture_trace.py",
         "sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+      },
+      {
+        "path": "paper/evidence/ane-v2/coreai-models-xcode27-beta6-compat.patch",
+        "sha256": "100d8e3e0c865aa3a94e0bc96f5f202fc6581e1df029053a0f72e69198919044"
       },
       {
         "path": "paper/evidence/ane-v2/download_public_w8.sh",

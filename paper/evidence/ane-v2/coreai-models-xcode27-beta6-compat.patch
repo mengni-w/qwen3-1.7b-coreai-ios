@@ -1,0 +1,46 @@
+diff --git a/swift/Sources/CoreAILanguageModels/LanguageModel/CoreAILanguageModel.swift b/swift/Sources/CoreAILanguageModels/LanguageModel/CoreAILanguageModel.swift
+index b5bd434ba0522a5e188d9f7367691d2205d28323..2ccb664c511eb6482caa707d1e873a11a6a90a80 100644
+--- a/swift/Sources/CoreAILanguageModels/LanguageModel/CoreAILanguageModel.swift
++++ b/swift/Sources/CoreAILanguageModels/LanguageModel/CoreAILanguageModel.swift
+@@ -61,7 +61,7 @@ public struct CoreAILanguageModel: LanguageModel {
+         if supportsToolCalling { caps.append(.toolCalling) }
+         if supportsReasoning { caps.append(.reasoning) }
+         if isGuidedGenerationSupported { caps.append(.guidedGeneration) }
+-        return LanguageModelCapabilities(capabilities: caps)
++        return LanguageModelCapabilities(caps)
+     }
+ 
+     public var executorConfiguration: CoreAIExecutor.Configuration {
+@@ -472,7 +472,8 @@ public struct CoreAILanguageModel: LanguageModel {
+                         output: .init(
+                             totalTokenCount: generatedTokenCount,
+                             reasoningTokenCount: reasoningTokenCount
+-                        )
++                        ),
++                        metadata: [:]
+                     )))
+ 
+             // Yield to let the engine's tokenSequence Task finish cleanup
+@@ -592,7 +593,8 @@ public struct CoreAILanguageModel: LanguageModel {
+                         output: .init(
+                             totalTokenCount: generatedTokenCount,
+                             reasoningTokenCount: 0
+-                        )
++                        ),
++                        metadata: [:]
+                     )))
+ 
+             // Yield to let the engine's tokenSequence Task finish cleanup
+diff --git a/swift/Sources/CoreAILanguageModels/VLM/CoreAIVisionLanguageModel.swift b/swift/Sources/CoreAILanguageModels/VLM/CoreAIVisionLanguageModel.swift
+index 34d26bfe1e555769c80baa605e5b053976d6a06d..b3c0d35c27421c7e1e2413bdfd45f0e49c134edd 100644
+--- a/swift/Sources/CoreAILanguageModels/VLM/CoreAIVisionLanguageModel.swift
++++ b/swift/Sources/CoreAILanguageModels/VLM/CoreAIVisionLanguageModel.swift
+@@ -29,7 +29,7 @@ public struct CoreAIVisionLanguageModel: LanguageModel {
+     public typealias Executor = CoreAIVLMExecutor
+ 
+     public var capabilities: LanguageModelCapabilities {
+-        LanguageModelCapabilities(capabilities: [.vision])
++        LanguageModelCapabilities([.vision])
+     }
+ 
+     public var executorConfiguration: CoreAIVLMExecutor.Configuration

@@ -38,11 +38,35 @@ COMPILED_BUNDLE_FILE_LIST_SHA256 = (
     "182336f4654bb735bcad35e45f7832756c34469931ad96d872532dca727ebd8d"
 )
 COREAI_SOURCE_REVISION = "04a3fd6cfe9bfae9cf05b1f246cf915d930d1c0a"
+COREAI_REPOSITORY = "https://github.com/apple/coreai-models.git"
+RUNTIME_PATCH_RELATIVE_PATH = (
+    "paper/evidence/ane-v2/coreai-models-xcode27-beta6-compat.patch"
+)
+RUNTIME_PATCH_SHA256 = "100d8e3e0c865aa3a94e0bc96f5f202fc6581e1df029053a0f72e69198919044"
+PATCHED_RUNTIME_FILES = [
+    {
+        "path": (
+            "swift/Sources/CoreAILanguageModels/LanguageModel/"
+            "CoreAILanguageModel.swift"
+        ),
+        "base_sha256": "9a672d0b3c8faa200a7326a5c38df74740bd31c8f96bce12232fdc41f967ca23",
+        "patched_sha256": "fd6f9b7c7344faf9bb6e3333dc06fb9a8466f886f1d994458afb939d0762ead6",
+    },
+    {
+        "path": (
+            "swift/Sources/CoreAILanguageModels/VLM/"
+            "CoreAIVisionLanguageModel.swift"
+        ),
+        "base_sha256": "78a426a821bd1dd4eff4a5eda1c77a72444270ec5ed2a49538113887b8c48a99",
+        "patched_sha256": "0938e55c0a5b8dc1430bb2ea87ed78795df6255a6c1c331cd55853dd09c07a1d",
+    },
+]
 MEASURED_PROMPT_SHA256 = "d975102e7856d44efc3e483a2c919e7a9d612fde515c50b110bc255a13a20f81"
 TARGET_DEVICE_IDENTIFIER_CLASS = "iPhone16,1"
 PUBLIC_BUNDLE_IDENTIFIER = "io.massif.PublicW8TraceConfirmation"
 PRIOR_AMENDMENT_RELATIVE_PATH = "paper/ANE_V2_AMENDMENT_1.md"
-AMENDMENT_RELATIVE_PATH = "paper/ANE_V2_AMENDMENT_2.md"
+ARTIFACT_AMENDMENT_RELATIVE_PATH = "paper/ANE_V2_AMENDMENT_2.md"
+AMENDMENT_RELATIVE_PATH = "paper/ANE_V2_AMENDMENT_3.md"
 PROJECT_RELATIVE_PATH = "companion/CoreAIQwen17Companion.xcodeproj/project.pbxproj"
 PACKAGE_RESOLVED_RELATIVE_PATH = (
     "companion/CoreAIQwen17Companion.xcodeproj/project.xcworkspace/"
@@ -52,7 +76,9 @@ PROTOCOL_RELATIVE_PATH = "paper/EXPERIMENT_PROTOCOL_V1.md"
 REQUIRED_SOURCE_PATHS = {
     "companion/CoreAIQwen17Companion/CoreAIQwen17CompanionApp.swift",
     PRIOR_AMENDMENT_RELATIVE_PATH,
+    ARTIFACT_AMENDMENT_RELATIVE_PATH,
     AMENDMENT_RELATIVE_PATH,
+    RUNTIME_PATCH_RELATIVE_PATH,
     "paper/evidence/ane-v2/analyze_trace.py",
     "paper/evidence/ane-v2/canonicalize_xctrace.py",
     "paper/evidence/ane-v2/capture_trace.py",
@@ -206,13 +232,18 @@ def require_utc_timestamp(value: Any, field: str) -> datetime:
 
 
 def validate_identity(identity: Any) -> None:
-    require_exact_keys(identity, {"schema", "artifact", "source", "app", "toolchain"}, "identity")
+    require_exact_keys(
+        identity,
+        {"schema", "artifact", "source", "runtime", "app", "toolchain"},
+        "identity",
+    )
     require(
-        identity.get("schema") == "public-w8-trace-identity-v3",
+        identity.get("schema") == "public-w8-trace-identity-v4",
         "identity record schema mismatch",
     )
     artifact = identity.get("artifact")
     source = identity.get("source")
+    runtime = identity.get("runtime")
     app = identity.get("app")
     toolchain = identity.get("toolchain")
     require_exact_keys(
@@ -231,10 +262,16 @@ def validate_identity(identity: Any) -> None:
             "git_commit", "git_status_clean", "project_file", "project_file_sha256",
             "package_resolved_file", "package_resolved_file_sha256", "protocol_file",
             "protocol_file_sha256", "prior_amendment_file",
-            "prior_amendment_file_sha256", "amendment_file",
+            "prior_amendment_file_sha256", "artifact_amendment_file",
+            "artifact_amendment_file_sha256", "amendment_file",
             "amendment_file_sha256", "source_files",
         },
         "identity.source",
+    )
+    require_exact_keys(
+        runtime,
+        {"repository", "base_revision", "patch_file", "patch_sha256", "patched_files"},
+        "identity.runtime",
     )
     require_exact_keys(
         app,
@@ -415,6 +452,14 @@ def validate_identity(identity: Any) -> None:
         source.get("prior_amendment_file_sha256"),
         "identity.source.prior_amendment_file_sha256",
     )
+    require(
+        source.get("artifact_amendment_file") == ARTIFACT_AMENDMENT_RELATIVE_PATH,
+        "identity source artifact-amendment path mismatch",
+    )
+    require_sha256(
+        source.get("artifact_amendment_file_sha256"),
+        "identity.source.artifact_amendment_file_sha256",
+    )
     require(source.get("amendment_file") == AMENDMENT_RELATIVE_PATH, "identity source amendment path mismatch")
     require_sha256(source.get("amendment_file_sha256"), "identity.source.amendment_file_sha256")
     files = source.get("source_files")
@@ -442,6 +487,48 @@ def validate_identity(identity: Any) -> None:
         == source["prior_amendment_file_sha256"],
         "source manifest does not bind the prior protocol amendment",
     )
+    require(
+        source_digest_by_path[ARTIFACT_AMENDMENT_RELATIVE_PATH]
+        == source["artifact_amendment_file_sha256"],
+        "source manifest does not bind the artifact protocol amendment",
+    )
+    require(
+        source_digest_by_path[RUNTIME_PATCH_RELATIVE_PATH] == RUNTIME_PATCH_SHA256,
+        "source manifest does not bind the frozen runtime patch",
+    )
+
+    require(runtime.get("repository") == COREAI_REPOSITORY, "runtime repository mismatch")
+    require(
+        runtime.get("base_revision") == COREAI_SOURCE_REVISION,
+        "runtime base revision mismatch",
+    )
+    require(
+        runtime.get("patch_file") == RUNTIME_PATCH_RELATIVE_PATH,
+        "runtime patch path mismatch",
+    )
+    require(
+        runtime.get("patch_sha256") == RUNTIME_PATCH_SHA256,
+        "runtime patch hash mismatch",
+    )
+    require(
+        runtime.get("patch_sha256") == source_digest_by_path[RUNTIME_PATCH_RELATIVE_PATH],
+        "runtime patch identity differs from the sealed source manifest",
+    )
+    patched_files = runtime.get("patched_files")
+    require(
+        isinstance(patched_files, list) and len(patched_files) == len(PATCHED_RUNTIME_FILES),
+        "runtime patched-file manifest length mismatch",
+    )
+    for index, (observed, expected) in enumerate(zip(patched_files, PATCHED_RUNTIME_FILES)):
+        require_exact_keys(
+            observed,
+            {"path", "base_sha256", "patched_sha256"},
+            f"identity.runtime.patched_files[{index}]",
+        )
+        require(
+            observed == expected,
+            f"runtime patched-file identity mismatch at index {index}",
+        )
 
     require(app.get("configuration") == "Release", "trace app must be a Release build")
     require(app.get("bundle_identifier") == PUBLIC_BUNDLE_IDENTIFIER, "trace app bundle identifier mismatch")
@@ -485,6 +572,10 @@ def validate_identity(identity: Any) -> None:
         toolchain.get("coreai_source_revision") == COREAI_SOURCE_REVISION,
         "Core AI source revision mismatch",
     )
+    require(
+        toolchain.get("coreai_source_revision") == runtime["base_revision"],
+        "toolchain and runtime Core AI revisions differ",
+    )
 
 
 def verify_current_source_identity(identity: Any, source_root: Path) -> None:
@@ -499,9 +590,16 @@ def verify_current_source_identity(identity: Any, source_root: Path) -> None:
         text=True,
     )
     require(completed.returncode == 0, "cannot resolve the current source commit")
+    current_commit = completed.stdout.strip()
+    ancestor = subprocess.run(
+        ["git", "merge-base", "--is-ancestor", source["git_commit"], current_commit],
+        cwd=source_root,
+        capture_output=True,
+        check=False,
+    )
     require(
-        completed.stdout.strip() == source["git_commit"],
-        "current source commit differs from the sealed identity",
+        ancestor.returncode == 0,
+        "sealed source commit is not an ancestor of the current source commit",
     )
 
     explicit_files = {
@@ -514,6 +612,10 @@ def verify_current_source_identity(identity: Any, source_root: Path) -> None:
         "prior_amendment_file": (
             PRIOR_AMENDMENT_RELATIVE_PATH,
             "prior_amendment_file_sha256",
+        ),
+        "artifact_amendment_file": (
+            ARTIFACT_AMENDMENT_RELATIVE_PATH,
+            "artifact_amendment_file_sha256",
         ),
         "amendment_file": (AMENDMENT_RELATIVE_PATH, "amendment_file_sha256"),
     }
@@ -532,9 +634,11 @@ def verify_current_source_identity(identity: Any, source_root: Path) -> None:
     discovered = sorted((source_root / "companion").rglob("*.swift"))
     discovered.extend(sorted((source_root / "paper/evidence/ane-v2").glob("*.py")))
     discovered.extend(sorted((source_root / "paper/evidence/ane-v2").glob("*.sh")))
+    discovered.extend(sorted((source_root / "paper/evidence/ane-v2").glob("*.patch")))
     discovered.extend(
         [
             source_root / PRIOR_AMENDMENT_RELATIVE_PATH,
+            source_root / ARTIFACT_AMENDMENT_RELATIVE_PATH,
             source_root / AMENDMENT_RELATIVE_PATH,
         ]
     )
@@ -1247,7 +1351,7 @@ def analyze(
     ]
     conclusion = PERMITTED_CONCLUSION if matched else None
     return {
-        "schema": "public-w8-ane-trace-analysis-v2",
+        "schema": "public-w8-ane-trace-analysis-v3",
         "protocol": "paper/EXPERIMENT_PROTOCOL_V1.md#3-ane-trace-confirmation",
         "protocol_amendment": AMENDMENT_RELATIVE_PATH,
         "run_uuid": run_uuid,
@@ -1323,6 +1427,10 @@ def analyze(
                 "compiled_bundle_file_list_sha256"
             ],
             "source_commit": identity["source"]["git_commit"],
+            "runtime_repository": identity["runtime"]["repository"],
+            "runtime_base_revision": identity["runtime"]["base_revision"],
+            "runtime_patch_sha256": identity["runtime"]["patch_sha256"],
+            "patched_runtime_files": identity["runtime"]["patched_files"],
             "app_bundle_identifier": identity["app"]["bundle_identifier"],
             "app_bundle_manifest_sha256": identity["app"]["bundle_manifest_sha256"],
             "xcode_build": identity["toolchain"]["xcode_build"],

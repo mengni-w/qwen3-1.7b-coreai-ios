@@ -28,6 +28,29 @@ COMPILED_BUNDLE_FILE_LIST_SHA256 = (
     "182336f4654bb735bcad35e45f7832756c34469931ad96d872532dca727ebd8d"
 )
 COREAI_SOURCE_REVISION = "04a3fd6cfe9bfae9cf05b1f246cf915d930d1c0a"
+COREAI_REPOSITORY = "https://github.com/apple/coreai-models.git"
+RUNTIME_PATCH_RELATIVE_PATH = (
+    "paper/evidence/ane-v2/coreai-models-xcode27-beta6-compat.patch"
+)
+RUNTIME_PATCH_SHA256 = "100d8e3e0c865aa3a94e0bc96f5f202fc6581e1df029053a0f72e69198919044"
+PATCHED_RUNTIME_FILES = (
+    {
+        "path": (
+            "swift/Sources/CoreAILanguageModels/LanguageModel/"
+            "CoreAILanguageModel.swift"
+        ),
+        "base_sha256": "9a672d0b3c8faa200a7326a5c38df74740bd31c8f96bce12232fdc41f967ca23",
+        "patched_sha256": "fd6f9b7c7344faf9bb6e3333dc06fb9a8466f886f1d994458afb939d0762ead6",
+    },
+    {
+        "path": (
+            "swift/Sources/CoreAILanguageModels/VLM/"
+            "CoreAIVisionLanguageModel.swift"
+        ),
+        "base_sha256": "78a426a821bd1dd4eff4a5eda1c77a72444270ec5ed2a49538113887b8c48a99",
+        "patched_sha256": "0938e55c0a5b8dc1430bb2ea87ed78795df6255a6c1c331cd55853dd09c07a1d",
+    },
+)
 PROJECT_RELATIVE_PATH = "companion/CoreAIQwen17Companion.xcodeproj/project.pbxproj"
 PACKAGE_RESOLVED_RELATIVE_PATH = (
     "companion/CoreAIQwen17Companion.xcodeproj/project.xcworkspace/"
@@ -38,7 +61,8 @@ APP_SOURCE_RELATIVE_PATH = (
 )
 PROTOCOL_RELATIVE_PATH = "paper/EXPERIMENT_PROTOCOL_V1.md"
 PRIOR_AMENDMENT_RELATIVE_PATH = "paper/ANE_V2_AMENDMENT_1.md"
-AMENDMENT_RELATIVE_PATH = "paper/ANE_V2_AMENDMENT_2.md"
+ARTIFACT_AMENDMENT_RELATIVE_PATH = "paper/ANE_V2_AMENDMENT_2.md"
+AMENDMENT_RELATIVE_PATH = "paper/ANE_V2_AMENDMENT_3.md"
 PUBLIC_BUNDLE_IDENTIFIER = "io.massif.PublicW8TraceConfirmation"
 
 
@@ -313,6 +337,7 @@ def git_identity(repo: Path) -> dict[str, Any]:
             "paper/evidence/ane-v2",
             PROTOCOL_RELATIVE_PATH,
             PRIOR_AMENDMENT_RELATIVE_PATH,
+            ARTIFACT_AMENDMENT_RELATIVE_PATH,
             AMENDMENT_RELATIVE_PATH,
         ],
         cwd=repo,
@@ -323,13 +348,28 @@ def git_identity(repo: Path) -> dict[str, Any]:
     swift_source = repo / APP_SOURCE_RELATIVE_PATH
     protocol = repo / PROTOCOL_RELATIVE_PATH
     prior_amendment = repo / PRIOR_AMENDMENT_RELATIVE_PATH
+    artifact_amendment = repo / ARTIFACT_AMENDMENT_RELATIVE_PATH
     amendment = repo / AMENDMENT_RELATIVE_PATH
+    runtime_patch = repo / RUNTIME_PATCH_RELATIVE_PATH
     require(project.is_file(), f"missing project file: {project}")
+    require(
+        f'repositoryURL = "{COREAI_REPOSITORY}";' in project.read_text(encoding="utf-8"),
+        "Xcode project Core AI repository URL mismatch",
+    )
     require(package_resolved.is_file(), f"missing Package.resolved: {package_resolved}")
     require(swift_source.is_file(), f"missing instrumented source: {swift_source}")
     require(protocol.is_file(), f"missing experiment protocol: {protocol}")
     require(prior_amendment.is_file(), f"missing prior protocol amendment: {prior_amendment}")
+    require(
+        artifact_amendment.is_file(),
+        f"missing artifact protocol amendment: {artifact_amendment}",
+    )
     require(amendment.is_file(), f"missing protocol amendment: {amendment}")
+    require(
+        runtime_patch.is_file() and not runtime_patch.is_symlink(),
+        f"missing regular runtime patch: {runtime_patch}",
+    )
+    require(sha256_file(runtime_patch) == RUNTIME_PATCH_SHA256, "runtime patch hash mismatch")
     resolved = json.loads(package_resolved.read_text(encoding="utf-8"))
     coreai_pins = [
         pin
@@ -344,7 +384,7 @@ def git_identity(repo: Path) -> dict[str, Any]:
     source_paths = sorted((repo / "companion").rglob("*.swift"))
     source_paths.extend(sorted((repo / "paper/evidence/ane-v2").glob("*.py")))
     source_paths.extend(sorted((repo / "paper/evidence/ane-v2").glob("*.sh")))
-    source_paths.extend([prior_amendment, amendment])
+    source_paths.extend([prior_amendment, artifact_amendment, amendment, runtime_patch])
     source_paths.sort(key=lambda path: path.relative_to(repo).as_posix())
     require(swift_source in source_paths, "instrumented Swift source was not discovered")
     return {
@@ -358,6 +398,8 @@ def git_identity(repo: Path) -> dict[str, Any]:
         "protocol_file_sha256": sha256_file(protocol),
         "prior_amendment_file": PRIOR_AMENDMENT_RELATIVE_PATH,
         "prior_amendment_file_sha256": sha256_file(prior_amendment),
+        "artifact_amendment_file": ARTIFACT_AMENDMENT_RELATIVE_PATH,
+        "artifact_amendment_file_sha256": sha256_file(artifact_amendment),
         "amendment_file": AMENDMENT_RELATIVE_PATH,
         "amendment_file_sha256": sha256_file(amendment),
         "source_files": [
@@ -367,6 +409,69 @@ def git_identity(repo: Path) -> dict[str, Any]:
             }
             for path in source_paths
         ],
+    }
+
+
+def runtime_identity(repo: Path, checkout: Path) -> dict[str, Any]:
+    require(checkout.is_dir() and not checkout.is_symlink(), "Core AI checkout is invalid")
+    patch = repo / RUNTIME_PATCH_RELATIVE_PATH
+    require(
+        patch.is_file() and not patch.is_symlink(),
+        "frozen Core AI runtime patch is not a regular file",
+    )
+    require(sha256_file(patch) == RUNTIME_PATCH_SHA256, "runtime patch hash mismatch")
+
+    head = run(["git", "rev-parse", "HEAD"], cwd=checkout).stdout.decode().strip()
+    require(head == COREAI_SOURCE_REVISION, "Core AI checkout revision mismatch")
+    changed_paths = sorted(
+        line
+        for line in run(
+            ["git", "diff", "--name-only", "HEAD", "--"], cwd=checkout
+        ).stdout.decode("utf-8", errors="strict").splitlines()
+        if line
+    )
+    expected_paths = sorted(record["path"] for record in PATCHED_RUNTIME_FILES)
+    require(
+        changed_paths == expected_paths,
+        "Core AI checkout contains changes outside the frozen runtime patch",
+    )
+    untracked = run(
+        ["git", "ls-files", "--others", "--exclude-standard"], cwd=checkout
+    ).stdout.decode("utf-8", errors="strict").splitlines()
+    require(not untracked, "Core AI checkout contains untracked files")
+    reverse = subprocess.run(
+        ["git", "apply", "--check", "--reverse", str(patch)],
+        cwd=checkout,
+        capture_output=True,
+        check=False,
+    )
+    require(reverse.returncode == 0, "frozen Core AI runtime patch is not applied exactly")
+
+    patched_files: list[dict[str, str]] = []
+    for expected in PATCHED_RUNTIME_FILES:
+        relative = expected["path"]
+        base_bytes = run(["git", "show", f"HEAD:{relative}"], cwd=checkout).stdout
+        require(
+            sha256_bytes(base_bytes) == expected["base_sha256"],
+            f"Core AI base source hash mismatch: {relative}",
+        )
+        current = checkout / relative
+        require(
+            current.is_file() and not current.is_symlink(),
+            f"Core AI patched source is not a regular file: {relative}",
+        )
+        require(
+            sha256_file(current) == expected["patched_sha256"],
+            f"Core AI patched source hash mismatch: {relative}",
+        )
+        patched_files.append(dict(expected))
+
+    return {
+        "repository": COREAI_REPOSITORY,
+        "base_revision": COREAI_SOURCE_REVISION,
+        "patch_file": RUNTIME_PATCH_RELATIVE_PATH,
+        "patch_sha256": RUNTIME_PATCH_SHA256,
+        "patched_files": patched_files,
     }
 
 
@@ -514,6 +619,7 @@ def parse_args() -> argparse.Namespace:
     mode.add_argument("--repo", type=Path)
     parser.add_argument("--artifact-dir", type=Path)
     parser.add_argument("--app", type=Path)
+    parser.add_argument("--coreai-checkout", type=Path)
     parser.add_argument("--publication-dir", type=Path)
     parser.add_argument("--public-output", type=Path)
     parser.add_argument("--private-output", type=Path)
@@ -566,6 +672,7 @@ def main() -> None:
                 for value in (
                     args.artifact_dir,
                     args.app,
+                    args.coreai_checkout,
                     args.publication_dir,
                     args.public_output,
                     args.private_output,
@@ -580,6 +687,7 @@ def main() -> None:
     for name in (
         "artifact_dir",
         "app",
+        "coreai_checkout",
         "publication_dir",
         "public_output",
         "private_output",
@@ -599,9 +707,10 @@ def main() -> None:
     require(not private_output.exists(), f"refusing existing private output: {private_output}")
     public_app, private_signing = app_identity(args.app.resolve())
     public_record = {
-        "schema": "public-w8-trace-identity-v3",
+        "schema": "public-w8-trace-identity-v4",
         "artifact": artifact_identity(args.artifact_dir.resolve()),
         "source": git_identity(repo),
+        "runtime": runtime_identity(repo, args.coreai_checkout.resolve()),
         "app": public_app,
         "toolchain": toolchain_identity(),
     }

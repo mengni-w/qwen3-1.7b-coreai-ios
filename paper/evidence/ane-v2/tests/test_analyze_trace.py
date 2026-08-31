@@ -14,6 +14,7 @@ from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
+REPOSITORY_ROOT = ROOT.parents[2]
 FIXTURE = Path(__file__).resolve().parent / "fixtures" / "valid"
 
 
@@ -94,6 +95,9 @@ def create_bound_source_repository(root: Path) -> dict:
             analyzer.PROJECT_RELATIVE_PATH,
             analyzer.PACKAGE_RESOLVED_RELATIVE_PATH,
             analyzer.PROTOCOL_RELATIVE_PATH,
+            identity_preparer.ARTIFACT_AMENDMENT_RELATIVE_PATH,
+            identity_preparer.AMENDMENT_RELATIVE_PATH,
+            identity_preparer.RUNTIME_PATCH_RELATIVE_PATH,
         }
     )
     for relative in required_files:
@@ -114,6 +118,13 @@ def create_bound_source_repository(root: Path) -> dict:
                 + "\n",
                 encoding="utf-8",
             )
+        elif relative == analyzer.PROJECT_RELATIVE_PATH:
+            path.write_text(
+                f'repositoryURL = "{identity_preparer.COREAI_REPOSITORY}";\n',
+                encoding="utf-8",
+            )
+        elif relative == identity_preparer.RUNTIME_PATCH_RELATIVE_PATH:
+            path.write_bytes((REPOSITORY_ROOT / relative).read_bytes())
         else:
             path.write_text(f"fixture bytes for {relative}\n", encoding="utf-8")
     for command in (
@@ -125,6 +136,94 @@ def create_bound_source_repository(root: Path) -> dict:
     ):
         subprocess.run(command, cwd=repo, check=True, capture_output=True)
     return {"repo": repo, "source": identity_preparer.git_identity(repo)}
+
+
+def create_patched_runtime_checkout(root: Path) -> dict:
+    source_repo = root / "identity-source"
+    checkout = root / "runtime-checkout"
+    source_repo.mkdir()
+    checkout.mkdir()
+    paths = ("Sources/One.swift", "Sources/Two.swift")
+    base_bytes = {
+        paths[0]: b"let one = 1\n",
+        paths[1]: b"let two = 2\n",
+        "Sources/Three.swift": b"let three = 3\n",
+    }
+    patched_bytes = {
+        paths[0]: b"let one = 10\n",
+        paths[1]: b"let two = 20\n",
+    }
+    for relative, contents in base_bytes.items():
+        path = checkout / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(contents)
+    for command in (
+        ["git", "init", "-q"],
+        ["git", "config", "user.email", "fixture@example.invalid"],
+        ["git", "config", "user.name", "Fixture"],
+        ["git", "add", "."],
+        ["git", "commit", "-q", "-m", "runtime base"],
+    ):
+        subprocess.run(command, cwd=checkout, check=True, capture_output=True)
+    head = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=checkout,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    for relative, contents in patched_bytes.items():
+        (checkout / relative).write_bytes(contents)
+    patch_bytes = subprocess.run(
+        ["git", "diff", "--binary", "HEAD", "--", *paths],
+        cwd=checkout,
+        check=True,
+        capture_output=True,
+    ).stdout
+    patch_relative_path = "runtime.patch"
+    (source_repo / patch_relative_path).write_bytes(patch_bytes)
+    patched_files = tuple(
+        {
+            "path": relative,
+            "base_sha256": hashlib.sha256(base_bytes[relative]).hexdigest(),
+            "patched_sha256": hashlib.sha256(patched_bytes[relative]).hexdigest(),
+        }
+        for relative in paths
+    )
+    return {
+        "source_repo": source_repo,
+        "checkout": checkout,
+        "head": head,
+        "patch_relative_path": patch_relative_path,
+        "patch_sha256": hashlib.sha256(patch_bytes).hexdigest(),
+        "patched_files": patched_files,
+        "base_bytes": base_bytes,
+        "patched_bytes": patched_bytes,
+    }
+
+
+def prepare_fixture_runtime_identity(runtime: dict) -> dict:
+    with (
+        mock.patch.object(identity_preparer, "COREAI_SOURCE_REVISION", runtime["head"]),
+        mock.patch.object(
+            identity_preparer,
+            "RUNTIME_PATCH_RELATIVE_PATH",
+            runtime["patch_relative_path"],
+        ),
+        mock.patch.object(
+            identity_preparer,
+            "RUNTIME_PATCH_SHA256",
+            runtime["patch_sha256"],
+        ),
+        mock.patch.object(
+            identity_preparer,
+            "PATCHED_RUNTIME_FILES",
+            runtime["patched_files"],
+        ),
+    ):
+        return identity_preparer.runtime_identity(
+            runtime["source_repo"], runtime["checkout"]
+        )
 
 
 def valid_inputs():
@@ -151,6 +250,61 @@ def valid_inputs():
 
 
 class AnalyzeTraceTests(unittest.TestCase):
+    def test_identity_requires_runtime_patch_binding_v4(self):
+        mutations = (
+            ("schema", "public-w8-trace-identity-v3"),
+            ("repository", "https://example.invalid/coreai-models.git"),
+            ("base_revision", "f" * 40),
+            ("patch_file", "paper/evidence/ane-v2/other.patch"),
+            ("patch_sha256", "f" * 64),
+        )
+        for field, replacement in mutations:
+            identity = read("identity.json")
+            if field == "schema":
+                identity[field] = replacement
+            else:
+                identity["runtime"][field] = replacement
+            with self.subTest(field=field), self.assertRaises(analyzer.ValidationError):
+                analyzer.validate_identity(identity)
+
+    def test_identity_requires_exact_patched_runtime_file_manifest(self):
+        identity = read("identity.json")
+        identity["runtime"]["patched_files"].pop()
+        with self.assertRaises(analyzer.ValidationError):
+            analyzer.validate_identity(identity)
+
+        identity = read("identity.json")
+        identity["runtime"]["patched_files"].append(
+            {
+                "path": "swift/Sources/CoreAILanguageModels/Unexpected.swift",
+                "base_sha256": "a" * 64,
+                "patched_sha256": "b" * 64,
+            }
+        )
+        with self.assertRaises(analyzer.ValidationError):
+            analyzer.validate_identity(identity)
+
+    def test_identity_requires_exact_runtime_file_digests(self):
+        for index in range(2):
+            for field in ("base_sha256", "patched_sha256"):
+                identity = read("identity.json")
+                identity["runtime"]["patched_files"][index][field] = "f" * 64
+                with self.subTest(index=index, field=field), self.assertRaises(
+                    analyzer.ValidationError
+                ):
+                    analyzer.validate_identity(identity)
+
+    def test_identity_source_manifest_binds_the_runtime_patch_bytes(self):
+        identity = read("identity.json")
+        patch_record = next(
+            record
+            for record in identity["source"]["source_files"]
+            if record["path"] == identity["runtime"]["patch_file"]
+        )
+        patch_record["sha256"] = "f" * 64
+        with self.assertRaises(analyzer.ValidationError):
+            analyzer.validate_identity(identity)
+
     def test_identity_reconstructs_the_frozen_artifact_manifest(self):
         identity = read("identity.json")
         identity["artifact"]["payloads"][-1]["size_bytes"] += 1
@@ -183,6 +337,15 @@ class AnalyzeTraceTests(unittest.TestCase):
 
     def test_native_identifier_exact_multiset_join(self):
         result = analyzer.analyze(**valid_inputs())
+        self.assertEqual(result["schema"], "public-w8-ane-trace-analysis-v3")
+        self.assertEqual(
+            result["identity_summary"]["runtime_patch_sha256"],
+            identity_preparer.RUNTIME_PATCH_SHA256,
+        )
+        self.assertEqual(
+            result["identity_summary"]["patched_runtime_files"],
+            read("identity.json")["runtime"]["patched_files"],
+        )
         self.assertEqual(result["selected_key_mode"], "native_identifier_relative_start_duration")
         self.assertEqual(
             result["counts"],
@@ -477,6 +640,74 @@ class CanonicalizeXctraceTests(unittest.TestCase):
 
 
 class ExportAndIdentityTests(unittest.TestCase):
+    def test_runtime_identity_verifies_the_applied_patch_and_both_files(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            runtime = create_patched_runtime_checkout(Path(temporary))
+            identity = prepare_fixture_runtime_identity(runtime)
+            self.assertEqual(identity["base_revision"], runtime["head"])
+            self.assertEqual(identity["patch_sha256"], runtime["patch_sha256"])
+            self.assertEqual(identity["patched_files"], list(runtime["patched_files"]))
+
+    def test_runtime_identity_rejects_a_missing_or_extra_changed_file(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            runtime = create_patched_runtime_checkout(Path(temporary))
+            second = runtime["patched_files"][1]["path"]
+            (runtime["checkout"] / second).write_bytes(runtime["base_bytes"][second])
+            with self.assertRaisesRegex(
+                identity_preparer.IdentityError, "outside the frozen runtime patch"
+            ):
+                prepare_fixture_runtime_identity(runtime)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            runtime = create_patched_runtime_checkout(Path(temporary))
+            third = "Sources/Three.swift"
+            (runtime["checkout"] / third).write_bytes(b"let three = 30\n")
+            with self.assertRaisesRegex(
+                identity_preparer.IdentityError, "outside the frozen runtime patch"
+            ):
+                prepare_fixture_runtime_identity(runtime)
+
+    def test_runtime_identity_rejects_unpatched_drift_untracked_and_wrong_revision(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            runtime = create_patched_runtime_checkout(Path(temporary))
+            for record in runtime["patched_files"]:
+                (runtime["checkout"] / record["path"]).write_bytes(
+                    runtime["base_bytes"][record["path"]]
+                )
+            with self.assertRaisesRegex(
+                identity_preparer.IdentityError, "outside the frozen runtime patch"
+            ):
+                prepare_fixture_runtime_identity(runtime)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            runtime = create_patched_runtime_checkout(Path(temporary))
+            runtime["patched_files"] = tuple(
+                dict(record) for record in runtime["patched_files"]
+            )
+            runtime["patched_files"][0]["patched_sha256"] = "f" * 64
+            with self.assertRaisesRegex(
+                identity_preparer.IdentityError, "patched source hash mismatch"
+            ):
+                prepare_fixture_runtime_identity(runtime)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            runtime = create_patched_runtime_checkout(Path(temporary))
+            (runtime["checkout"] / "untracked.txt").write_text(
+                "not part of the runtime\n", encoding="utf-8"
+            )
+            with self.assertRaisesRegex(
+                identity_preparer.IdentityError, "contains untracked files"
+            ):
+                prepare_fixture_runtime_identity(runtime)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            runtime = create_patched_runtime_checkout(Path(temporary))
+            runtime["head"] = "f" * 40
+            with self.assertRaisesRegex(
+                identity_preparer.IdentityError, "checkout revision mismatch"
+            ):
+                prepare_fixture_runtime_identity(runtime)
+
     def test_artifact_file_discovery_excludes_only_the_root_generated_manifest(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -731,10 +962,24 @@ class ExportAndIdentityTests(unittest.TestCase):
                     analyzer.verify_current_source_identity(identity, bound["repo"])
                 path.write_bytes(original)
 
+    def test_sealed_source_identity_accepts_a_descendant_commit(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            bound = create_bound_source_repository(Path(temporary))
+            identity = read("identity.json")
+            identity["source"] = bound["source"]
+            evidence = bound["repo"] / "paper" / "final-evidence.json"
+            evidence.write_text('{"status":"sealed"}\n', encoding="utf-8")
+            for command in (
+                ["git", "add", "paper/final-evidence.json"],
+                ["git", "commit", "-q", "-m", "publish sealed evidence"],
+            ):
+                subprocess.run(command, cwd=bound["repo"], check=True, capture_output=True)
+            analyzer.verify_current_source_identity(identity, bound["repo"])
+
     def test_publication_scan_rejects_private_identity_fields(self):
         with self.assertRaisesRegex(publication.PublicationError, "private keys"):
             publication.scan_public_value(
-                {"schema": "public-w8-trace-identity-v3", "team_identifier": "PRIVATE"},
+                {"schema": "public-w8-trace-identity-v4", "team_identifier": "PRIVATE"},
                 "identity.json",
             )
 

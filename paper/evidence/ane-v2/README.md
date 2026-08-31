@@ -1,4 +1,4 @@
-# ANE trace confirmation V1, identity schema V3
+# ANE trace confirmation V1, identity schema V4
 
 This directory implements Section 3 of `paper/EXPERIMENT_PROTOCOL_V1.md`. It
 contains instrumentation and deterministic derivation code, not a trace or a
@@ -6,9 +6,11 @@ result. A real run is admissible only after these files and the companion
 instrumentation have been reviewed and committed.
 `paper/ANE_V2_AMENDMENT_1.md` defines the signing and publication boundary.
 `paper/ANE_V2_AMENDMENT_2.md` prospectively freezes the current,
-runtime-compatible public W8 artifact. Both amendments are hashed into every
-new admissible source identity. Do not collect a trace until Amendment 2 and
-the corresponding instrumentation and tools have been reviewed and committed.
+runtime-compatible public W8 artifact. `paper/ANE_V2_AMENDMENT_3.md` freezes
+the minimal Xcode 27 Beta 6 compatibility patch applied to the pinned Core AI
+source. All three amendments and the patch are hashed into every new admissible
+source identity. Do not collect a trace until Amendment 3 and the corresponding
+instrumentation and tools have been reviewed and committed.
 
 Use the same Xcode 27 Beta toolchain for every build, identity, capture, and
 export command in the run:
@@ -45,7 +47,7 @@ Both endpoints carry the public run UUID and PID. The begin endpoint is marked
 records use the prefix `ANE_TRACE_V2_JSON=` and always carry the same UUID. The
 measured prompt itself is not logged; its SHA-256 is logged instead.
 
-## 1. Download and build without changing project sources
+## 1. Download, patch the pinned dependency, and build
 
 Run from the repository root:
 
@@ -66,11 +68,28 @@ The generated manifest is a local evidence object, not a file claimed to exist
 at the immutable Hub revision.
 
 The destination is ignored and already referenced by the Xcode project. Do
-not drag resources into Xcode. Build and sign a Release app by supplying the
-team and final bundle identifier on the command line, not by editing the
-project:
+not drag resources into Xcode. Resolve the checked-in package graph into a new
+package directory, apply the committed compatibility patch to the pinned Core
+AI checkout, and then build from that same directory with automatic package
+resolution disabled:
 
 ```bash
+export TRACE_SOURCE_PACKAGES=/tmp/PublicW8TraceSourcePackages
+test ! -e "$TRACE_SOURCE_PACKAGES"
+
+DEVELOPER_DIR=/Applications/Xcode-27-Beta.app/Contents/Developer \
+xcodebuild \
+  -resolvePackageDependencies \
+  -project companion/CoreAIQwen17Companion.xcodeproj \
+  -scheme CoreAIQwen17Companion \
+  -clonedSourcePackagesDirPath "$TRACE_SOURCE_PACKAGES" \
+  -onlyUsePackageVersionsFromResolvedFile
+
+git -C "$TRACE_SOURCE_PACKAGES/checkouts/coreai-models" apply \
+  --check "$PWD/paper/evidence/ane-v2/coreai-models-xcode27-beta6-compat.patch"
+git -C "$TRACE_SOURCE_PACKAGES/checkouts/coreai-models" apply \
+  "$PWD/paper/evidence/ane-v2/coreai-models-xcode27-beta6-compat.patch"
+
 DEVELOPER_DIR=/Applications/Xcode-27-Beta.app/Contents/Developer \
 xcodebuild \
   -project companion/CoreAIQwen17Companion.xcodeproj \
@@ -78,10 +97,19 @@ xcodebuild \
   -configuration Release \
   -destination 'generic/platform=iOS' \
   -derivedDataPath /tmp/PublicW8TraceDerivedData \
+  -clonedSourcePackagesDirPath "$TRACE_SOURCE_PACKAGES" \
+  -disableAutomaticPackageResolution \
+  -onlyUsePackageVersionsFromResolvedFile \
   DEVELOPMENT_TEAM="$TRACE_DEVELOPMENT_TEAM" \
   PRODUCT_BUNDLE_IDENTIFIER=io.massif.PublicW8TraceConfirmation \
   build
 ```
+
+The patch changes only the two files and four Foundation Models API call sites
+listed in Amendment 3. It does not change tokenization, generation controls,
+or model assets. Identity preparation rejects an unpatched checkout, an extra
+tracked or untracked change, a different base revision, or any patched-file
+digest mismatch.
 
 Before installation, and only after the instrumentation commit exists, seal
 the static identities:
@@ -94,12 +122,13 @@ python3 paper/evidence/ane-v2/prepare_identity.py \
   --repo "$PWD" \
   --artifact-dir /tmp/public-w8-trace-artifact \
   --app /tmp/PublicW8TraceDerivedData/Build/Products/Release-iphoneos/CoreAIQwen17Companion.app \
+  --coreai-checkout "$TRACE_SOURCE_PACKAGES/checkouts/coreai-models" \
   --publication-dir /tmp/public-w8-trace-public \
   --public-output /tmp/public-w8-trace-public/identity.json \
   --private-output /tmp/public-w8-trace-private/identity-private.json
 ```
 
-The command fails if any frozen artifact field differs, if the generated
+The command fails if any frozen artifact or runtime field differs, if the generated
 artifact manifest does not cover exactly the downloaded regular files, if any
 companion/ANE-analysis source is dirty, if `codesign --verify --deep --strict`
 fails, the fixed public bundle identifier does not match, or a required
@@ -113,7 +142,8 @@ path, bytes, sha256
 The public record includes the manifest and its digest; the exact root-metadata
 version and digest; the exact `SHA256SUMS` digest; the source, compiled-main,
 producer, and compiled-bundle identities; the source commit, project,
-`Package.resolved`, both amendment hashes, and source-file hashes; Release app
+`Package.resolved`, all amendment hashes, runtime patch identity, per-file
+base and patched hashes, and source-file hashes; Release app
 and executable hashes; verified signing status, CDHash, signature format, and
 signing-output hashes; the fixed bundle identifier; Xcode/Instruments build;
 and the verified Core AI source revision. It contains no signing Identifier,
