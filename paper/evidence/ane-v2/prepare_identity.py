@@ -382,6 +382,7 @@ def git_identity(repo: Path) -> dict[str, Any]:
         "Package.resolved Core AI revision mismatch",
     )
     source_paths = sorted((repo / "companion").rglob("*.swift"))
+    source_paths.extend(sorted((repo / "companion").rglob("*.plist")))
     source_paths.extend(sorted((repo / "paper/evidence/ane-v2").glob("*.py")))
     source_paths.extend(sorted((repo / "paper/evidence/ane-v2").glob("*.sh")))
     source_paths.extend([prior_amendment, artifact_amendment, amendment, runtime_patch])

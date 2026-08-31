@@ -58,6 +58,12 @@ signing and publication boundary. Amendment 2 remains the public W8 artifact
 identity. This amendment becomes the latest protocol amendment and is the hash
 bound by run metadata.
 
+The companion uses a committed source `Info.plist` whose
+`ANETraceBuildConfiguration` value is `$(CONFIGURATION)`. Xcode must expand it
+to `Release` in the processed app bundle before identity preparation succeeds.
+The source plist is included in the identity's source-file manifest; the
+processed plist and complete signed app bundle are hashed separately.
+
 All other experimental requirements remain unchanged: the public W8 artifact,
 fixed prompt, sessions, signpost, target PID, trace template, device class,
 Xcode and Instruments build, exact join, and permitted conclusion. A matching

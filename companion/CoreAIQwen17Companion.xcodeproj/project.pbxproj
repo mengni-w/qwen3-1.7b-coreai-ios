@@ -13,6 +13,7 @@
 
 /* Begin PBXFileReference section */
 		BB0000000000000000000011 /* CoreAIQwen17CompanionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreAIQwen17CompanionApp.swift; sourceTree = "<group>"; };
+		BB0000000000000000000014 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BB0000000000000000000012 /* CoreAIQwen17Companion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoreAIQwen17Companion.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB0000000000000000000013 /* qwen3_1_7b_w8_4k_ios */ = {isa = PBXFileReference; lastKnownFileType = folder; path = qwen3_1_7b_w8_4k_ios; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -38,7 +39,10 @@
 		};
 		BB0000000000000000000032 /* CoreAIQwen17Companion */ = {
 			isa = PBXGroup;
-			children = (BB0000000000000000000011 /* CoreAIQwen17CompanionApp.swift */);
+			children = (
+				BB0000000000000000000011 /* CoreAIQwen17CompanionApp.swift */,
+				BB0000000000000000000014 /* Info.plist */,
+			);
 			path = CoreAIQwen17Companion;
 			sourceTree = "<group>";
 		};
@@ -154,10 +158,8 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_ANETraceBuildConfiguration = "$(CONFIGURATION)";
-				INFOPLIST_KEY_CFBundleDisplayName = "Core AI Qwen 1.7B";
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = CoreAIQwen17Companion/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks");
 				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = org.example.CoreAIQwen17Companion;
@@ -173,10 +175,8 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_ANETraceBuildConfiguration = "$(CONFIGURATION)";
-				INFOPLIST_KEY_CFBundleDisplayName = "Core AI Qwen 1.7B";
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = CoreAIQwen17Companion/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks");
 				MARKETING_VERSION = 0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = org.example.CoreAIQwen17Companion;

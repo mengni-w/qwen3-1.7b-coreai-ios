@@ -152,10 +152,11 @@ result exist only in the bound private record. The script refuses a private
 path inside either the repository or publication directory and creates the
 private file with mode `0600`.
 
-The generated Info.plist carries `ANETraceBuildConfiguration` directly from
-Xcode's `$(CONFIGURATION)` build setting. Identity preparation reads that value
-from the built app and accepts only `Release`; it does not assign the label from
-the command that invoked the script.
+The source Info.plist carries `ANETraceBuildConfiguration` from Xcode's
+`$(CONFIGURATION)` build setting. Xcode expands the value in the processed app
+bundle. Identity preparation reads that processed value and accepts only
+`Release`; it does not assign the label from the command that invoked the
+script.
 
 At run time, the companion hashes its installed executable. Metadata sealing
 and analysis require that hash to equal the executable in the sealed Release

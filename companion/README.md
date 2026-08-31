@@ -51,10 +51,11 @@ credentials or project changes. The ANE protocol requires the resulting Release
 app to pass `codesign --verify --deep --strict`; an unsigned build is never an
 admissible trace app.
 
-The project embeds `ANETraceBuildConfiguration=$(CONFIGURATION)` in the
-generated Info.plist. The identity script reads that value from the built app
-and rejects Debug or any other configuration; the evidence cannot label itself
-as Release.
+The source Info.plist embeds
+`ANETraceBuildConfiguration=$(CONFIGURATION)`. Xcode expands that value while
+processing the selected build configuration. The identity script reads it from
+the built app and rejects Debug or any other value; the evidence cannot label
+itself as Release.
 
 ## Run
 
