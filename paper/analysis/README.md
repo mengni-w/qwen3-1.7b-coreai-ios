@@ -18,8 +18,11 @@ new measurement.
    NLTK 3.10.0, then requires byte-for-byte identity with the published JSON.
 6. Reanalyzes the unchanged paired predictions with a post-review,
    context-length-stratified bootstrap and exact paired sign tests.
-7. Parses every accepted speed sample from the fixed-hash report, recomputes
-   medians, and checks them against the report's headline table.
+7. Admits only a finalized, conformant eight-block
+   `public-artifact-speed-confirmation-v2` publication bundle under
+   `REPORT_PROTOCOL_V3.md`. Before a bundle is accepted, a candidate path is
+   required explicitly. After acceptance, the source-locked bundle is selected
+   automatically and cannot be overridden from the command line.
 8. Generates T3 from the corrected formal fidelity-v2 result. The older
    `quality-summary.json` remains available only as historical model-selection
    evidence; its W8 fidelity values are superseded.
@@ -32,6 +35,36 @@ The copyrighted dataset text and cloned repositories remain under the ignored
 `.analysis-work/` directory. Generated outputs contain aggregates and already
 public timing rows, not passages, questions, or reference answers.
 
+## Prospective speed-v2 evidence
+
+Before the new result is integrated, copy only the immutable root
+`FINALIZED.json` and its byte-identical `public/` directory into a fresh
+publication bundle. Do not copy `host/`, `.xcresult` bundles, device-control
+output, or other private acquisition files. Then run:
+
+```sh
+./analysis/run.sh \
+  --speed-evidence-dir evidence/speed-v2/attempts/<run-id>
+```
+
+Relative evidence paths are resolved from `paper/`. The pipeline rehashes every
+file named by the public evidence index and requires that the index cover every
+public file. It cross-checks the finalization certificate, public host record,
+analyzer summary, frozen identities, eight-block schedule, 120 completed
+profile observations, and 60 complete pairs. An aborted, nonconformant,
+partially completed, privately sourced, or unfinalized bundle is rejected
+before it can supply a paper statistic.
+
+Until a successful run has been copied and frozen in `source-lock.json`, a
+normal analysis run requires `--speed-evidence-dir`. The historical
+three-sample output can only be checked by the explicit `--test-only` path; it
+cannot be regenerated as current paper evidence. The later evidence-integration
+commit fills `speedV2Admission.acceptedBundle` with the repository-relative
+bundle path, run ID, finalization hash, public-index hash, public-host-record
+hash, and analyzer-summary hash. From that commit onward, `./analysis/run.sh`
+uses the accepted bundle by default and rejects any `--speed-evidence-dir`
+override.
+
 ## Run
 
 Requirements: `git`, `curl`, `uv`, and network access for the first run.
@@ -39,6 +72,10 @@ Requirements: `git`, `curl`, `uv`, and network access for the first run.
 ```sh
 ./analysis/run.sh
 ```
+
+This default form is the submission path after `acceptedBundle` has been
+filled. During prospective candidate review, use the command in the preceding
+section instead.
 
 After one successful online run, the exact cached inputs can be reused without
 network access:
@@ -56,6 +93,10 @@ Run the committed-output checks with:
 ```sh
 ./analysis/run.sh --test-only
 ```
+
+While `acceptedBundle` is `null`, this is the only path allowed to validate the
+committed historical schema-1 speed output. It does not create or admit a new
+paper result.
 
 Generated files are written to `analysis/generated/`. A successful run ends
 with `PIPELINE_OK` and prints the source and generated-output hashes.

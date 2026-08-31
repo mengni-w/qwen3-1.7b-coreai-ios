@@ -20,6 +20,9 @@ SOURCE_LOCK = ROOT / "analysis/source-lock.json"
 GENERATED = Path(
     os.environ.get("ANALYSIS_GENERATED_DIR", ROOT / "analysis/generated")
 ).resolve()
+ALLOW_LEGACY_SPEED_SCHEMA = (
+    os.environ.get("ANALYSIS_ALLOW_LEGACY_SPEED_SCHEMA") == "1"
+)
 
 
 def load_json(relative_path: str) -> dict:
@@ -277,6 +280,71 @@ class GeneratedEvidenceTests(unittest.TestCase):
 
     def test_speed_samples_and_medians(self):
         speed = load_json("speed-normalized.json")
+        if speed["schemaVersion"] == 2:
+            self.assertFalse(ALLOW_LEGACY_SPEED_SCHEMA)
+            source_lock = json.loads(SOURCE_LOCK.read_text(encoding="utf-8"))
+            accepted = source_lock["speedV2Admission"]["acceptedBundle"]
+            if accepted is not None:
+                self.assertEqual(speed["runID"], accepted["runID"])
+                self.assertEqual(
+                    speed["source"]["finalizationSHA256"],
+                    accepted["finalizationSHA256"],
+                )
+                self.assertEqual(
+                    speed["source"]["publicEvidenceIndexSHA256"],
+                    accepted["publicEvidenceIndexSHA256"],
+                )
+                self.assertEqual(
+                    speed["source"]["publicHostRecordSHA256"],
+                    accepted["publicHostRecordSHA256"],
+                )
+                self.assertEqual(
+                    speed["source"]["analyzerSummarySHA256"],
+                    accepted["analyzerSummarySHA256"],
+                )
+            self.assertEqual(
+                speed["analysis"],
+                "public-artifact-speed-confirmation-v2",
+            )
+            self.assertEqual(
+                speed["admission"],
+                {
+                    "finalizationStatus": "passed",
+                    "preFinalizationOutcome": "eligible",
+                    "conformanceStatus": "passed",
+                    "physicalBlocks": 8,
+                    "plannedSamples": 120,
+                    "pairedLogicalSamples": 60,
+                    "privateEvidenceRead": False,
+                },
+            )
+            self.assertEqual(
+                set(speed["workloads"]),
+                {"business_medium", "near4k_prefill", "decode_256_cap"},
+            )
+            for workload in speed["workloads"].values():
+                self.assertEqual(set(workload["profiles"]), {"W8_ANE", "INT4_GPU"})
+                for cell in workload["profiles"].values():
+                    self.assertEqual(cell["planned"], 20)
+                    self.assertEqual(cell["completed"], 20)
+                    self.assertEqual(cell["failed"], 0)
+                paired = workload["pairedAMinusB"]
+                self.assertEqual(paired["plannedPairs"], 20)
+                self.assertEqual(paired["successfulPairs"], 20)
+            self.assertNotIn("/tmp/", json.dumps(speed))
+            self.assertNotIn("/Users/", json.dumps(speed))
+            return
+
+        self.assertEqual(speed["schemaVersion"], 1)
+        self.assertTrue(
+            ALLOW_LEGACY_SPEED_SCHEMA,
+            "historical three-sample speed output is allowed only by the explicit test-only gate",
+        )
+        source_lock = json.loads(SOURCE_LOCK.read_text(encoding="utf-8"))
+        self.assertIsNone(
+            source_lock["speedV2Admission"]["acceptedBundle"],
+            "historical speed output is forbidden after a speed-v2 bundle is accepted",
+        )
         expected = {
             "business_161_60": {
                 "W8_ANE": (0.431, 3.259),
