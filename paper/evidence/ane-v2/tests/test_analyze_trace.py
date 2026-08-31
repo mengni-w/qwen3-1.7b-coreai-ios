@@ -151,6 +151,36 @@ def valid_inputs():
 
 
 class AnalyzeTraceTests(unittest.TestCase):
+    def test_identity_reconstructs_the_frozen_artifact_manifest(self):
+        identity = read("identity.json")
+        identity["artifact"]["payloads"][-1]["size_bytes"] += 1
+        with self.assertRaisesRegex(
+            analyzer.ValidationError, "do not reconstruct the frozen benchmark manifest"
+        ):
+            analyzer.validate_identity(identity)
+
+    def test_identity_rejects_extra_file_and_symbolic_link_payloads(self):
+        for kind in ("file", "symlink"):
+            identity = read("identity.json")
+            identity["artifact"]["payloads"].append(
+                {
+                    "path": f"unexpected-{kind}",
+                    "kind": kind,
+                    "size_bytes": 1,
+                    "sha256": "a" * 64,
+                }
+            )
+            with self.subTest(kind=kind), self.assertRaises(analyzer.ValidationError):
+                analyzer.validate_identity(identity)
+
+    def test_identity_rejects_a_changed_published_sha256s_list(self):
+        identity = read("identity.json")
+        identity["artifact"]["published_sha256s"].pop()
+        with self.assertRaisesRegex(
+            analyzer.ValidationError, "published SHA256SUMS must contain"
+        ):
+            analyzer.validate_identity(identity)
+
     def test_native_identifier_exact_multiset_join(self):
         result = analyzer.analyze(**valid_inputs())
         self.assertEqual(result["selected_key_mode"], "native_identifier_relative_start_duration")
@@ -447,6 +477,23 @@ class CanonicalizeXctraceTests(unittest.TestCase):
 
 
 class ExportAndIdentityTests(unittest.TestCase):
+    def test_artifact_file_discovery_excludes_only_the_root_generated_manifest(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / identity_preparer.BENCHMARK_MANIFEST_NAME).write_text(
+                "root generated manifest\n", encoding="utf-8"
+            )
+            nested = root / "nested" / identity_preparer.BENCHMARK_MANIFEST_NAME
+            nested.parent.mkdir()
+            nested.write_text("downloaded payload\n", encoding="utf-8")
+            (root / "payload.bin").write_bytes(b"payload")
+
+            paths = [record["path"] for record in identity_preparer.artifact_files(root)]
+            self.assertNotIn(identity_preparer.BENCHMARK_MANIFEST_NAME, paths)
+            self.assertIn(
+                f"nested/{identity_preparer.BENCHMARK_MANIFEST_NAME}", paths
+            )
+
     def schemas(self):
         return {
             "signposts": "os-signpost",
@@ -687,7 +734,7 @@ class ExportAndIdentityTests(unittest.TestCase):
     def test_publication_scan_rejects_private_identity_fields(self):
         with self.assertRaisesRegex(publication.PublicationError, "private keys"):
             publication.scan_public_value(
-                {"schema": "public-w8-trace-identity-v2", "team_identifier": "PRIVATE"},
+                {"schema": "public-w8-trace-identity-v3", "team_identifier": "PRIVATE"},
                 "identity.json",
             )
 

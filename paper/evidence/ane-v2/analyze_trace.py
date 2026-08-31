@@ -24,14 +24,25 @@ SIGNPOST_SUBSYSTEM = "io.massif.qwen3.coreai.trace-confirmation"
 SIGNPOST_CATEGORY = "inference"
 SIGNPOST_NAME = "PUBLIC_W8_TRACE_CONFIRMATION_V1"
 ARTIFACT_REPOSITORY = "massif/Qwen3-1.7B-CoreAI-ANE-W8-4K-h16p"
-ARTIFACT_REVISION = "466ebe2e5cec125fa113ea71503add41bba581a8"
-ARTIFACT_SOURCE_HASH = "5e885ec407f1b2690df5098d38b1bed4a3e66f4352c859fb2bb79666bc0aef73"
-MAIN_H16P_SHA256 = "a7eefeef16708a324f9919890355eb92180ec85eef419ebd5822e8c8afd42f5f"
+ARTIFACT_REVISION = "75bbe06906cb5d953e602e3e4fb6364187c81822"
+ROOT_METADATA_VERSION = "0.2"
+ROOT_METADATA_SHA256 = "c12e3b1035dd8c009d5b8d8572d0ad829236871edd10c02ef35d89644c5289d1"
+PUBLISHED_SHA256SUMS_SHA256 = "11b44a503983182f99f5de2a458947ac1bfb9b68bfaafd39a5b13feb4d430be9"
+BENCHMARK_MANIFEST_SHA256 = "91c68e82e280a36d39aaeef9b8726ab1d59e52760b6f970db67c334a674d47b2"
+BENCHMARK_MANIFEST_FILE_COUNT = 59
+PUBLISHED_SHA256SUMS_ENTRY_COUNT = 57
+ARTIFACT_SOURCE_HASH = "13ba3f73fcb7e090cd6ba1ca14b6b8903516ab608d451e94b9cdd750cfceda2c"
+MAIN_H16P_SHA256 = "09f609775baa56b11ff3c91bfcb07b145930297289634fdc5514b2a5ab4dc7ca"
+ARTIFACT_PRODUCER = "coreai-build-3600.83.1"
+COMPILED_BUNDLE_FILE_LIST_SHA256 = (
+    "182336f4654bb735bcad35e45f7832756c34469931ad96d872532dca727ebd8d"
+)
 COREAI_SOURCE_REVISION = "04a3fd6cfe9bfae9cf05b1f246cf915d930d1c0a"
 MEASURED_PROMPT_SHA256 = "d975102e7856d44efc3e483a2c919e7a9d612fde515c50b110bc255a13a20f81"
 TARGET_DEVICE_IDENTIFIER_CLASS = "iPhone16,1"
 PUBLIC_BUNDLE_IDENTIFIER = "io.massif.PublicW8TraceConfirmation"
-AMENDMENT_RELATIVE_PATH = "paper/ANE_V2_AMENDMENT_1.md"
+PRIOR_AMENDMENT_RELATIVE_PATH = "paper/ANE_V2_AMENDMENT_1.md"
+AMENDMENT_RELATIVE_PATH = "paper/ANE_V2_AMENDMENT_2.md"
 PROJECT_RELATIVE_PATH = "companion/CoreAIQwen17Companion.xcodeproj/project.pbxproj"
 PACKAGE_RESOLVED_RELATIVE_PATH = (
     "companion/CoreAIQwen17Companion.xcodeproj/project.xcworkspace/"
@@ -40,6 +51,7 @@ PACKAGE_RESOLVED_RELATIVE_PATH = (
 PROTOCOL_RELATIVE_PATH = "paper/EXPERIMENT_PROTOCOL_V1.md"
 REQUIRED_SOURCE_PATHS = {
     "companion/CoreAIQwen17Companion/CoreAIQwen17CompanionApp.swift",
+    PRIOR_AMENDMENT_RELATIVE_PATH,
     AMENDMENT_RELATIVE_PATH,
     "paper/evidence/ane-v2/analyze_trace.py",
     "paper/evidence/ane-v2/canonicalize_xctrace.py",
@@ -96,6 +108,12 @@ def canonical_json_bytes(value: Any) -> bytes:
     return (
         json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
         + "\n"
+    ).encode("utf-8")
+
+
+def benchmark_manifest_json_bytes(value: Any) -> bytes:
+    return (
+        json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
     ).encode("utf-8")
 
 
@@ -190,7 +208,7 @@ def require_utc_timestamp(value: Any, field: str) -> datetime:
 def validate_identity(identity: Any) -> None:
     require_exact_keys(identity, {"schema", "artifact", "source", "app", "toolchain"}, "identity")
     require(
-        identity.get("schema") == "public-w8-trace-identity-v2",
+        identity.get("schema") == "public-w8-trace-identity-v3",
         "identity record schema mismatch",
     )
     artifact = identity.get("artifact")
@@ -200,8 +218,9 @@ def validate_identity(identity: Any) -> None:
     require_exact_keys(
         artifact,
         {
-            "repository", "revision", "source_hash", "main_h16p_sha256",
-            "artifact_producer", "manifest_format", "manifest_sha256", "payloads",
+            "repository", "revision", "root_metadata_version", "root_metadata_sha256",
+            "source_hash", "main_h16p_sha256", "artifact_producer",
+            "compiled_bundle_file_list_sha256", "manifest_format", "manifest_sha256", "payloads",
             "published_sha256s", "published_sha256s_file_sha256",
         },
         "identity.artifact",
@@ -211,8 +230,9 @@ def validate_identity(identity: Any) -> None:
         {
             "git_commit", "git_status_clean", "project_file", "project_file_sha256",
             "package_resolved_file", "package_resolved_file_sha256", "protocol_file",
-            "protocol_file_sha256", "amendment_file", "amendment_file_sha256",
-            "source_files",
+            "protocol_file_sha256", "prior_amendment_file",
+            "prior_amendment_file_sha256", "amendment_file",
+            "amendment_file_sha256", "source_files",
         },
         "identity.source",
     )
@@ -236,21 +256,42 @@ def validate_identity(identity: Any) -> None:
 
     require(artifact.get("repository") == ARTIFACT_REPOSITORY, "artifact repository mismatch")
     require(artifact.get("revision") == ARTIFACT_REVISION, "artifact revision mismatch")
+    require(
+        artifact.get("root_metadata_version") == ROOT_METADATA_VERSION,
+        "root metadata version mismatch",
+    )
+    require(
+        artifact.get("root_metadata_sha256") == ROOT_METADATA_SHA256,
+        "root metadata hash mismatch",
+    )
     require(artifact.get("source_hash") == ARTIFACT_SOURCE_HASH, "artifact sourceHash mismatch")
     require(
         artifact.get("main_h16p_sha256") == MAIN_H16P_SHA256,
         "compiled main-h16p.mlirb mismatch",
     )
-    require_string(artifact.get("artifact_producer"), "identity.artifact.artifact_producer")
-    require_sha256(artifact.get("manifest_sha256"), "identity.artifact.manifest_sha256")
+    require(
+        artifact.get("artifact_producer") == ARTIFACT_PRODUCER,
+        "artifact producer mismatch",
+    )
+    require(
+        artifact.get("compiled_bundle_file_list_sha256")
+        == COMPILED_BUNDLE_FILE_LIST_SHA256,
+        "compiled-bundle fingerprint mismatch",
+    )
+    require(
+        artifact.get("manifest_sha256") == BENCHMARK_MANIFEST_SHA256,
+        "benchmark artifact manifest hash mismatch",
+    )
     require(
         artifact.get("manifest_format")
-        == "sha256-tab-size-tab-kind-tab-posix-path-newline-v1",
+        == "benchmark-artifact-manifest-json-v2",
         "artifact manifest format mismatch",
     )
     payloads = artifact.get("payloads")
     require(isinstance(payloads, list) and bool(payloads), "artifact payload manifest is empty")
     paths: set[str] = set()
+    payload_paths: list[str] = []
+    manifest_files: list[dict[str, Any]] = []
     found_main = False
     for index, payload in enumerate(payloads):
         require_exact_keys(
@@ -260,29 +301,89 @@ def validate_identity(identity: Any) -> None:
         path = require_relative_posix_path(payload.get("path"), f"artifact.payloads[{index}].path")
         require(path not in paths, f"duplicate artifact payload path: {path}")
         paths.add(path)
-        require(payload.get("kind") in ("file", "symlink"), f"artifact payload {index} kind mismatch")
-        require_int(payload.get("size_bytes"), f"artifact.payloads[{index}].size_bytes")
+        payload_paths.append(path)
+        require(payload.get("kind") == "file", f"artifact payload {index} must be a regular file")
+        size_bytes = require_int(
+            payload.get("size_bytes"), f"artifact.payloads[{index}].size_bytes"
+        )
         digest = require_sha256(payload.get("sha256"), f"artifact.payloads[{index}].sha256")
+        manifest_files.append(
+            {"path": path, "bytes": size_bytes, "sha256": digest}
+        )
         if path.endswith("/main-h16p.mlirb") or path == "main-h16p.mlirb":
             require(not found_main, "artifact manifest contains multiple main-h16p.mlirb files")
             require(digest == MAIN_H16P_SHA256, "artifact payload main hash mismatch")
             found_main = True
     require(found_main, "artifact manifest does not contain main-h16p.mlirb")
-    require_sha256(
-        artifact.get("published_sha256s_file_sha256"),
-        "identity.artifact.published_sha256s_file_sha256",
+    require(
+        len(payloads) == BENCHMARK_MANIFEST_FILE_COUNT,
+        f"artifact manifest must contain {BENCHMARK_MANIFEST_FILE_COUNT} files",
+    )
+    require(
+        payload_paths == sorted(payload_paths),
+        "artifact payload manifest is not in canonical path order",
+    )
+    payload_by_path = {payload["path"]: payload["sha256"] for payload in payloads}
+    require(
+        payload_by_path.get("metadata.json") == ROOT_METADATA_SHA256,
+        "artifact manifest root metadata identity mismatch",
+    )
+    require(
+        payload_by_path.get("SHA256SUMS") == PUBLISHED_SHA256SUMS_SHA256,
+        "artifact manifest SHA256SUMS identity mismatch",
+    )
+    require(
+        artifact.get("published_sha256s_file_sha256")
+        == PUBLISHED_SHA256SUMS_SHA256,
+        "published SHA256SUMS file hash mismatch",
     )
     published = artifact.get("published_sha256s")
     require(isinstance(published, list) and bool(published), "published SHA256SUMS is empty")
     payload_by_path = {payload["path"]: payload["sha256"] for payload in payloads}
     published_paths: set[str] = set()
+    published_path_order: list[str] = []
+    published_records: list[dict[str, str]] = []
     for index, record in enumerate(published):
         require_exact_keys(record, {"path", "sha256"}, f"published_sha256s[{index}]")
         path = require_relative_posix_path(record.get("path"), f"published_sha256s[{index}].path")
         digest = require_sha256(record.get("sha256"), f"published_sha256s[{index}].sha256")
         require(path not in published_paths, f"duplicate published SHA256SUMS path: {path}")
         published_paths.add(path)
+        published_path_order.append(path)
         require(payload_by_path.get(path) == digest, f"published digest differs for {path}")
+        published_records.append({"path": path, "sha256": digest})
+    require(
+        len(published_records) == PUBLISHED_SHA256SUMS_ENTRY_COUNT,
+        f"published SHA256SUMS must contain {PUBLISHED_SHA256SUMS_ENTRY_COUNT} entries",
+    )
+    require(
+        published_path_order == sorted(published_path_order),
+        "published SHA256SUMS entries are not in canonical path order",
+    )
+    expected_published_paths = sorted(paths - {".gitattributes", "SHA256SUMS"})
+    require(
+        published_path_order == expected_published_paths,
+        "published SHA256SUMS path set differs from the frozen payload set",
+    )
+    manifest_document = {
+        "schemaVersion": 2,
+        "repository": ARTIFACT_REPOSITORY,
+        "revision": ARTIFACT_REVISION,
+        "publishedSHA256SUMS": {
+            "sha256": PUBLISHED_SHA256SUMS_SHA256,
+            "entries": len(published_records),
+            "matchingEntries": len(published_records),
+            "acknowledgedMismatches": [],
+        },
+        "files": manifest_files,
+    }
+    reconstructed_manifest_sha256 = hashlib.sha256(
+        benchmark_manifest_json_bytes(manifest_document)
+    ).hexdigest()
+    require(
+        reconstructed_manifest_sha256 == artifact["manifest_sha256"],
+        "identity payloads do not reconstruct the frozen benchmark manifest",
+    )
 
     commit = require_string(source.get("git_commit"), "identity.source.git_commit")
     require(bool(COMMIT_RE.fullmatch(commit)), "source git commit must be a lowercase 40-hex ID")
@@ -306,6 +407,14 @@ def validate_identity(identity: Any) -> None:
         "identity source protocol path mismatch",
     )
     require_sha256(source.get("protocol_file_sha256"), "identity.source.protocol_file_sha256")
+    require(
+        source.get("prior_amendment_file") == PRIOR_AMENDMENT_RELATIVE_PATH,
+        "identity source prior-amendment path mismatch",
+    )
+    require_sha256(
+        source.get("prior_amendment_file_sha256"),
+        "identity.source.prior_amendment_file_sha256",
+    )
     require(source.get("amendment_file") == AMENDMENT_RELATIVE_PATH, "identity source amendment path mismatch")
     require_sha256(source.get("amendment_file_sha256"), "identity.source.amendment_file_sha256")
     files = source.get("source_files")
@@ -327,6 +436,11 @@ def validate_identity(identity: Any) -> None:
         source_digest_by_path[AMENDMENT_RELATIVE_PATH]
         == source["amendment_file_sha256"],
         "source manifest does not bind the protocol amendment",
+    )
+    require(
+        source_digest_by_path[PRIOR_AMENDMENT_RELATIVE_PATH]
+        == source["prior_amendment_file_sha256"],
+        "source manifest does not bind the prior protocol amendment",
     )
 
     require(app.get("configuration") == "Release", "trace app must be a Release build")
@@ -397,6 +511,10 @@ def verify_current_source_identity(identity: Any, source_root: Path) -> None:
             "package_resolved_file_sha256",
         ),
         "protocol_file": (PROTOCOL_RELATIVE_PATH, "protocol_file_sha256"),
+        "prior_amendment_file": (
+            PRIOR_AMENDMENT_RELATIVE_PATH,
+            "prior_amendment_file_sha256",
+        ),
         "amendment_file": (AMENDMENT_RELATIVE_PATH, "amendment_file_sha256"),
     }
     for path_field, (expected_path, digest_field) in explicit_files.items():
@@ -414,7 +532,12 @@ def verify_current_source_identity(identity: Any, source_root: Path) -> None:
     discovered = sorted((source_root / "companion").rglob("*.swift"))
     discovered.extend(sorted((source_root / "paper/evidence/ane-v2").glob("*.py")))
     discovered.extend(sorted((source_root / "paper/evidence/ane-v2").glob("*.sh")))
-    discovered.append(source_root / AMENDMENT_RELATIVE_PATH)
+    discovered.extend(
+        [
+            source_root / PRIOR_AMENDMENT_RELATIVE_PATH,
+            source_root / AMENDMENT_RELATIVE_PATH,
+        ]
+    )
     discovered.sort(key=lambda path: path.relative_to(source_root).as_posix())
     actual_paths = [path.relative_to(source_root).as_posix() for path in discovered]
     sealed_records = source["source_files"]
@@ -1187,7 +1310,18 @@ def analyze(
         "identity_summary": {
             "artifact_repository": identity["artifact"]["repository"],
             "artifact_revision": identity["artifact"]["revision"],
+            "root_metadata_version": identity["artifact"]["root_metadata_version"],
+            "root_metadata_sha256": identity["artifact"]["root_metadata_sha256"],
+            "published_sha256s_file_sha256": identity["artifact"][
+                "published_sha256s_file_sha256"
+            ],
             "artifact_manifest_sha256": identity["artifact"]["manifest_sha256"],
+            "source_aimodel_sha256": identity["artifact"]["source_hash"],
+            "compiled_main_sha256": identity["artifact"]["main_h16p_sha256"],
+            "artifact_producer": identity["artifact"]["artifact_producer"],
+            "compiled_bundle_file_list_sha256": identity["artifact"][
+                "compiled_bundle_file_list_sha256"
+            ],
             "source_commit": identity["source"]["git_commit"],
             "app_bundle_identifier": identity["app"]["bundle_identifier"],
             "app_bundle_manifest_sha256": identity["app"]["bundle_manifest_sha256"],

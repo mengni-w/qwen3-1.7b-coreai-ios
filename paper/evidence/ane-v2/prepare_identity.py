@@ -15,9 +15,18 @@ from typing import Any
 
 
 ARTIFACT_REPOSITORY = "massif/Qwen3-1.7B-CoreAI-ANE-W8-4K-h16p"
-ARTIFACT_REVISION = "466ebe2e5cec125fa113ea71503add41bba581a8"
-ARTIFACT_SOURCE_HASH = "5e885ec407f1b2690df5098d38b1bed4a3e66f4352c859fb2bb79666bc0aef73"
-MAIN_H16P_SHA256 = "a7eefeef16708a324f9919890355eb92180ec85eef419ebd5822e8c8afd42f5f"
+ARTIFACT_REVISION = "75bbe06906cb5d953e602e3e4fb6364187c81822"
+ROOT_METADATA_VERSION = "0.2"
+ROOT_METADATA_SHA256 = "c12e3b1035dd8c009d5b8d8572d0ad829236871edd10c02ef35d89644c5289d1"
+PUBLISHED_SHA256SUMS_SHA256 = "11b44a503983182f99f5de2a458947ac1bfb9b68bfaafd39a5b13feb4d430be9"
+BENCHMARK_MANIFEST_NAME = "benchmark-artifact-manifest.json"
+BENCHMARK_MANIFEST_SHA256 = "91c68e82e280a36d39aaeef9b8726ab1d59e52760b6f970db67c334a674d47b2"
+ARTIFACT_SOURCE_HASH = "13ba3f73fcb7e090cd6ba1ca14b6b8903516ab608d451e94b9cdd750cfceda2c"
+MAIN_H16P_SHA256 = "09f609775baa56b11ff3c91bfcb07b145930297289634fdc5514b2a5ab4dc7ca"
+ARTIFACT_PRODUCER = "coreai-build-3600.83.1"
+COMPILED_BUNDLE_FILE_LIST_SHA256 = (
+    "182336f4654bb735bcad35e45f7832756c34469931ad96d872532dca727ebd8d"
+)
 COREAI_SOURCE_REVISION = "04a3fd6cfe9bfae9cf05b1f246cf915d930d1c0a"
 PROJECT_RELATIVE_PATH = "companion/CoreAIQwen17Companion.xcodeproj/project.pbxproj"
 PACKAGE_RESOLVED_RELATIVE_PATH = (
@@ -28,7 +37,8 @@ APP_SOURCE_RELATIVE_PATH = (
     "companion/CoreAIQwen17Companion/CoreAIQwen17CompanionApp.swift"
 )
 PROTOCOL_RELATIVE_PATH = "paper/EXPERIMENT_PROTOCOL_V1.md"
-AMENDMENT_RELATIVE_PATH = "paper/ANE_V2_AMENDMENT_1.md"
+PRIOR_AMENDMENT_RELATIVE_PATH = "paper/ANE_V2_AMENDMENT_1.md"
+AMENDMENT_RELATIVE_PATH = "paper/ANE_V2_AMENDMENT_2.md"
 PUBLIC_BUNDLE_IDENTIFIER = "io.massif.PublicW8TraceConfirmation"
 
 
@@ -97,6 +107,198 @@ def canonical_manifest(root: Path, *, exclude_cache: bool) -> tuple[list[dict[st
     return records, sha256_bytes(manifest_bytes)
 
 
+def artifact_files(root: Path) -> list[dict[str, Any]]:
+    require(root.is_dir(), f"artifact root is not a directory: {root}")
+    records: list[dict[str, Any]] = []
+    for path in sorted(root.rglob("*"), key=lambda item: item.relative_to(root).as_posix()):
+        relative = path.relative_to(root).as_posix()
+        require(".cache" not in Path(relative).parts, "Hugging Face transport cache remains")
+        require(not path.is_symlink(), f"artifact contains a symbolic link: {relative}")
+        if path.is_file() and relative != BENCHMARK_MANIFEST_NAME:
+            records.append(
+                {
+                    "path": relative,
+                    "bytes": path.stat().st_size,
+                    "sha256": sha256_file(path),
+                }
+            )
+    require(bool(records), "artifact root has no payload files")
+    return records
+
+
+def published_sha256s(
+    artifact_dir: Path,
+    files: list[dict[str, Any]] | None = None,
+) -> tuple[dict[str, Any], list[dict[str, str]]]:
+    path = artifact_dir / "SHA256SUMS"
+    require(path.is_file() and not path.is_symlink(), "public artifact has no regular SHA256SUMS")
+    file_digests = None if files is None else {record["path"]: record["sha256"] for record in files}
+    observed_sums_sha = (
+        sha256_file(path) if file_digests is None else file_digests.get("SHA256SUMS")
+    )
+    require(
+        observed_sums_sha == PUBLISHED_SHA256SUMS_SHA256,
+        "published SHA256SUMS file hash mismatch",
+    )
+    records: list[dict[str, str]] = []
+    paths: set[str] = set()
+    for line_number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+        if not line:
+            continue
+        match = re.fullmatch(r"([0-9a-f]{64})  \./(.+)", line)
+        require(match is not None, f"invalid SHA256SUMS line {line_number}")
+        digest, relative = match.groups()
+        relative_path = Path(relative)
+        require(
+            not relative.startswith("/")
+            and all(part not in ("", ".", "..") for part in relative_path.parts),
+            f"invalid SHA256SUMS path: {relative}",
+        )
+        require(relative not in paths, f"duplicate SHA256SUMS path: {relative}")
+        paths.add(relative)
+        payload = artifact_dir / relative_path
+        require(
+            payload.is_file() and not payload.is_symlink(),
+            f"SHA256SUMS path is not a regular file: {relative}",
+        )
+        observed = sha256_file(payload) if file_digests is None else file_digests.get(relative)
+        require(observed == digest, f"published payload digest mismatch: {relative}")
+        records.append({"path": relative, "sha256": digest})
+    require(bool(records), "public SHA256SUMS is empty")
+    return (
+        {
+            "sha256": PUBLISHED_SHA256SUMS_SHA256,
+            "entries": len(records),
+            "matchingEntries": len(records),
+            "acknowledgedMismatches": [],
+        },
+        records,
+    )
+
+
+def validate_compiled_identity(artifact_dir: Path, files: list[dict[str, Any]]) -> dict[str, str]:
+    by_path = {record["path"]: record for record in files}
+    root_metadata_path = artifact_dir / "metadata.json"
+    require(
+        root_metadata_path.is_file() and not root_metadata_path.is_symlink(),
+        "root metadata.json is missing",
+    )
+    require(
+        by_path.get("metadata.json", {}).get("sha256") == ROOT_METADATA_SHA256,
+        "root metadata hash mismatch",
+    )
+    root_metadata = json.loads(root_metadata_path.read_text(encoding="utf-8"))
+    require(
+        str(root_metadata.get("metadata_version", "")) == ROOT_METADATA_VERSION,
+        "root metadata_version mismatch",
+    )
+    assets = root_metadata.get("assets")
+    require(isinstance(assets, dict), "root metadata assets are missing")
+    compiled_relative = assets.get("main")
+    require(
+        isinstance(compiled_relative, str)
+        and compiled_relative
+        and not compiled_relative.startswith("/")
+        and all(part not in ("", ".", "..") for part in compiled_relative.split("/")),
+        "root metadata main asset path is invalid",
+    )
+    compilation = root_metadata.get("compilation")
+    require(isinstance(compilation, dict), "root metadata compilation identity is missing")
+    require(
+        compilation.get("source_aimodel_sha256") == ARTIFACT_SOURCE_HASH,
+        "root metadata source artifact hash mismatch",
+    )
+    require(
+        compilation.get("compiled_main_sha256") == MAIN_H16P_SHA256,
+        "root metadata compiled main hash mismatch",
+    )
+    require(
+        compilation.get("compiled_bundle_file_list_sha256")
+        == COMPILED_BUNDLE_FILE_LIST_SHA256,
+        "root metadata compiled-bundle fingerprint mismatch",
+    )
+
+    compiled_dir = artifact_dir / compiled_relative
+    compiled_metadata_path = compiled_dir / "metadata.json"
+    main_path = compiled_dir / "main-h16p.mlirb"
+    main_hash_path = compiled_dir / "main.hash"
+    require(compiled_metadata_path.is_file(), "compiled asset metadata.json is missing")
+    compiled_metadata = json.loads(compiled_metadata_path.read_text(encoding="utf-8"))
+    require(
+        str(compiled_metadata.get("sourceHash", "")).lower() == ARTIFACT_SOURCE_HASH,
+        "compiled asset sourceHash mismatch",
+    )
+    require(
+        compiled_metadata.get("producer") == ARTIFACT_PRODUCER,
+        "compiled asset producer mismatch",
+    )
+    require(main_path.is_file(), "compiled main-h16p.mlirb is missing")
+    require(main_hash_path.is_file(), "compiled main.hash is missing")
+    require(main_hash_path.read_bytes().hex() == MAIN_H16P_SHA256, "compiled main.hash mismatch")
+
+    main_relative = (Path(compiled_relative) / "main-h16p.mlirb").as_posix()
+    require(
+        by_path.get(main_relative, {}).get("sha256") == MAIN_H16P_SHA256,
+        "artifact manifest compiled-main identity mismatch",
+    )
+    return {
+        "root_metadata_version": ROOT_METADATA_VERSION,
+        "root_metadata_sha256": ROOT_METADATA_SHA256,
+        "source_hash": ARTIFACT_SOURCE_HASH,
+        "main_h16p_sha256": MAIN_H16P_SHA256,
+        "artifact_producer": ARTIFACT_PRODUCER,
+        "compiled_bundle_file_list_sha256": COMPILED_BUNDLE_FILE_LIST_SHA256,
+    }
+
+
+def benchmark_manifest_bytes(artifact_dir: Path) -> bytes:
+    files = artifact_files(artifact_dir)
+    validate_compiled_identity(artifact_dir, files)
+    published_summary, _ = published_sha256s(artifact_dir, files)
+    document = {
+        "schemaVersion": 2,
+        "repository": ARTIFACT_REPOSITORY,
+        "revision": ARTIFACT_REVISION,
+        "publishedSHA256SUMS": published_summary,
+        "files": files,
+    }
+    return (
+        json.dumps(document, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
+    ).encode("utf-8")
+
+
+def prepare_downloaded_artifact(artifact_dir: Path) -> None:
+    artifact_dir = artifact_dir.resolve()
+    manifest_path = artifact_dir / BENCHMARK_MANIFEST_NAME
+    require(not manifest_path.exists(), f"refusing existing artifact manifest: {manifest_path}")
+    encoded = benchmark_manifest_bytes(artifact_dir)
+    require(
+        sha256_bytes(encoded) == BENCHMARK_MANIFEST_SHA256,
+        "generated benchmark artifact manifest hash mismatch",
+    )
+    write_new(manifest_path, encoded, mode=0o644)
+    print(f"wrote artifact manifest {manifest_path} sha256={BENCHMARK_MANIFEST_SHA256}")
+
+
+def validate_benchmark_manifest(
+    artifact_dir: Path,
+) -> tuple[list[dict[str, Any]], dict[str, Any], list[dict[str, str]]]:
+    manifest_path = artifact_dir / BENCHMARK_MANIFEST_NAME
+    require(
+        manifest_path.is_file() and not manifest_path.is_symlink(),
+        "benchmark artifact manifest is missing",
+    )
+    require(
+        sha256_file(manifest_path) == BENCHMARK_MANIFEST_SHA256,
+        "benchmark artifact manifest hash mismatch",
+    )
+    expected_bytes = benchmark_manifest_bytes(artifact_dir)
+    require(manifest_path.read_bytes() == expected_bytes, "benchmark artifact manifest contents differ")
+    document = json.loads(expected_bytes)
+    _, published_records = published_sha256s(artifact_dir, document["files"])
+    return document["files"], document["publishedSHA256SUMS"], published_records
+
+
 def git_identity(repo: Path) -> dict[str, Any]:
     commit = run(["git", "rev-parse", "HEAD"], cwd=repo).stdout.decode().strip()
     require(bool(re.fullmatch(r"[0-9a-f]{40}", commit)), "cannot resolve a full source commit")
@@ -110,6 +312,7 @@ def git_identity(repo: Path) -> dict[str, Any]:
             "companion",
             "paper/evidence/ane-v2",
             PROTOCOL_RELATIVE_PATH,
+            PRIOR_AMENDMENT_RELATIVE_PATH,
             AMENDMENT_RELATIVE_PATH,
         ],
         cwd=repo,
@@ -119,11 +322,13 @@ def git_identity(repo: Path) -> dict[str, Any]:
     package_resolved = repo / PACKAGE_RESOLVED_RELATIVE_PATH
     swift_source = repo / APP_SOURCE_RELATIVE_PATH
     protocol = repo / PROTOCOL_RELATIVE_PATH
+    prior_amendment = repo / PRIOR_AMENDMENT_RELATIVE_PATH
     amendment = repo / AMENDMENT_RELATIVE_PATH
     require(project.is_file(), f"missing project file: {project}")
     require(package_resolved.is_file(), f"missing Package.resolved: {package_resolved}")
     require(swift_source.is_file(), f"missing instrumented source: {swift_source}")
     require(protocol.is_file(), f"missing experiment protocol: {protocol}")
+    require(prior_amendment.is_file(), f"missing prior protocol amendment: {prior_amendment}")
     require(amendment.is_file(), f"missing protocol amendment: {amendment}")
     resolved = json.loads(package_resolved.read_text(encoding="utf-8"))
     coreai_pins = [
@@ -139,7 +344,7 @@ def git_identity(repo: Path) -> dict[str, Any]:
     source_paths = sorted((repo / "companion").rglob("*.swift"))
     source_paths.extend(sorted((repo / "paper/evidence/ane-v2").glob("*.py")))
     source_paths.extend(sorted((repo / "paper/evidence/ane-v2").glob("*.sh")))
-    source_paths.append(amendment)
+    source_paths.extend([prior_amendment, amendment])
     source_paths.sort(key=lambda path: path.relative_to(repo).as_posix())
     require(swift_source in source_paths, "instrumented Swift source was not discovered")
     return {
@@ -151,6 +356,8 @@ def git_identity(repo: Path) -> dict[str, Any]:
         "package_resolved_file_sha256": sha256_file(package_resolved),
         "protocol_file": PROTOCOL_RELATIVE_PATH,
         "protocol_file_sha256": sha256_file(protocol),
+        "prior_amendment_file": PRIOR_AMENDMENT_RELATIVE_PATH,
+        "prior_amendment_file_sha256": sha256_file(prior_amendment),
         "amendment_file": AMENDMENT_RELATIVE_PATH,
         "amendment_file_sha256": sha256_file(amendment),
         "source_files": [
@@ -257,54 +464,30 @@ def app_identity(app_bundle: Path) -> tuple[dict[str, Any], dict[str, Any]]:
 
 
 def artifact_identity(artifact_dir: Path) -> dict[str, Any]:
-    payloads, manifest_sha = canonical_manifest(artifact_dir, exclude_cache=True)
-    payload_by_path = {item["path"]: item for item in payloads}
-    published_sums_path = artifact_dir / "SHA256SUMS"
-    require(published_sums_path.is_file(), "public artifact has no SHA256SUMS")
-    published_sums: list[dict[str, str]] = []
-    for line_number, line in enumerate(
-        published_sums_path.read_text(encoding="utf-8").splitlines(), start=1
-    ):
-        if not line:
-            continue
-        match = re.fullmatch(r"([0-9a-f]{64})  \./(.+)", line)
-        require(match is not None, f"invalid SHA256SUMS line {line_number}")
-        digest, relative = match.groups()
-        require(relative in payload_by_path, f"SHA256SUMS path is missing: {relative}")
-        require(
-            payload_by_path[relative]["sha256"] == digest,
-            f"published payload digest mismatch: {relative}",
-        )
-        published_sums.append({"path": relative, "sha256": digest})
-    require(bool(published_sums), "public SHA256SUMS is empty")
-    mains = [item for item in payloads if item["path"].endswith("main-h16p.mlirb")]
-    require(len(mains) == 1, f"expected one main-h16p.mlirb, found {len(mains)}")
-    require(mains[0]["kind"] == "file", "public compiled main must be a regular file")
-    require(mains[0]["sha256"] == MAIN_H16P_SHA256, "public compiled main hash mismatch")
-    main_path = artifact_dir / mains[0]["path"]
-    metadata_path = main_path.parent / "metadata.json"
-    require(metadata_path.is_file(), "compiled asset metadata.json is missing")
-    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
-    source_hash = metadata.get("sourceHash")
-    require(
-        isinstance(source_hash, str) and source_hash.lower() == ARTIFACT_SOURCE_HASH,
-        "public sourceHash mismatch",
-    )
-    require(
-        isinstance(metadata.get("producer"), str) and bool(metadata["producer"]),
-        "compiled asset metadata lacks producer identity",
-    )
+    files, published_summary, published_sums = validate_benchmark_manifest(artifact_dir)
+    payloads = [
+        {
+            "path": record["path"],
+            "kind": "file",
+            "size_bytes": record["bytes"],
+            "sha256": record["sha256"],
+        }
+        for record in files
+    ]
     return {
         "repository": ARTIFACT_REPOSITORY,
         "revision": ARTIFACT_REVISION,
+        "root_metadata_version": ROOT_METADATA_VERSION,
+        "root_metadata_sha256": ROOT_METADATA_SHA256,
         "source_hash": ARTIFACT_SOURCE_HASH,
         "main_h16p_sha256": MAIN_H16P_SHA256,
-        "artifact_producer": metadata.get("producer"),
-        "manifest_format": "sha256-tab-size-tab-kind-tab-posix-path-newline-v1",
-        "manifest_sha256": manifest_sha,
+        "artifact_producer": ARTIFACT_PRODUCER,
+        "compiled_bundle_file_list_sha256": COMPILED_BUNDLE_FILE_LIST_SHA256,
+        "manifest_format": "benchmark-artifact-manifest-json-v2",
+        "manifest_sha256": BENCHMARK_MANIFEST_SHA256,
         "payloads": payloads,
         "published_sha256s": published_sums,
-        "published_sha256s_file_sha256": sha256_file(published_sums_path),
+        "published_sha256s_file_sha256": published_summary["sha256"],
     }
 
 
@@ -326,12 +509,14 @@ def toolchain_identity() -> dict[str, str]:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--repo", type=Path, required=True)
-    parser.add_argument("--artifact-dir", type=Path, required=True)
-    parser.add_argument("--app", type=Path, required=True)
-    parser.add_argument("--publication-dir", type=Path, required=True)
-    parser.add_argument("--public-output", type=Path, required=True)
-    parser.add_argument("--private-output", type=Path, required=True)
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--prepare-artifact-dir", type=Path)
+    mode.add_argument("--repo", type=Path)
+    parser.add_argument("--artifact-dir", type=Path)
+    parser.add_argument("--app", type=Path)
+    parser.add_argument("--publication-dir", type=Path)
+    parser.add_argument("--public-output", type=Path)
+    parser.add_argument("--private-output", type=Path)
     return parser.parse_args()
 
 
@@ -374,6 +559,32 @@ def write_new(path: Path, encoded: bytes, *, mode: int) -> None:
 
 def main() -> None:
     args = parse_args()
+    if args.prepare_artifact_dir is not None:
+        require(
+            all(
+                value is None
+                for value in (
+                    args.artifact_dir,
+                    args.app,
+                    args.publication_dir,
+                    args.public_output,
+                    args.private_output,
+                )
+            ),
+            "artifact preparation does not accept identity-sealing arguments",
+        )
+        prepare_downloaded_artifact(args.prepare_artifact_dir)
+        return
+
+    require(args.repo is not None, "--repo is required for identity sealing")
+    for name in (
+        "artifact_dir",
+        "app",
+        "publication_dir",
+        "public_output",
+        "private_output",
+    ):
+        require(getattr(args, name) is not None, f"--{name.replace('_', '-')} is required")
     repo = args.repo.resolve()
     publication_dir = args.publication_dir.resolve()
     public_output = args.public_output.resolve()
@@ -388,7 +599,7 @@ def main() -> None:
     require(not private_output.exists(), f"refusing existing private output: {private_output}")
     public_app, private_signing = app_identity(args.app.resolve())
     public_record = {
-        "schema": "public-w8-trace-identity-v2",
+        "schema": "public-w8-trace-identity-v3",
         "artifact": artifact_identity(args.artifact_dir.resolve()),
         "source": git_identity(repo),
         "app": public_app,

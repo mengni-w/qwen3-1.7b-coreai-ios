@@ -48,7 +48,7 @@ private enum CompanionError: LocalizedError {
     case .missingModelBundle(let name):
       "Missing model resource folder: \(name)"
     case .invalidCompiledAsset(let name):
-      "The compiled h16p asset is missing or has the wrong sourceHash: \(name)"
+      "The public W8 package does not match the frozen trace identity: \(name)"
     case .noStreamSnapshots:
       "The response stream ended without producing a snapshot."
     case .smokeMismatch(let content):
@@ -74,9 +74,21 @@ final class CompanionState {
   private let modelBundleName = "qwen3_1_7b_w8_4k_ios"
   private let compiledModelName = "qwen3_1_7b_coreai_ane_w8_4k.h16p.aimodelc"
   private let expectedSourceHash =
-    "5e885ec407f1b2690df5098d38b1bed4a3e66f4352c859fb2bb79666bc0aef73"
+    "13ba3f73fcb7e090cd6ba1ca14b6b8903516ab608d451e94b9cdd750cfceda2c"
+  private let expectedRootMetadataVersion = "0.2"
+  private let expectedRootMetadataSHA256 =
+    "c12e3b1035dd8c009d5b8d8572d0ad829236871edd10c02ef35d89644c5289d1"
+  private let expectedPublishedSHA256SUMSSHA256 =
+    "11b44a503983182f99f5de2a458947ac1bfb9b68bfaafd39a5b13feb4d430be9"
+  private let expectedArtifactManifestSHA256 =
+    "91c68e82e280a36d39aaeef9b8726ab1d59e52760b6f970db67c334a674d47b2"
+  private let expectedCompiledMainSHA256 =
+    "09f609775baa56b11ff3c91bfcb07b145930297289634fdc5514b2a5ab4dc7ca"
+  private let expectedProducer = "coreai-build-3600.83.1"
+  private let expectedCompiledBundleFingerprint =
+    "182336f4654bb735bcad35e45f7832756c34469931ad96d872532dca727ebd8d"
   private let publicArtifactRepository = "massif/Qwen3-1.7B-CoreAI-ANE-W8-4K-h16p"
-  private let publicArtifactRevision = "466ebe2e5cec125fa113ea71503add41bba581a8"
+  private let publicArtifactRevision = "75bbe06906cb5d953e602e3e4fb6364187c81822"
   private let coreAISourceRevision = "04a3fd6cfe9bfae9cf05b1f246cf915d930d1c0a"
   private let traceInstructions =
     "Follow the user's request exactly. Return only the requested answer and no reasoning."
@@ -392,12 +404,39 @@ final class CompanionState {
   private func validateCompiledAsset(in modelURL: URL) throws -> String {
     let compiledURL = modelURL.appending(path: compiledModelName, directoryHint: .isDirectory)
     let mainURL = compiledURL.appending(path: "main-h16p.mlirb")
-    let metadataURL = compiledURL.appending(path: "metadata.json")
+    let mainHashURL = compiledURL.appending(path: "main.hash")
+    let compiledMetadataURL = compiledURL.appending(path: "metadata.json")
+    let rootMetadataURL = modelURL.appending(path: "metadata.json")
+    let publishedSumsURL = modelURL.appending(path: "SHA256SUMS")
+    let artifactManifestURL = modelURL.appending(path: "benchmark-artifact-manifest.json")
     guard FileManager.default.fileExists(atPath: mainURL.path),
-      let data = try? Data(contentsOf: metadataURL),
-      let metadata = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-      let sourceHash = metadata["sourceHash"] as? String,
-      sourceHash.lowercased() == expectedSourceHash
+      let rootMetadataData = try? Data(contentsOf: rootMetadataURL),
+      Self.sha256(rootMetadataData) == expectedRootMetadataSHA256,
+      let rootMetadata = try? JSONSerialization.jsonObject(
+        with: rootMetadataData
+      ) as? [String: Any],
+      rootMetadata["metadata_version"] as? String == expectedRootMetadataVersion,
+      let assets = rootMetadata["assets"] as? [String: Any],
+      assets["main"] as? String == compiledModelName,
+      let compilation = rootMetadata["compilation"] as? [String: Any],
+      compilation["source_aimodel_sha256"] as? String == expectedSourceHash,
+      compilation["compiled_main_sha256"] as? String == expectedCompiledMainSHA256,
+      compilation["compiled_bundle_file_list_sha256"] as? String
+        == expectedCompiledBundleFingerprint,
+      let publishedSumsData = try? Data(contentsOf: publishedSumsURL),
+      Self.sha256(publishedSumsData) == expectedPublishedSHA256SUMSSHA256,
+      let artifactManifestData = try? Data(contentsOf: artifactManifestURL),
+      Self.sha256(artifactManifestData) == expectedArtifactManifestSHA256,
+      let compiledMetadataData = try? Data(contentsOf: compiledMetadataURL),
+      let compiledMetadata = try? JSONSerialization.jsonObject(
+        with: compiledMetadataData
+      ) as? [String: Any],
+      let sourceHash = compiledMetadata["sourceHash"] as? String,
+      sourceHash.lowercased() == expectedSourceHash,
+      compiledMetadata["producer"] as? String == expectedProducer,
+      let mainHash = try? Data(contentsOf: mainHashURL),
+      mainHash.map({ String(format: "%02x", $0) }).joined()
+        == expectedCompiledMainSHA256
     else {
       throw CompanionError.invalidCompiledAsset(compiledModelName)
     }
@@ -567,7 +606,11 @@ final class CompanionState {
   }
 
   private nonisolated static func sha256(_ value: String) -> String {
-    SHA256.hash(data: Data(value.utf8)).map { String(format: "%02x", $0) }.joined()
+    sha256(Data(value.utf8))
+  }
+
+  private nonisolated static func sha256(_ value: Data) -> String {
+    SHA256.hash(data: value).map { String(format: "%02x", $0) }.joined()
   }
 
   private nonisolated static func currentExecutableSHA256() -> String {

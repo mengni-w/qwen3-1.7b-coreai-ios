@@ -1,11 +1,14 @@
-# ANE trace confirmation V1, identity schema V2
+# ANE trace confirmation V1, identity schema V3
 
 This directory implements Section 3 of `paper/EXPERIMENT_PROTOCOL_V1.md`. It
 contains instrumentation and deterministic derivation code, not a trace or a
 result. A real run is admissible only after these files and the companion
 instrumentation have been reviewed and committed.
-`paper/ANE_V2_AMENDMENT_1.md` defines the signing and publication boundary and
-is hashed into every admissible public identity.
+`paper/ANE_V2_AMENDMENT_1.md` defines the signing and publication boundary.
+`paper/ANE_V2_AMENDMENT_2.md` prospectively freezes the current,
+runtime-compatible public W8 artifact. Both amendments are hashed into every
+new admissible source identity. Do not collect a trace until Amendment 2 and
+the corresponding instrumentation and tools have been reviewed and committed.
 
 Use the same Xcode 27 Beta toolchain for every build, identity, capture, and
 export command in the run:
@@ -53,6 +56,15 @@ ditto /tmp/public-w8-trace-artifact \
   companion/ModelBundle/qwen3_1_7b_w8_4k_ios
 ```
 
+The downloader pins Hub revision
+`75bbe06906cb5d953e602e3e4fb6364187c81822`, verifies the runtime-facing root
+metadata, published `SHA256SUMS`, source `.aimodel`, compiled main, producer,
+and compiled-bundle fingerprint, then writes the frozen schema-v2 benchmark
+artifact manifest. Its required SHA-256 is
+`91c68e82e280a36d39aaeef9b8726ab1d59e52760b6f970db67c334a674d47b2`.
+The generated manifest is a local evidence object, not a file claimed to exist
+at the immutable Hub revision.
+
 The destination is ignored and already referenced by the Xcode project. Do
 not drag resources into Xcode. Build and sign a Release app by supplying the
 team and final bundle identifier on the command line, not by editing the
@@ -87,26 +99,28 @@ python3 paper/evidence/ane-v2/prepare_identity.py \
   --private-output /tmp/public-w8-trace-private/identity-private.json
 ```
 
-The command fails if the public revision's `sourceHash` or compiled-main hash
-does not match the protocol, if any companion/ANE-analysis source is dirty, if
-`codesign --verify --deep --strict` fails, the fixed public bundle identifier
-does not match, or a required identity is absent. Its artifact manifest
-excludes Hugging Face's transport-only `.cache` directory and covers every
-downloaded payload. A manifest line is:
+The command fails if any frozen artifact field differs, if the generated
+artifact manifest does not cover exactly the downloaded regular files, if any
+companion/ANE-analysis source is dirty, if `codesign --verify --deep --strict`
+fails, the fixed public bundle identifier does not match, or a required
+identity is absent. Hugging Face's transport-only `.cache` directory and all
+symbolic links are rejected. Each schema-v2 manifest entry contains:
 
 ```text
-sha256<TAB>size_bytes<TAB>file_or_symlink<TAB>relative_posix_path<NEWLINE>
+path, bytes, sha256
 ```
 
-The public record includes the complete payload manifest, source commit, project,
-`Package.resolved`, and source-file hashes, Release app and executable hashes,
-the verified signing status, CDHash, signature format, signing-output hashes,
-the fixed bundle identifier, Xcode/Instruments build, and the verified Core AI
-source revision. It contains no signing Identifier, team identifier, or
-authority string. Those fields and the strict-verification result exist only in
-the bound private record. The script refuses a private path inside either the
-repository or publication directory and creates the private file with mode
-`0600`.
+The public record includes the manifest and its digest; the exact root-metadata
+version and digest; the exact `SHA256SUMS` digest; the source, compiled-main,
+producer, and compiled-bundle identities; the source commit, project,
+`Package.resolved`, both amendment hashes, and source-file hashes; Release app
+and executable hashes; verified signing status, CDHash, signature format, and
+signing-output hashes; the fixed bundle identifier; Xcode/Instruments build;
+and the verified Core AI source revision. It contains no signing Identifier,
+team identifier, or authority string. Those fields and the strict-verification
+result exist only in the bound private record. The script refuses a private
+path inside either the repository or publication directory and creates the
+private file with mode `0600`.
 
 The generated Info.plist carries `ANETraceBuildConfiguration` directly from
 Xcode's `$(CONFIGURATION)` build setting. Identity preparation reads that value
@@ -190,10 +204,11 @@ cp /tmp/public-w8-trace-private/exports/export-command.json \
 ```
 
 Because a `.trace` is a bundle, its recorded hash is the SHA-256 of a sorted
-manifest using the same `sha256<TAB>size<TAB>kind<TAB>path<NEWLINE>` format as
-the app/artifact identity record; symlink hashes cover `SYMLINK<NUL>` plus the
-UTF-8 target. This definition is used identically during export and metadata
-sealing.
+`sha256<TAB>size<TAB>kind<TAB>path<NEWLINE>` manifest; symlink hashes cover
+`SYMLINK<NUL>` plus the UTF-8 target. The Release app bundle uses the same
+tabular manifest definition. The downloaded model instead uses the schema-v2
+benchmark JSON manifest described in Section 1. Each definition is used
+identically wherever that object is sealed and later verified.
 
 ## 4. Canonicalize without changing the matching rule
 
@@ -301,7 +316,7 @@ python3 paper/evidence/ane-v2/analyze_trace.py \
   --output /tmp/public-w8-trace-public/ane-analysis.json
 ```
 
-The analyzer first re-hashes the current protocol, amendment, analyzer,
+The analyzer first re-hashes the current protocol, both amendments, analyzer,
 canonicalizer, sealer, public validator, app source, Xcode project, and the
 complete sealed source-file set, and requires the current Git commit to match
 the identity. It then requires exactly one complete frozen signpost interval

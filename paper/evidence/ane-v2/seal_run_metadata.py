@@ -68,7 +68,7 @@ def verify_private_identity_binding(private_path: Path, public_path: Path) -> No
         raise ValueError("private identity does not bind the supplied public identity")
     public = load(public_path)
     if (
-        public.get("schema") != "public-w8-trace-identity-v2"
+        public.get("schema") != "public-w8-trace-identity-v3"
         or public.get("app", {}).get("code_signing", {}).get("signed") is not True
     ):
         raise ValueError("public identity does not record a verified signature")
@@ -199,7 +199,7 @@ def main() -> None:
     capture = load(args.capture_command)
     export = load(args.export_command)
     app_record_set = load(args.app_records)
-    if identity.get("schema") != "public-w8-trace-identity-v2":
+    if identity.get("schema") != "public-w8-trace-identity-v3":
         raise SystemExit("identity schema mismatch")
     if capture.get("schema") != "public-w8-trace-capture-command-v2":
         raise SystemExit("capture command schema mismatch")
