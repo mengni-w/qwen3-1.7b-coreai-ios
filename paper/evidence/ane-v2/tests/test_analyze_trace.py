@@ -952,6 +952,7 @@ class ExportAndIdentityTests(unittest.TestCase):
                 analyzer.AMENDMENT_RELATIVE_PATH,
                 "paper/evidence/ane-v2/analyze_trace.py",
                 analyzer.PROJECT_RELATIVE_PATH,
+                analyzer.INFO_PLIST_RELATIVE_PATH,
             ):
                 path = bound["repo"] / relative
                 original = path.read_bytes()

@@ -68,6 +68,7 @@ PRIOR_AMENDMENT_RELATIVE_PATH = "paper/ANE_V2_AMENDMENT_1.md"
 ARTIFACT_AMENDMENT_RELATIVE_PATH = "paper/ANE_V2_AMENDMENT_2.md"
 AMENDMENT_RELATIVE_PATH = "paper/ANE_V2_AMENDMENT_3.md"
 PROJECT_RELATIVE_PATH = "companion/CoreAIQwen17Companion.xcodeproj/project.pbxproj"
+INFO_PLIST_RELATIVE_PATH = "companion/CoreAIQwen17Companion/Info.plist"
 PACKAGE_RESOLVED_RELATIVE_PATH = (
     "companion/CoreAIQwen17Companion.xcodeproj/project.xcworkspace/"
     "xcshareddata/swiftpm/Package.resolved"
@@ -75,6 +76,7 @@ PACKAGE_RESOLVED_RELATIVE_PATH = (
 PROTOCOL_RELATIVE_PATH = "paper/EXPERIMENT_PROTOCOL_V1.md"
 REQUIRED_SOURCE_PATHS = {
     "companion/CoreAIQwen17Companion/CoreAIQwen17CompanionApp.swift",
+    INFO_PLIST_RELATIVE_PATH,
     PRIOR_AMENDMENT_RELATIVE_PATH,
     ARTIFACT_AMENDMENT_RELATIVE_PATH,
     AMENDMENT_RELATIVE_PATH,
@@ -632,6 +634,7 @@ def verify_current_source_identity(identity: Any, source_root: Path) -> None:
         )
 
     discovered = sorted((source_root / "companion").rglob("*.swift"))
+    discovered.extend(sorted((source_root / "companion").rglob("*.plist")))
     discovered.extend(sorted((source_root / "paper/evidence/ane-v2").glob("*.py")))
     discovered.extend(sorted((source_root / "paper/evidence/ane-v2").glob("*.sh")))
     discovered.extend(sorted((source_root / "paper/evidence/ane-v2").glob("*.patch")))

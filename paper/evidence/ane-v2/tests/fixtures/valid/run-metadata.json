@@ -8,7 +8,7 @@
   "device_model": "iPhone 15 Pro",
   "emitted_tokens": 8,
   "export_command_record_sha256": "89bb93aae50c1c5e5971a8a3c31d886573607ec5af75a13d7fbcefef02ca1ec4",
-  "identity_record_sha256": "cbd8e91252db250027339f634d4fb26f0ca3c02d1f27af4ded9c86d1b4c7e350",
+  "identity_record_sha256": "736b1eab3a1641c9669532d787ed7535f8d3a43bf8c465bab79ee5a7e3af08e8",
   "identity_binding_verified": true,
   "input_tokens": 24,
   "installed_bundle_identifier": "io.massif.PublicW8TraceConfirmation",
