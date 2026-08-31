@@ -16,7 +16,14 @@
   },
   "speedV2Admission": {
     "schemaVersion": 1,
-    "acceptedBundle": null,
+    "acceptedBundle": {
+      "relativePath": "paper/evidence/speed-v2/attempts/speed-v2-20260831-j",
+      "runID": "speed-v2-20260831-j",
+      "finalizationSHA256": "061d802ecc587dde3487780f3e5dca66402e8cd2ac893df5a34c108e1f04650d",
+      "publicEvidenceIndexSHA256": "dbb570d0ca1fda3c07ab90642d6df356ccb937b41213ec591ace6d875aec5f21",
+      "publicHostRecordSHA256": "aad5495585f8f9ec184aa9d2f6015cfb2082a41c5f006c9431702e43cc7f68ff",
+      "analyzerSummarySHA256": "134934dbd311ade970b532805aa8096c0311b51e872ce78d87e11057e474ddc5"
+    },
     "reportProtocol": "paper/REPORT_PROTOCOL_V3.md",
     "reportProtocolSHA256": "760052171c27a6e851be356ef6ed0a76d4066d1d3851d42d53488284951c5d94",
     "hostIdentity": {

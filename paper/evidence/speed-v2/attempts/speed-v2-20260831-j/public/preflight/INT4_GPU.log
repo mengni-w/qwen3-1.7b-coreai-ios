@@ -1,0 +1,4 @@
+Launched application with io.github.massif01.qwen3.int4speedbench bundle identifier.
+Waiting for the application to terminate…
+SPEED_V2_JSON={"benchmarkCommit":"29271b8d9ca9a2d36d6752debc0ac37416aa8c59","bundleIdentifier":"io.github.massif01.qwen3.int4speedbench","cachedInputTokenProbe":0,"capabilitiesConstruction":"passed","event":"abi_preflight","patchedRuntimeSourceSHA256":"11cf90c72b4b4b6695c6fdbc63e58dc7d41633a7bba9ffa5273852cc079cf0e0","protocol":"public-artifact-speed-confirmation-v2","protocolCommit":"14e4067a960cbac5a06b372b502355074304d0d4","runID":"speed-v2-20260831-j","runtimeCommit":"85e2f2d8c6433825e64219a32693ed1a4aed519f","runtimePatchSHA256":"5f7730605866a91c92ece798f03953f88249e61eeaed8660e05c4a1022809485","schemaVersion":3,"sequence":1,"status":"passed","timestamp":"2026-08-31T14:13:51.525Z","transcriptToolCallLayoutSize":96,"usageActionConstruction":"passed","variant":"INT4_GPU","xcodeBuild":"27A5252f"}
+The app terminated with the exit code 0.

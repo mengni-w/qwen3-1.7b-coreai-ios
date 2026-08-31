@@ -1,0 +1,263 @@
+{
+  "generatedAt": "2026-08-31T15:45:09.616831Z",
+  "privateEvidenceIndex": {
+    "bytes": 23861,
+    "path": "host/evidence-index-private.json",
+    "sha256": "dac0522d50a5439a3ae6a1d5f2cf4af0953778df8dda4906a71df2ee7fb23aec"
+  },
+  "publicFiles": [
+    {
+      "bytes": 862,
+      "path": "public/README.md",
+      "sha256": "da484c7511f02dfadf59142c3b90f7dc585fe4a9899471205321abd10a55b929",
+      "visibility": "public"
+    },
+    {
+      "bytes": 6184,
+      "path": "public/artifacts/INT4_GPU-benchmark-artifact-manifest.json",
+      "sha256": "18c22f4f35ae54421a58593af2858979c13b0cf6f5a15d18c044469007fa86ae",
+      "visibility": "public"
+    },
+    {
+      "bytes": 17238,
+      "path": "public/artifacts/W8_ANE-benchmark-artifact-manifest.json",
+      "sha256": "91c68e82e280a36d39aaeef9b8726ab1d59e52760b6f970db67c334a674d47b2",
+      "visibility": "public"
+    },
+    {
+      "bytes": 8408,
+      "path": "public/build/INT4_GPU-app-bundle-manifest.json",
+      "sha256": "2cbde476301959261cbb8032e740d7e1439ae1a899bef4a759d24cd90bf56776",
+      "visibility": "public"
+    },
+    {
+      "bytes": 213,
+      "path": "public/build/INT4_GPU-codesign.log",
+      "sha256": "fda8257a6c8f84cf8100bbd5a604f684a581d9f912b3aa461296588a08fd3bed",
+      "visibility": "public"
+    },
+    {
+      "bytes": 293194,
+      "path": "public/build/INT4_GPU-foundation-models-abi.log",
+      "sha256": "09f56db57d4a071a5f8d073a3fdfd0147c1cb7fc0c2f540bbd2ce05c62ad2381",
+      "visibility": "public"
+    },
+    {
+      "bytes": 93192,
+      "path": "public/build/INT4_GPU.log",
+      "sha256": "78e6ae4c071e02d7757add7475483865e888bcd11b5f57b2c5ed11470893291b",
+      "visibility": "public"
+    },
+    {
+      "bytes": 20056,
+      "path": "public/build/W8_ANE-app-bundle-manifest.json",
+      "sha256": "00197c315b1341c1bd881bdcfafe32c432b1fef468fcabad3a30d9dcc9c463ba",
+      "visibility": "public"
+    },
+    {
+      "bytes": 209,
+      "path": "public/build/W8_ANE-codesign.log",
+      "sha256": "142cb2247cb794627b55d1277866c325581278f53e95016225ad9b05beeeec97",
+      "visibility": "public"
+    },
+    {
+      "bytes": 293194,
+      "path": "public/build/W8_ANE-foundation-models-abi.log",
+      "sha256": "09f56db57d4a071a5f8d073a3fdfd0147c1cb7fc0c2f540bbd2ce05c62ad2381",
+      "visibility": "public"
+    },
+    {
+      "bytes": 1194599,
+      "path": "public/build/W8_ANE.log",
+      "sha256": "73055748517d3dd98686b531745183d216720c067d7b08f97c439a600fb71189",
+      "visibility": "public"
+    },
+    {
+      "bytes": 37774,
+      "path": "public/console/block-01-W8_ANE.log",
+      "sha256": "1bbff2dd8763e6b91c1babb77626b22af6516e43abfc6524078cac2e87e9926f",
+      "visibility": "public"
+    },
+    {
+      "bytes": 100917,
+      "path": "public/console/block-02-INT4_GPU.log",
+      "sha256": "11955883e5e44797f2573898570884e95cbd9fb04fea8276d31c4be186dc27ee",
+      "visibility": "public"
+    },
+    {
+      "bytes": 176033,
+      "path": "public/console/block-03-INT4_GPU.log",
+      "sha256": "08f05bc4900195582df364887204bceaa58e2227748694326b7ef0d7d49f857d",
+      "visibility": "public"
+    },
+    {
+      "bytes": 207175,
+      "path": "public/console/block-04-W8_ANE.log",
+      "sha256": "4b0240af097d881c35399ea50435e2dd782284a64f70f1af1b7ea8546cfd829a",
+      "visibility": "public"
+    },
+    {
+      "bytes": 176635,
+      "path": "public/console/block-05-INT4_GPU.log",
+      "sha256": "e171d0e24d7d839750aa64ddebd2db75c04e409e4586033724b364aad37116ae",
+      "visibility": "public"
+    },
+    {
+      "bytes": 239123,
+      "path": "public/console/block-06-W8_ANE.log",
+      "sha256": "8a4542fcfc391163d7f2855555db3151f57f2e05f9bdf221f4a95472c9067fc2",
+      "visibility": "public"
+    },
+    {
+      "bytes": 194854,
+      "path": "public/console/block-07-W8_ANE.log",
+      "sha256": "ecdf235fda8d5a5a077e5c0ec0d3290f898d39c7be845a24a0a5c9386878534d",
+      "visibility": "public"
+    },
+    {
+      "bytes": 202144,
+      "path": "public/console/block-08-INT4_GPU.log",
+      "sha256": "64a8d0adc88719d8e48998fbd646f363a06036476299d4f5817dc635482fec13",
+      "visibility": "public"
+    },
+    {
+      "bytes": 807391,
+      "path": "public/host/commands.log",
+      "sha256": "fbe481198eafbcc1de1fe633747b59ac671cf1cb91a09b7d6479a73e558295ee",
+      "visibility": "public"
+    },
+    {
+      "bytes": 30333,
+      "path": "public/host/host-run-record.json",
+      "sha256": "aad5495585f8f9ec184aa9d2f6015cfb2082a41c5f006c9431702e43cc7f68ff",
+      "visibility": "public"
+    },
+    {
+      "bytes": 5003,
+      "path": "public/host/operator-block-observations.json",
+      "sha256": "9dbce427e65b21f119520d349afb1f146ede589211a41ca2a57583270f03ecca",
+      "visibility": "public"
+    },
+    {
+      "bytes": 405,
+      "path": "public/host/operator-record.json",
+      "sha256": "e26ef2b4da22f0008a3c1e338bda398e9193f3aeec69ea7fda21a6ab881847d9",
+      "visibility": "public"
+    },
+    {
+      "bytes": 896,
+      "path": "public/install/INT4_GPU.json",
+      "sha256": "3cf6e954f5957edf9ca9bc8b6ca1c6f3a18e014b2721ffc563b8be2100c97766",
+      "visibility": "public"
+    },
+    {
+      "bytes": 293,
+      "path": "public/install/INT4_GPU.log",
+      "sha256": "5c5046a69fc860476afaf468fab83fc0253e936c887f3abeee1e9e123ef81c20",
+      "visibility": "public"
+    },
+    {
+      "bytes": 886,
+      "path": "public/install/W8_ANE.json",
+      "sha256": "a71c8210f2c7ce46a842b95179c9a9987a2a2994aafdec0aa5d1adfd6deb4967",
+      "visibility": "public"
+    },
+    {
+      "bytes": 289,
+      "path": "public/install/W8_ANE.log",
+      "sha256": "5e418359911ced36f95ac3f71cb4df060d14ea3021381551ba4dab1aa8b51b9d",
+      "visibility": "public"
+    },
+    {
+      "bytes": 1294,
+      "path": "public/launch/block-01-W8_ANE.json",
+      "sha256": "a3dbf8396ac016d9384b62a553f279ce6c9914e8177ac8dfbf6b5dff8d2e83fe",
+      "visibility": "public"
+    },
+    {
+      "bytes": 1308,
+      "path": "public/launch/block-02-INT4_GPU.json",
+      "sha256": "0f257019cd7d47544a6f7cb7f98a83697d544ffefe32d8974569779e33408332",
+      "visibility": "public"
+    },
+    {
+      "bytes": 1308,
+      "path": "public/launch/block-03-INT4_GPU.json",
+      "sha256": "3cc479b99013b6295346768400a9ef978d308533ac20289d40341455693c6de5",
+      "visibility": "public"
+    },
+    {
+      "bytes": 1294,
+      "path": "public/launch/block-04-W8_ANE.json",
+      "sha256": "e46d74f276a68979684da10ed1fe9d54c36d0865911ff1e6563a6a9a6378f6db",
+      "visibility": "public"
+    },
+    {
+      "bytes": 1308,
+      "path": "public/launch/block-05-INT4_GPU.json",
+      "sha256": "60d449028ae76c56f9606fd5c78018700ec350560606e1a76a42b680233e5d92",
+      "visibility": "public"
+    },
+    {
+      "bytes": 1294,
+      "path": "public/launch/block-06-W8_ANE.json",
+      "sha256": "e9c4f7ae61300019555f8818390f33cf9eca11dae4ba3d2ce7e540ee8ac60b7e",
+      "visibility": "public"
+    },
+    {
+      "bytes": 1294,
+      "path": "public/launch/block-07-W8_ANE.json",
+      "sha256": "315e1444ec25f9bf012d1cdc2269058b5c8a283464e5b60c6235b6677c335c78",
+      "visibility": "public"
+    },
+    {
+      "bytes": 1308,
+      "path": "public/launch/block-08-INT4_GPU.json",
+      "sha256": "9542eaeed43d4f23a2492270b8270481b05fa1747cddd8aa84b77a6f254f33c3",
+      "visibility": "public"
+    },
+    {
+      "bytes": 1647,
+      "path": "public/preflight/INT4_GPU-status.json",
+      "sha256": "f4bfd2930ad9e706a34097e8b5b96557a9afe44c593c82cc96bc23cfe901301c",
+      "visibility": "public"
+    },
+    {
+      "bytes": 980,
+      "path": "public/preflight/INT4_GPU.log",
+      "sha256": "ab9491a4cc130f1bb79eb6f9402d53f631d4fba3c5cfa64dd4b4ec8e58730920",
+      "visibility": "public"
+    },
+    {
+      "bytes": 1631,
+      "path": "public/preflight/W8_ANE-status.json",
+      "sha256": "2f62cb5a0d5efd91f084bc1f53ca06176545046e93f0a362f448fabd9d42ba29",
+      "visibility": "public"
+    },
+    {
+      "bytes": 974,
+      "path": "public/preflight/W8_ANE.log",
+      "sha256": "b0b20a66e1653a2af73891260c9e1b435c6410e0585959f0d91a46264b34abd6",
+      "visibility": "public"
+    },
+    {
+      "bytes": 0,
+      "path": "public/results/analysis.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "visibility": "public"
+    },
+    {
+      "bytes": 574980,
+      "path": "public/results/speed-v2-summary.json",
+      "sha256": "134934dbd311ade970b532805aa8096c0311b51e872ce78d87e11057e474ddc5",
+      "visibility": "public"
+    }
+  ],
+  "runID": "speed-v2-20260831-j",
+  "schemaVersion": 1,
+  "selfExclusion": [
+    "host/evidence-index-private.json",
+    "public/evidence-index.json",
+    "FINALIZED.json"
+  ]
+}

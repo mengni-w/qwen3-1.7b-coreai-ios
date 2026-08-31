@@ -1,6 +1,8 @@
 {
+  "incorporatesAcceptedSpeedV2": true,
   "incorporatesPostReviewAuthoringArtifactEvidence": true,
   "incorporatesPostReviewDeviceEvidence": true,
+  "incorporatesProspectiveSpeedV2": true,
   "localFileSHA256": {
     "paper/REPORT_PROTOCOL_V2.md": "b54284270c9f9fff14beadb8f5dca01d012b0585f887c0f6f30a729bc076587f",
     "paper/W8_COMPATIBILITY_OBSERVATION_1.md": "f5405f6adf8a2556f2ad95ee0291426dadd885e0de9f540f31e2d9f34dd67a79",
@@ -12,7 +14,7 @@
   },
   "pipelinePerformedDeviceMeasurement": false,
   "pipelinePerformedModelInference": false,
-  "pipelineSHA256": "0714b7aba33e02d7e45c9cb2edfa02eac0850f3fec2a41ca9035bc1ae5b5a5bb",
+  "pipelineSHA256": "6719e6d8845657f318e3a381c3d2b73b79d7e017bdc946abee7cf12084ca49e5",
   "publicStatusLockSHA256": "12b0ed2caf30e1f75e109bac404b8106d5b26ff6242d51588e7dd7fb10595f69",
   "repositoryCommits": {
     "comparison": "34a4c08a9282bd076b8b5fe154c5507e6a8b3774",
@@ -23,5 +25,13 @@
     "python": "3.11.15"
   },
   "schemaVersion": 1,
-  "sourceLockSHA256": "eb436929ccde86ca9d371b53d975697f05930b25388ce221abd955763f376fd8"
+  "sourceLockSHA256": "f6bb7c26e473312df534f9d66421e3b5befc7467471ee350a42591a7955600a5",
+  "speedEvidence": {
+    "analyzerSummarySHA256": "134934dbd311ade970b532805aa8096c0311b51e872ce78d87e11057e474ddc5",
+    "finalizationSHA256": "061d802ecc587dde3487780f3e5dca66402e8cd2ac893df5a34c108e1f04650d",
+    "publicEvidenceIndexSHA256": "dbb570d0ca1fda3c07ab90642d6df356ccb937b41213ec591ace6d875aec5f21",
+    "publicHostRecordSHA256": "aad5495585f8f9ec184aa9d2f6015cfb2082a41c5f006c9431702e43cc7f68ff",
+    "reportProtocol": "paper/REPORT_PROTOCOL_V3.md",
+    "reportProtocolSHA256": "760052171c27a6e851be356ef6ed0a76d4066d1d3851d42d53488284951c5d94"
+  }
 }

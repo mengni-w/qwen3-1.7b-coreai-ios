@@ -337,12 +337,14 @@ class SpeedV2AdmissionTests(unittest.TestCase):
         self.bundle = PublicationBundle(self.root)
         self.generated = Path(self.temporary.name) / "generated-review"
         self.generated.mkdir()
+        self.expected = copy.deepcopy(EXPECTED)
+        self.expected["acceptedBundle"] = None
 
     def tearDown(self):
         self.temporary.cleanup()
 
     def extract(self) -> dict:
-        return pipeline.extract_speed_v2(self.root, self.generated, EXPECTED)
+        return pipeline.extract_speed_v2(self.root, self.generated, self.expected)
 
     def rewrite_summary(self) -> None:
         self.bundle.write_records()

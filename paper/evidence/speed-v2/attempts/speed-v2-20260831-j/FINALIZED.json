@@ -1,0 +1,47 @@
+{
+  "finalizedAt": "2026-08-31T15:45:10.910922Z",
+  "postIndexAcquisitionSeal": {
+    "analyzerSHA256": "e0a885cfa9c0d272b2f6d34af80ca1ef8d7e1ab38e5c135d0c685633fe5b9b5c",
+    "artifacts": {
+      "INT4_GPU": {
+        "manifestSHA256": "18c22f4f35ae54421a58593af2858979c13b0cf6f5a15d18c044469007fa86ae",
+        "repository": "massif/Qwen3-1.7B-CoreAI-GPU-INT4-4K-h16p",
+        "revision": "c32b6342c98e5e23363f692e614bccca37f24234"
+      },
+      "W8_ANE": {
+        "manifestSHA256": "91c68e82e280a36d39aaeef9b8726ab1d59e52760b6f970db67c334a674d47b2",
+        "repository": "massif/Qwen3-1.7B-CoreAI-ANE-W8-4K-h16p",
+        "revision": "75bbe06906cb5d953e602e3e4fb6364187c81822"
+      }
+    },
+    "benchmarkCommit": "29271b8d9ca9a2d36d6752debc0ac37416aa8c59",
+    "hostControllerSHA256": "7bb8e73c8ef5640da6cab8a435e6c7fa50b34b750fe662c19e182cc7c8e1ae5f",
+    "patchedRuntimeSourceSHA256": "11cf90c72b4b4b6695c6fdbc63e58dc7d41633a7bba9ffa5273852cc079cf0e0",
+    "protocolCommit": "14e4067a960cbac5a06b372b502355074304d0d4",
+    "runtimeCommit": "85e2f2d8c6433825e64219a32693ed1a4aed519f",
+    "runtimePatchSHA256": "5f7730605866a91c92ece798f03953f88249e61eeaed8660e05c4a1022809485",
+    "schemaVersion": 1,
+    "sealSHA256": "28f06cf668859e5f8194c62f9641291900222e72a8e35e0c4965a2708a0c7bc7"
+  },
+  "privateEvidenceIndex": {
+    "path": "host/evidence-index-private.json",
+    "sha256": "dac0522d50a5439a3ae6a1d5f2cf4af0953778df8dda4906a71df2ee7fb23aec"
+  },
+  "privateHostRecord": {
+    "bytes": 31738,
+    "path": "host/host-run-record-private.json",
+    "sha256": "e55c68f6028b0c3dd4771c346a20c8f3ba97bbdedb26b9e3c4c71dbb9f5b386a"
+  },
+  "publicEvidenceIndex": {
+    "path": "public/evidence-index.json",
+    "sha256": "dbb570d0ca1fda3c07ab90642d6df356ccb937b41213ec591ace6d875aec5f21"
+  },
+  "publicHostRecord": {
+    "bytes": 30333,
+    "path": "public/host/host-run-record.json",
+    "sha256": "aad5495585f8f9ec184aa9d2f6015cfb2082a41c5f006c9431702e43cc7f68ff"
+  },
+  "runID": "speed-v2-20260831-j",
+  "schemaVersion": 1,
+  "status": "passed"
+}

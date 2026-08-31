@@ -1,0 +1,21 @@
+{
+  "bundleIdentifier": "io.github.massif01.qwen3.w8speedbench",
+  "endedAt": "2026-08-31T14:13:24.113344Z",
+  "exitStatus": 0,
+  "installIdentity": {
+    "bundleIdentifier": "io.github.massif01.qwen3.w8speedbench",
+    "outcome": "success"
+  },
+  "log": "install/W8_ANE.log",
+  "logSHA256": "dcbaa8399c47d9b732860842a26a93f5ef73cd4dc70121b0908149eaa6d6e965",
+  "preinstallAppSeal": {
+    "appBundleManifestSHA256": "00197c315b1341c1bd881bdcfafe32c432b1fef468fcabad3a30d9dcc9c463ba",
+    "executableSHA256": "387d99d6eacfc1459b7e1cb5f9e42371a32b33b76c75fdb93f469d55091c3736",
+    "infoPlistSHA256": "ece462a56b4e71cf0de5fe680e98b2ec21b77358d20481bc400d139773363182",
+    "status": "sealed"
+  },
+  "profile": "W8_ANE",
+  "result": "install/W8_ANE.json",
+  "resultSHA256": "27088c70bdfae4059c7db6ab75fed53c916d5a2c218f82fde503ec3ded89efee",
+  "startedAt": "2026-08-31T14:12:41.086524Z"
+}

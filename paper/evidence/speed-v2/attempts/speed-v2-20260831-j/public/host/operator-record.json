@@ -1,0 +1,15 @@
+{
+  "autoLockDisabled": true,
+  "externalPower": true,
+  "foregroundOperation": true,
+  "lowPowerMode": false,
+  "noCompetingForegroundWorkload": true,
+  "preparedAt": "2026-08-31T14:10:00Z",
+  "runID": "speed-v2-20260831-j",
+  "runIDPreviouslyUsed": false,
+  "schemaVersion": 3,
+  "screenBrightnessFixed": true,
+  "screenBrightnessPercent": 50,
+  "screenState": "on",
+  "unattendedAuthorization": true
+}

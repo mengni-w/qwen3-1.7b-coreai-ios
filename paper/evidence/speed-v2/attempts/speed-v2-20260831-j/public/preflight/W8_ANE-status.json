@@ -1,0 +1,41 @@
+{
+  "appRecord": {
+    "benchmarkCommit": "29271b8d9ca9a2d36d6752debc0ac37416aa8c59",
+    "bundleIdentifier": "io.github.massif01.qwen3.w8speedbench",
+    "cachedInputTokenProbe": 0,
+    "capabilitiesConstruction": "passed",
+    "event": "abi_preflight",
+    "patchedRuntimeSourceSHA256": "11cf90c72b4b4b6695c6fdbc63e58dc7d41633a7bba9ffa5273852cc079cf0e0",
+    "protocol": "public-artifact-speed-confirmation-v2",
+    "protocolCommit": "14e4067a960cbac5a06b372b502355074304d0d4",
+    "runID": "speed-v2-20260831-j",
+    "runtimeCommit": "85e2f2d8c6433825e64219a32693ed1a4aed519f",
+    "runtimePatchSHA256": "5f7730605866a91c92ece798f03953f88249e61eeaed8660e05c4a1022809485",
+    "schemaVersion": 3,
+    "sequence": 1,
+    "status": "passed",
+    "timestamp": "2026-08-31T14:13:50.928Z",
+    "transcriptToolCallLayoutSize": 96,
+    "usageActionConstruction": "passed",
+    "variant": "W8_ANE",
+    "xcodeBuild": "27A5252f"
+  },
+  "appRecordPresent": true,
+  "appRecordValid": true,
+  "console": "preflight/W8_ANE.log",
+  "consoleSHA256": "deb055e812bd52f42e69b4ca180e721203e27f0ae5f9c37deaadf53ba486a820",
+  "endedAt": "2026-08-31T14:13:50.783124Z",
+  "launchIdentity": {
+    "executableSuffix": "/W8SpeedBench.app/W8SpeedBench",
+    "outcome": "success",
+    "processIdentifier": 6095
+  },
+  "launchResult": "preflight/W8_ANE.json",
+  "launchResultPresent": true,
+  "launchResultSHA256": "87cea5f88151765da05d670a32edc5b971a77eb46d450cc0c7aaaf021f839e33",
+  "launchResultValid": true,
+  "processExitStatus": 0,
+  "profile": "W8_ANE",
+  "startedAt": "2026-08-31T14:13:50.404128Z",
+  "statusRecord": "preflight/W8_ANE-status.json"
+}

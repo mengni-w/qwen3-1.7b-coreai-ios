@@ -1,0 +1,21 @@
+{
+  "bundleIdentifier": "io.github.massif01.qwen3.int4speedbench",
+  "endedAt": "2026-08-31T14:13:50.110247Z",
+  "exitStatus": 0,
+  "installIdentity": {
+    "bundleIdentifier": "io.github.massif01.qwen3.int4speedbench",
+    "outcome": "success"
+  },
+  "log": "install/INT4_GPU.log",
+  "logSHA256": "2503984b76e490a9c3dccf8ab16682bb82db72734d650cbe2e5999f84dae56ad",
+  "preinstallAppSeal": {
+    "appBundleManifestSHA256": "2cbde476301959261cbb8032e740d7e1439ae1a899bef4a759d24cd90bf56776",
+    "executableSHA256": "380dc09a2af8d4f1ecdbb44cf08107832a60edd39c2468a95300baeaa7ec6e6d",
+    "infoPlistSHA256": "dcad430227306f9e2ad4d52d680ece1047e82184eb573af19aa80b37c85670db",
+    "status": "sealed"
+  },
+  "profile": "INT4_GPU",
+  "result": "install/INT4_GPU.json",
+  "resultSHA256": "61d7ea8bb2f8a22c3e3555ca087abd1157cb00fcd9cda59993abce5752bce968",
+  "startedAt": "2026-08-31T14:13:24.578411Z"
+}

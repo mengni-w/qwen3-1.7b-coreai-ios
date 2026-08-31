@@ -1,0 +1,37 @@
+{
+  "console": "console/block-07-W8_ANE.log",
+  "consoleSHA256": "7e206129375af9cb62e54811b50354240984fbb03b4b5ba4e9d8f8c1799c11cc",
+  "endedAt": "2026-08-31T15:31:57.878917Z",
+  "launchIdentity": {
+    "executableSuffix": "/W8SpeedBench.app/W8SpeedBench",
+    "outcome": "success",
+    "processIdentifier": 6250
+  },
+  "launchResult": "launch/block-07-W8_ANE.json",
+  "launchResultPresent": true,
+  "launchResultSHA256": "59c9a96dfee77d16e0724a3cbd2404e55a1c25f84a227ad57c1b2acdf6c240ee",
+  "launchResultValid": true,
+  "operatorObservation": {
+    "autoLockDisabled": true,
+    "basis": "initial-operator-declaration;app-records-environment",
+    "externalPower": true,
+    "foregroundOperation": true,
+    "lowPowerMode": false,
+    "noCompetingForegroundWorkload": true,
+    "observationMode": "preauthorized-unattended",
+    "physicalBlock": 7,
+    "profile": "W8_ANE",
+    "recordedAt": "2026-08-31T15:19:31.234118Z",
+    "runID": "speed-v2-20260831-j",
+    "schemaVersion": 2,
+    "screenBrightnessFixed": true,
+    "screenBrightnessPercent": 50,
+    "screenState": "on",
+    "unattendedAuthorization": true
+  },
+  "physicalBlock": 7,
+  "processExitStatus": 0,
+  "profile": "W8_ANE",
+  "startedAt": "2026-08-31T15:19:31.234839Z",
+  "statusRecord": "launch/block-07-W8_ANE-status.json"
+}

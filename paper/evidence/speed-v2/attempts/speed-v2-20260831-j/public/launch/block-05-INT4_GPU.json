@@ -1,0 +1,37 @@
+{
+  "console": "console/block-05-INT4_GPU.log",
+  "consoleSHA256": "320fa802abdfaa4c15d92b3351f02f8b1b1bd215d18e9576c632a196f937a309",
+  "endedAt": "2026-08-31T15:05:12.983854Z",
+  "launchIdentity": {
+    "executableSuffix": "/INT4SpeedBench.app/INT4SpeedBench",
+    "outcome": "success",
+    "processIdentifier": 6240
+  },
+  "launchResult": "launch/block-05-INT4_GPU.json",
+  "launchResultPresent": true,
+  "launchResultSHA256": "c6186fbf1119e6ac5b452118ebd87653aa8a26b5e4b11a7968c69178a9068e90",
+  "launchResultValid": true,
+  "operatorObservation": {
+    "autoLockDisabled": true,
+    "basis": "initial-operator-declaration;app-records-environment",
+    "externalPower": true,
+    "foregroundOperation": true,
+    "lowPowerMode": false,
+    "noCompetingForegroundWorkload": true,
+    "observationMode": "preauthorized-unattended",
+    "physicalBlock": 5,
+    "profile": "INT4_GPU",
+    "recordedAt": "2026-08-31T14:53:13.501901Z",
+    "runID": "speed-v2-20260831-j",
+    "schemaVersion": 2,
+    "screenBrightnessFixed": true,
+    "screenBrightnessPercent": 50,
+    "screenState": "on",
+    "unattendedAuthorization": true
+  },
+  "physicalBlock": 5,
+  "processExitStatus": 0,
+  "profile": "INT4_GPU",
+  "startedAt": "2026-08-31T14:53:13.502647Z",
+  "statusRecord": "launch/block-05-INT4_GPU-status.json"
+}

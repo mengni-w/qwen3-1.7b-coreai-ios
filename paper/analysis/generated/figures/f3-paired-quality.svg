@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="980" height="470" viewBox="0 0 980 470">
 <rect width="100%" height="100%" fill="#ffffff"/>
-<style>text{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;fill:#161616}.title{font-size:24px;font-weight:700}.label{font-size:15px}.small{font-size:12px;fill:#555}.axis{stroke:#777;stroke-width:1}.grid{stroke:#ddd;stroke-width:1}.w8{fill:#d94a42}.int4{fill:#315b9a}.w8point{fill:#fff;stroke:#8f211b;stroke-width:2}.int4point{fill:#fff;stroke:#173b73;stroke-width:2}</style>
+<style>text{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;fill:#161616}.title{font-size:24px;font-weight:700}.label{font-size:15px}.small{font-size:12px;fill:#555}.axis{stroke:#777;stroke-width:1}.grid{stroke:#ddd;stroke-width:1}.w8{fill:#d94a42}.int4{fill:#315b9a}.w8point{fill:#fff;fill-opacity:.58;stroke:#8f211b;stroke-width:1.25}.int4point{fill:#fff;fill-opacity:.58;stroke:#173b73;stroke-width:1.25}</style>
 <text x="40" y="48" class="title">Paired quality difference: Static-W8 minus Dynamic-INT4</text>
 <text x="40" y="75" class="small">95% bootstrap intervals; both intervals cross zero</text>
 <line x1="170.00" y1="105" x2="170.00" y2="390" class="grid"/>

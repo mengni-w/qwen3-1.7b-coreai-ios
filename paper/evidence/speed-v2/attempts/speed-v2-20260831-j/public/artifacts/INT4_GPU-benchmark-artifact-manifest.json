@@ -1,0 +1,175 @@
+{
+  "files": [
+    {
+      "bytes": 150,
+      "path": ".gitattributes",
+      "sha256": "334ecd15713e3cc39b0a0e341891dcc4abe7a2009dd2244fa22e976f61ecc56e"
+    },
+    {
+      "bytes": 11343,
+      "path": "LICENSE",
+      "sha256": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e"
+    },
+    {
+      "bytes": 1394,
+      "path": "NOTICE.md",
+      "sha256": "c8e1fe314f12d88f5f9e4e2d3b1ed6f2a848d163d70c74785659b2af68bc231a"
+    },
+    {
+      "bytes": 12459,
+      "path": "README.md",
+      "sha256": "6cf4260b36ed72ae82b318ac4d5a41c3cfa1cbd89ebeba1ee9d6f0b9add389ba"
+    },
+    {
+      "bytes": 3363,
+      "path": "SHA256SUMS",
+      "sha256": "8c5ae280d6b1382e8ce2b4988e4eabe372376155bb69bdbe07a92148371f6b3a"
+    },
+    {
+      "bytes": 3268,
+      "path": "evidence/FEASIBILITY_RESULT.md",
+      "sha256": "e26c76f1f9d293194e763a15d18d83df690dc53144f96b9878ed4ce48361544d"
+    },
+    {
+      "bytes": 3655,
+      "path": "evidence/QUALITY_BENCHMARK_PROTOCOL.md",
+      "sha256": "0d1ca650a76384efd0282ff6f7691b90b965ddd78a2265c047423adacac8c07d"
+    },
+    {
+      "bytes": 5914,
+      "path": "evidence/QUALITY_COMPARISON.md",
+      "sha256": "747e36d381807fc3d7efeaa9d810de739e83ac876f6138a340c1fe3fd625469b"
+    },
+    {
+      "bytes": 4628,
+      "path": "evidence/QUALITY_COMPARISON.zh-CN.md",
+      "sha256": "16c5ecf12bdde4ed89ad31bf0bc194c36371044411db15da3d397b9d083e97ff"
+    },
+    {
+      "bytes": 2095,
+      "path": "evidence/SPEED_BENCHMARK_PROTOCOL.md",
+      "sha256": "564c00ab521497d3f29edc8fa731a029d65622123f8caaeb79c6d9d9eee4b4de"
+    },
+    {
+      "bytes": 7090,
+      "path": "evidence/SPEED_BENCHMARK_RESULT.md",
+      "sha256": "f89d82c680bda3534779d28d9ff322f84a16845658271fd2a5674de89791963d"
+    },
+    {
+      "bytes": 2360,
+      "path": "evidence/artifact-summary.json",
+      "sha256": "2c50cec391f72d98a09c65c20fe8fab1c35a8843abf10c5a9b28886a97cf6239"
+    },
+    {
+      "bytes": 5189,
+      "path": "evidence/quality-comparison.json",
+      "sha256": "47bae909fdac3e80996b4042daff173931dec306c6f8a9977189792f4effa171"
+    },
+    {
+      "bytes": 734,
+      "path": "metadata.json",
+      "sha256": "c798a4390004640041eb238b0647d70038a24d707c282a45b4586ef0e49d66c0"
+    },
+    {
+      "bytes": 73576,
+      "path": "qwen3_1_7b_dynamic_int4_4k-h16p-gpu.aimodelc/main-h16p-delegates/MPSGraph/mpsExecutable.mpsgraphpackage/manifest.plist",
+      "sha256": "1dcdc5ef5f7b3d69cac8b99c046f83bf524b5056ca0627c232704d55069752e3"
+    },
+    {
+      "bytes": 423453,
+      "path": "qwen3_1_7b_dynamic_int4_4k-h16p-gpu.aimodelc/main-h16p-delegates/MPSGraph/mpsExecutable.mpsgraphpackage/original_model_0.mpsgraph",
+      "sha256": "306a9e1fe68bb539d65141a1449ababdb27307aebe85b775b30260682c85fbac"
+    },
+    {
+      "bytes": 968161268,
+      "path": "qwen3_1_7b_dynamic_int4_4k-h16p-gpu.aimodelc/main-h16p-delegates/MPSGraph/mpsExecutable.mpsgraphpackage/resources.bin",
+      "sha256": "37c7f2fcf85625abb32d83ca24e7a9facd33a37f79dbc3afec64d41eb900f8bc"
+    },
+    {
+      "bytes": 840566,
+      "path": "qwen3_1_7b_dynamic_int4_4k-h16p-gpu.aimodelc/main-h16p-delegates/MPSGraph/mpsExecutable.mpsgraphpackage/specialized_model_1.mpsgraph",
+      "sha256": "0afeafecbcea8f1af3083e82b4b6e95983c910085e70cb3cb4d1d9935ecb8238"
+    },
+    {
+      "bytes": 2915,
+      "path": "qwen3_1_7b_dynamic_int4_4k-h16p-gpu.aimodelc/main-h16p.mlirb",
+      "sha256": "ad953b6bc902accc1f1200a8870012c5dec6b488f0f4ec0f10a9916b16cb56ef"
+    },
+    {
+      "bytes": 32,
+      "path": "qwen3_1_7b_dynamic_int4_4k-h16p-gpu.aimodelc/main.hash",
+      "sha256": "10d6ea5040c449e4dbd71ea87f8f0a2847e41a2b432e081bf9ca59048ecd1b39"
+    },
+    {
+      "bytes": 193,
+      "path": "qwen3_1_7b_dynamic_int4_4k-h16p-gpu.aimodelc/metadata.json",
+      "sha256": "d2450dce5763701c9e910f56d58b4f859e4b9552124b12bbaf5b56f88f93a0a4"
+    },
+    {
+      "bytes": 1751,
+      "path": "qwen3_1_7b_dynamic_int4_4k-h16p-gpu.aimodelc/stats.json",
+      "sha256": "4ad071e62999628f7d91951e4803183b14a79779b45aa3a4b8f96d1335a0597c"
+    },
+    {
+      "bytes": 1644,
+      "path": "runtime/NO_THINKING.md",
+      "sha256": "dbfcaa7d30509c817fdb7d7eba9e21737dc173b31a46bf972d322643ad780d3c"
+    },
+    {
+      "bytes": 1012,
+      "path": "runtime/coreai-models-enable-no-thinking.patch",
+      "sha256": "35d3ad160f5bc4f5603f58da19a2584928edfb8f2aabfc53922cfcd7aa50e671"
+    },
+    {
+      "bytes": 707,
+      "path": "tokenizer/added_tokens.json",
+      "sha256": "c0284b582e14987fbd3d5a2cb2bd139084371ed9acbae488829a1c900833c680"
+    },
+    {
+      "bytes": 4168,
+      "path": "tokenizer/chat_template.jinja",
+      "sha256": "a55ee1b1660128b7098723e0abcd92caa0788061051c62d51cbe87d9cf1974d8"
+    },
+    {
+      "bytes": 1671853,
+      "path": "tokenizer/merges.txt",
+      "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+    },
+    {
+      "bytes": 613,
+      "path": "tokenizer/special_tokens_map.json",
+      "sha256": "76862e765266b85aa9459767e33cbaf13970f327a0e88d1c65846c2ddd3a1ecd"
+    },
+    {
+      "bytes": 11422654,
+      "path": "tokenizer/tokenizer.json",
+      "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4"
+    },
+    {
+      "bytes": 5404,
+      "path": "tokenizer/tokenizer_config.json",
+      "sha256": "443bfa629eb16387a12edbf92a76f6a6f10b2af3b53d87ba1550adfcf45f7fa0"
+    },
+    {
+      "bytes": 2776833,
+      "path": "tokenizer/vocab.json",
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+    }
+  ],
+  "publishedSHA256SUMS": {
+    "acknowledgedMismatches": [
+      {
+        "classification": "repository metadata; not a model payload",
+        "observedPinnedRevisionSHA256": "334ecd15713e3cc39b0a0e341891dcc4abe7a2009dd2244fa22e976f61ecc56e",
+        "path": ".gitattributes",
+        "publishedSHA256": "0e07a2811a542bc61e9b184a7f6f3dd7155cdacf77e592d2702ddea8c4ec31dd"
+      }
+    ],
+    "entries": 30,
+    "matchingEntries": 29,
+    "sha256": "8c5ae280d6b1382e8ce2b4988e4eabe372376155bb69bdbe07a92148371f6b3a"
+  },
+  "repository": "massif/Qwen3-1.7B-CoreAI-GPU-INT4-4K-h16p",
+  "revision": "c32b6342c98e5e23363f692e614bccca37f24234",
+  "schemaVersion": 2
+}
