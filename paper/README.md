@@ -25,6 +25,9 @@ in isolation.
 - [`REPORT_PROTOCOL_V2.md`](REPORT_PROTOCOL_V2.md) separately governs the
   post-review W8 load-compatibility observation; it is not presented as
   preregistration or part of the historical comparison.
+- [`REPORT_PROTOCOL_V3.md`](REPORT_PROTOCOL_V3.md) governs the later paired
+  speed acquisition using the current published W8 artifact and the public
+  INT4 artifact.
 - [`EVIDENCE_INDEX.md`](EVIDENCE_INDEX.md) maps every admitted manuscript claim
   to a versioned source, exact evidence object, allowed wording, and limit.
 - [`analysis/README.md`](analysis/README.md) documents the deterministic
@@ -36,6 +39,9 @@ in isolation.
 - [`evidence/w8-compatibility/README.md`](evidence/w8-compatibility/README.md)
   documents the sanitized event-level records for the post-review load-only
   diagnostic and their boundary to the private source captures.
+- [`evidence/speed-v2/attempts/speed-v2-20260831-j/`](evidence/speed-v2/attempts/speed-v2-20260831-j/)
+  is the finalized Run J evidence bundle: 120 completed generation
+  measurements across the two profiles and three workloads.
 - [`manuscript/qwen3-coreai-report.tex`](manuscript/qwen3-coreai-report.tex) is
   the English technical report; [`manuscript/README.md`](manuscript/README.md)
   documents its reproducible build and visual-review gates.
@@ -43,9 +49,14 @@ in isolation.
   sentence-level claim-to-evidence review.
 - [`manuscript/output/pdf/qwen3-coreai-report.pdf`](manuscript/output/pdf/qwen3-coreai-report.pdf)
   is the compiled report PDF.
-- The main comparison reuses completed public experiments. A later, separately
-  labeled load-only diagnostic is recorded in
+- W8 evidence is separated by exact identity: `A-W8-HISTORICAL` for the
+  historical device, trace, and CMRC2018 results; `A-W8-JULY-PUBLIC` for the
+  July six-case suite and later compatibility diagnostic; and `A-W8-CURRENT`
+  (Hub revision `75bbe06906cb5d953e602e3e4fb6364187c81822`) for Run J.
+- The load-only compatibility diagnostic is recorded separately in
   [`W8_COMPATIBILITY_OBSERVATION_1.md`](W8_COMPATIBILITY_OBSERVATION_1.md).
+  Its no-generation boundary describes that diagnostic only; Run J later
+  performed generation with the exact `A-W8-CURRENT` compiled payload.
 - No e1/Marker product source belongs in this repository.
 
 ## Explicit scope boundary

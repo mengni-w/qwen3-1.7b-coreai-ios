@@ -55,15 +55,12 @@ profile observations, and 60 complete pairs. An aborted, nonconformant,
 partially completed, privately sourced, or unfinalized bundle is rejected
 before it can supply a paper statistic.
 
-Until a successful run has been copied and frozen in `source-lock.json`, a
-normal analysis run requires `--speed-evidence-dir`. The historical
-three-sample output can only be checked by the explicit `--test-only` path; it
-cannot be regenerated as current paper evidence. The later evidence-integration
-commit fills `speedV2Admission.acceptedBundle` with the repository-relative
-bundle path, run ID, finalization hash, public-index hash, public-host-record
-hash, and analyzer-summary hash. From that commit onward, `./analysis/run.sh`
-uses the accepted bundle by default and rejects any `--speed-evidence-dir`
-override.
+Run J is now copied and frozen in `source-lock.json`. Its
+`speedV2Admission.acceptedBundle` entry records the repository-relative bundle
+path, run ID, finalization hash, public-index hash, public-host-record hash, and
+analyzer-summary hash. Consequently, `./analysis/run.sh` uses Run J by default
+and rejects a `--speed-evidence-dir` override. The earlier three-sample result
+remains historical evidence and cannot supply the current performance tables.
 
 ## Run
 
@@ -94,9 +91,8 @@ Run the committed-output checks with:
 ./analysis/run.sh --test-only
 ```
 
-While `acceptedBundle` is `null`, this is the only path allowed to validate the
-committed historical schema-1 speed output. It does not create or admit a new
-paper result.
+This path validates the committed generated outputs without collecting or
+admitting a new paper result.
 
 Generated files are written to `analysis/generated/`. A successful run ends
 with `PIPELINE_OK` and prints the source and generated-output hashes.

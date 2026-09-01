@@ -34,26 +34,39 @@ Hugging Face:
 
 ```bash
 hf download massif/Qwen3-1.7B-CoreAI-ANE-W8-4K-h16p \
+  --revision 75bbe06906cb5d953e602e3e4fb6364187c81822 \
   --local-dir Qwen3-1.7B-CoreAI-ANE-W8-4K-h16p
 ```
 
-The Hugging Face repository contains the compiled `h16p` artifact, tokenizer,
-frozen recipe, checksums, machine-readable evidence, and integration example.
+This command pins `A-W8-CURRENT`, the artifact used by Run J. The Hugging Face
+repository contains the compiled `h16p` artifact, tokenizer, frozen recipe,
+checksums, machine-readable evidence, and integration example.
 This GitHub repository remains the source for the reproducible onboarding
 patch, tests, methodology, and Apple contribution material.
 
-Three W8 artifacts are distinguished below: `A-W8-HISTORICAL` (the comparison
-binary), `A-W8-PUBLIC` (the downloadable Hub rebuild), and
-`A-W8-CURRENT-CANDIDATE` (the later Xcode 27 Beta 6 export). They share the
-checkpoint and W8 recipe but are not interchangeable.
+Three W8 artifact identities are used throughout this repository:
 
-`A-W8-PUBLIC` passed its recorded six-case suite. In a later
-load-only check on iOS 27 build `24A5424a`, that exact public AOT stopped during
-`ANECCompileOffline` twice, while a separately exported Xcode 27 Beta 6
-candidate (A-W8-CURRENT-CANDIDATE) loaded and unloaded once. These are distinct artifact/toolchain
-pairs, so deployment on a new runtime requires validation of the exact payload.
-The observation does not isolate an iOS, compiler, model-export, or memory
-cause, and the candidate is not the current public Hub artifact.
+- `A-W8-HISTORICAL`: compiled main
+  `0c2dfcfeaae195386f1e61c05e0cf2b4a1ce6ecda1c321803afc0019b1d886d7`,
+  used by the historical device suites, trace, and CMRC2018 comparison;
+- `A-W8-JULY-PUBLIC`: Hub revision
+  `466ebe2e5cec125fa113ea71503add41bba581a8`, compiled main
+  `a7eefeef16708a324f9919890355eb92180ec85eef419ebd5822e8c8afd42f5f`,
+  used by the July six-case public-artifact suite and the later compatibility
+  diagnostic;
+- `A-W8-CURRENT`: Hub revision
+  `75bbe06906cb5d953e602e3e4fb6364187c81822`, compiled main
+  `09f609775baa56b11ff3c91bfcb07b145930297289634fdc5514b2a5ab4dc7ca`,
+  used by the accepted Run J generation and speed measurements.
+
+They share the checkpoint and W8 recipe but are not byte-interchangeable. In
+the earlier load-only diagnostic on iOS 27 build `24A5424a`,
+`A-W8-JULY-PUBLIC` stopped during `ANECCompileOffline` twice, whereas
+`A-W8-CURRENT` loaded and unloaded once. That protocol did not perform
+generation or tracing. Run J later performed generation with the exact same
+`A-W8-CURRENT` compiled payload, so the load-only boundary must not be read as
+an artifact-wide absence of generation evidence. Neither run isolates an iOS,
+compiler, export, or memory cause for the July compatibility result.
 
 ## Status
 
@@ -71,10 +84,11 @@ Validation against that main revision completed with:
 - the registered preset dry-run resolved to W8, FP16, 4,096 context, and
   embedding quantization enabled.
 
-A subsequent Xcode 27 Beta 6 run also completed the full export and `h16p`
-AOT compilation at the same pinned Apple commit. That build is tracked as a
-separate artifact identity; it does not replace the binaries used by the
-historical device or profile-comparison results.
+A subsequent Xcode 27 Beta 6 run completed the full export and `h16p` AOT
+compilation at the same pinned Apple commit. The resulting `A-W8-CURRENT`
+artifact is published at the revision pinned above and completed Run J. It
+does not replace the binaries used by the historical device and CMRC2018
+results.
 
 Apple's current repository does not accept code pull requests. The intended
 upstream channel is a **Model request** issue; `MODEL_REQUEST.md` contains the
@@ -96,9 +110,9 @@ solve different deployment problems:
   reports that numeric accuracy was not run and that iPhone throughput was
   still pending at the cited revision.
 
-This GitHub repository does not redistribute a compiled model; the artifact
-validated in its recorded earlier environment is published separately on
-[Hugging Face](https://huggingface.co/massif/Qwen3-1.7B-CoreAI-ANE-W8-4K-h16p).
+This GitHub repository does not redistribute a compiled model;
+`A-W8-CURRENT`, the artifact used by Run J, is published separately at the
+[revision-pinned Hugging Face tree](https://huggingface.co/massif/Qwen3-1.7B-CoreAI-ANE-W8-4K-h16p/tree/75bbe06906cb5d953e602e3e4fb6364187c81822).
 The GitHub repository contains the Apple-main onboarding components: a version-pinned
 W8 recipe, preset, metadata, documentation, tests, conversion-matrix coverage,
 and a resource-free companion. It also records static `h16p` execution on an
@@ -173,11 +187,22 @@ result.
 
 See `RESULTS.md` and the machine-readable files under `results/`.
 
-### Supplementary load compatibility (A-W8-PUBLIC vs A-W8-CURRENT-CANDIDATE)
+### Current published speed run (A-W8-CURRENT)
+
+Run J (`speed-v2-20260831-j`) used Hub revision
+`75bbe06906cb5d953e602e3e4fb6364187c81822` and compiled main
+`09f609775baa56b11ff3c91bfcb07b145930297289634fdc5514b2a5ab4dc7ca`.
+Across both compared profiles it completed 120 generation measurements—20 per
+profile and workload—with no failed admitted sample. These measurements support
+the current storage, process-RSS, TTFT, total-time, and visible-decode results;
+they do not establish exclusive Neural Engine execution or energy use.
+
+### Supplementary load compatibility (A-W8-JULY-PUBLIC vs A-W8-CURRENT)
 
 See `RESULTS.md` and `results/w8-aot-compatibility-evidence.json` for the
-load-only outcomes and their limits. This diagnostic contains no generation,
-trace, cold-start, or comparative-performance result.
+earlier load-only outcomes and their limits. No generation, trace, cold-start,
+or comparative-performance measurement was performed within that diagnostic;
+the later Run J generation evidence is separate.
 
 ## Claim boundaries
 
@@ -198,8 +223,8 @@ This project does not claim:
 - adoption or endorsement by Apple;
 - that the current compatibility difference was caused by an iOS upgrade,
   compiler defect, model-export change, or system-wide memory shortage;
-- generation success or ANE participation for the subsequent candidate, or
-  path-independent byte reproducibility from the two exports that used
+- ANE participation for `A-W8-CURRENT` without a separately admitted trace;
+- path-independent byte reproducibility from the two exports that used
   different output directories.
 
 ## Repository map

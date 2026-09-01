@@ -12,7 +12,7 @@ Requirements:
 
 - Python 3;
 - the locked analysis environment documented in [`../analysis/README.md`](../analysis/README.md);
-- Google Chrome `150.0.7871.115` for SVG-to-PDF conversion;
+- Google Chrome `151.0.7922.174` for SVG-to-PDF conversion;
 - [Tectonic](https://tectonic-typesetting.github.io/) `0.17.0` for LaTeX compilation.
 
 Evidence reconstruction and document compilation are separate operations.
@@ -28,6 +28,7 @@ Then compile the manuscript from the checked generated outputs:
 Run:
 
 ```sh
+CHROME=/absolute/path/to/chrome-151 \
 TECTONIC=/absolute/path/to/tectonic ./manuscript/build.sh
 ```
 

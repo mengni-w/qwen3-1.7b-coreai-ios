@@ -6,10 +6,10 @@
 \toprule
 Metric (MiB) & Static-W8 & Dynamic-INT4 & Dynamic-INT4 reduction \\
 \midrule
-Compiled bundle & 1,714.4 & 924.6 & 789.8 (46.1\%) \\
-Peak process RSS & 2,865.0 & 1,995.3 & 869.7 (30.4\%) \\
+Compiled-model storage & 1,711.4 & 924.6 & 786.8 (46.0\%) \\
+Peak process RSS & 3,409.1 & 1,978.0 & 1,431.2 (42.0\%) \\
 \bottomrule
 \end{tabular}
-\caption{Compiled resource-directory logical size and peak process resident memory in the disclosed benchmark. \evidence{CL-15,CL-16}}
+\caption{Compiled-model storage is the median of four identical estimatedDiskBytes observations converted to MiB; peak process RSS is the maximum after-unload process peak across four physical blocks. \evidence{CL-15,CL-16}}
 \label{tab:size-rss}
 \end{table}

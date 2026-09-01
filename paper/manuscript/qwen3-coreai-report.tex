@@ -48,7 +48,7 @@ A Static W8 Implementation and Same-Device Profile Evaluation}
   \small\href{mailto:mengninolab@gmail.com}{\nolinkurl{mengninolab@gmail.com}}\\[-1pt]
   \small\href{https://orcid.org/0009-0004-7465-9067}{ORCID: 0009-0004-7465-9067}
 }
-\date{August 31, 2026}
+\date{September 1, 2026}
 
 \begin{document}
 \maketitle
@@ -57,11 +57,11 @@ A Static W8 Implementation and Same-Device Profile Evaluation}
 Apple's public \artifact{coreai-models} repository contained no Qwen3-1.7B preset at the revision examined in this study.\evidence{CL-01}
 We implement a version-pinned static iOS path with per-tensor W8 K-means-palettized transformer projections, a separately INT8-quantized tied embedding, FP16 compute, fixed KV state, a 4,096-token context, and \artifact{h16p} ahead-of-time compilation with Neural Engine-preferred compute.\evidence{CL-03,CL-04,CL-05}
 A formal authoring-model evaluation under the amended fidelity-v2 protocol achieved 0.996897 mean and 0.953391 minimum logit cosine on the holdout, 96.97\% top-1 agreement, and a 0.008880 mean candidate-minus-reference NLL delta.\evidence{CL-06,CL-07}
-On an iPhone 15 Pro running iOS 27, the historical W8 artifact completed four six-case suites. An Instruments trace recorded 547 MPSGraph program intervals and 547 Apple Neural Engine Prediction intervals, supporting ANE participation in the traced run.\evidence{CL-08,CL-09}
-A separately published W8 rebuild passed a six-case suite in its recorded environment. A later load-only diagnostic compared that exact public AOT with a current-toolchain candidate in one iOS 27 environment: the former failed twice during offline compilation, while the latter loaded and unloaded once. The design confounds exported bytes and compiler producer, precluding causal attribution.\evidence{CL-10,CL-22,CL-28}
-The same-device comparison uses the historical Static-W8 artifact and a Dynamic-INT4 profile on a frozen 300-example CMRC2018 subset.\evidence{CL-11,CL-12}
+On an iPhone 15 Pro running iOS 27, the historical W8 artifact completed four six-case suites. An Instruments trace recorded 547 MPSGraph program intervals and 547 Apple Neural Engine Prediction intervals, supporting ANE participation in that traced run.\evidence{CL-08,CL-09}
+A separately published W8 rebuild passed a six-case suite in its recorded environment. A later load-only diagnostic compared that earlier public AOT with a current-toolchain build in one iOS 27 environment: the former failed twice during offline compilation, while the latter loaded and unloaded once. Because both the exported bytes and compiler producer changed, this diagnostic does not isolate a cause.\evidence{CL-10,CL-22,CL-28}
+The paired quality comparison uses the historical Static-W8 artifact and a Dynamic-INT4 profile on a frozen 300-example CMRC2018 subset.\evidence{CL-11,CL-12}
 Static-W8 scored 59.33 EM / 81.70 F1 and Dynamic-INT4 scored 57.67 EM / 81.42 F1; both paired confidence intervals included zero.\evidence{CL-13,CL-14}
-Dynamic-INT4 used less storage and peak process memory and decoded faster, while Static-W8 reached the first token sooner and completed the near-4K prefill workload in less time.\evidence{CL-15,CL-16,CL-17,CL-18,CL-19,CL-20}
+We then compared the exact current public W8 and INT4 artifacts in an eight-block speed run containing 120 completed profile/workload observations and 60 paired logical samples. Dynamic-INT4 used less storage and peak process memory and decoded faster, while Static-W8 reached the first token sooner and completed the near-4K workload in less time.\evidence{CL-15,CL-16,CL-17,CL-18,CL-19,CL-20}
 Because the profiles differ in several coupled design choices, these measurements compare complete system profiles rather than isolated precision or compute-unit effects.
 \end{abstract}
 
@@ -114,12 +114,12 @@ Static-W8 begins from the unquantized upstream checkpoint. The recipe applies pe
 
 The reference patch adds a Qwen3-1.7B model preset and metadata, introduces the version-pinned recipe, marks the preset experimental, adds focused registry and export-contract tests, and extends iOS conversion-matrix coverage.\evidence{CL-05} Against Apple main commit \digest{04a3fd6cfe9bfae9cf05b1f246cf915d930d1c0a}, the patch applied cleanly; 28 focused tests passed, 42 related iOS conversion tests collected without errors, Ruff passed, and the dry-run resolved FP16 compute, the W8 recipe, 4,096 tokens, and enabled embedding quantization.\evidence{CL-05}
 
-For a subsequent compatibility diagnostic, we repeated the full export and \artifact{h16p} AOT compilation at the same Apple commit under Xcode 27 Beta 6. The resulting candidate is a third artifact identity and is used only for the load-only observation. Appendix~\ref{sec:compatibility-appendix} records its authoring and compiled hashes together with a second export from the same pinned inputs.\evidence{CL-28,CL-29}
+For a subsequent compatibility diagnostic, we repeated the full export and \artifact{h16p} AOT compilation at the same Apple commit under Xcode 27 Beta 6. This third artifact identity was first observed in the load-only diagnostic, then published as \artifact{A-W8-CURRENT} and used in the separate speed-v2 generation run. Appendix~\ref{sec:compatibility-appendix} records its authoring and compiled hashes together with a second export from the same pinned inputs.\evidence{CL-28,CL-29}
 
 The exported \artifact{.aimodel} is compiled with \artifact{coreai-build} for iOS 27, \artifact{h16p}, and Neural Engine-preferred compute. The historical compiled artifact exposes 34 AOT functions across prompt, context, extension, and query buckets.\evidence{CL-04,CL-08} The runtime loads the resource through \artifact{CoreAILanguageModel} and performs generation using \artifact{LanguageModelSession}.\evidence{CL-08}
 
 \paragraph{Artifact identities.}
-We distinguish three W8 binaries throughout: \artifact{A-W8-HISTORICAL}, used in the historical device suites and paired profile comparison; \artifact{A-W8-PUBLIC}, the later downloadable rebuild with its own six-case suite; and \artifact{A-W8-CURRENT-CANDIDATE}, the subsequent artifact used only for the load-only diagnostic. Evidence is never transferred from one identity to another.\evidence{CL-08,CL-10,CL-22,CL-28}
+We distinguish three W8 binaries throughout: \artifact{A-W8-HISTORICAL}, used in the historical device suites and paired quality comparison; \artifact{A-W8-JULY-PUBLIC}, the July downloadable rebuild with its own six-case suite; and \artifact{A-W8-CURRENT}, first used as the current-toolchain side of the load diagnostic and subsequently published and measured in the speed-v2 run. Evidence is never transferred from one identity to another.\evidence{CL-08,CL-10,CL-22,CL-28}
 
 \begin{figure}[H]
   \centering
@@ -145,9 +145,9 @@ An early pilot relied only on the \artifact{/no_think} prompt suffix. Inspection
 
 \subsection{Study design and provenance}
 
-The principal comparison is retrospective: its protocol was fixed before manuscript drafting, and the versioned artifacts, per-example predictions, timing records, manifests, and trace summaries were already public. Two subsequent analyses used separate protocols: the fidelity-v2 run and the descriptive load-compatibility diagnostic.\evidence{CL-07,CL-28} The paper pipeline verifies the inputs in \artifact{analysis/source-lock.json}, reconstructs the CMRC sample, repeats deterministic scoring, extracts the accepted timing samples, and generates the quantitative tables and figures. The pipeline itself performs no model inference or device measurement.
+The paired CMRC2018 comparison is retrospective: its protocol, artifacts, and per-example predictions predate manuscript drafting. The fidelity-v2 evaluation and load-compatibility diagnostic use separate protocols. The current speed result comes from a prospectively governed eight-block acquisition admitted under Report Protocol V3.\evidence{CL-07,CL-28} The paper pipeline verifies the inputs in \artifact{analysis/source-lock.json}, reconstructs the CMRC sample, repeats deterministic scoring, validates the public speed bundle, and generates the quantitative tables and figures. The pipeline itself performs no model inference or device measurement.
 
-Repository commits, Hub revisions, and SHA-256 digests identify the inputs. The downloadable W8 payload implements the same W8 mechanism as the historical A/B model but is not byte-identical to it, so the comparison artifact and the public rebuild retain separate validation records.\evidence{CL-22}
+Repository commits, Hub revisions, and SHA-256 digests identify the inputs. The three W8 payloads implement the same frozen W8 mechanism but are not byte-identical. The historical artifact supports the CMRC2018 and historical device claims, the July public rebuild supports its six-case suite and later load failures, and the current public artifact supports the speed-v2 measurements.\evidence{CL-22}
 
 \subsection{W8 conversion-fidelity selection}
 
@@ -163,9 +163,9 @@ The formal evaluation completed all 10 reference runs, 10 candidate runs, and 10
 
 An Instruments trace was summarized by counts of MPSGraph program and Apple Neural Engine Prediction intervals. The sanitized summary, rather than the original trace bundle, is public. The recorded intervals support ANE participation in the traced inference program.\evidence{CL-09}
 
-\artifact{A-W8-PUBLIC} was rebuilt separately from the historical A/B binary to remove private path data. It passed a six-case suite on the same device class in its recorded environment; the two artifacts retain separate identities.\evidence{CL-10,CL-22}
+\artifact{A-W8-JULY-PUBLIC} was rebuilt separately from the historical A/B binary to remove private path data. It passed a six-case suite on the same device class in its recorded environment; the two artifacts retain separate identities.\evidence{CL-10,CL-22}
 
-We later ran a descriptive load-only protocol on an iPhone 15 Pro with iOS 27 build \artifact{24A5424a}. It comprised two attempts with \artifact{A-W8-PUBLIC}---the second after a full-reboot request and observed reconnection---and one load-and-unload attempt with \artifact{A-W8-CURRENT-CANDIDATE}. The reboot command timed out while waiting for the device, so completion of the reboot was not directly verified from a boot-session identifier or uptime. No generation or Instruments trace was collected, and cache state was not controlled; the protocol therefore defines neither a cold-start benchmark nor a performance comparison.\evidence{CL-28}
+We later ran a descriptive load-only protocol on an iPhone 15 Pro with iOS 27 build \artifact{24A5424a}. It comprised two attempts with \artifact{A-W8-JULY-PUBLIC}---the second after a full-reboot request and observed reconnection---and one load-and-unload attempt with \artifact{A-W8-CURRENT}. The reboot command timed out while waiting for the device, so completion of the reboot was not directly verified from a boot-session identifier or uptime. That diagnostic collected no generation or Instruments trace, and cache state was not controlled; it therefore defines neither a cold-start benchmark nor a performance comparison. The later speed-v2 run evaluated \artifact{A-W8-CURRENT} under a separate protocol.\evidence{CL-28}
 
 \subsection{Paired CMRC2018 quality comparison}
 
@@ -179,11 +179,13 @@ The initial feasibility protocol also required Dynamic-INT4 to remain within 1.0
 
 \subsection{Workload-specific latency and memory}
 
-The latency experiment compares the two complete profiles rather than isolated hardware units. Both variants used the same tokenizer, chat template, prompts, non-thinking control, temperature, and fresh sessions. Each workload had one untimed warm-up followed by three accepted measured samples, with a distinct fixed-width tag to avoid an unreported repeat-input cache.\evidence{CL-17,CL-18,CL-19}
+The latency experiment compares the two complete public profiles rather than isolated hardware units. Both variants used the same tokenizer, chat template, prompts, non-thinking control, temperature, and fresh sessions. The frozen schedule alternated eight physical profile blocks. Each profile contributed four blocks and 20 completed measurements per workload, for 120 observations and 60 paired logical samples overall.\evidence{CL-17,CL-18,CL-19}
 
-The workloads were: (1) 161 input / 60 output tokens for a compact structured task, (2) 3,790 input / 10 output tokens for near-4K prefill, and (3) 120 input / 256 output tokens for sustained decode.\evidence{CL-17,CL-18,CL-19} One Static-W8 generation terminated after 24 output tokens. Because the sustained-decode statistic was defined for runs reaching at least 200 tokens, this run was recorded, excluded from that statistic, and replaced.\evidence{CL-19} A separate diagnostic pass reused identical prompt tokens and showed cache-sensitive prefill timing; it was excluded before the accepted tagged samples were collected. Sustained-decode throughput is therefore conditional on reaching the protocol's 200-token threshold.
+The three workload groups were a medium business prompt, near-4K prefill with a short response, and a 256-token decode cap. Median input/output counts were 150/56 for Static-W8 and 150/22 for Dynamic-INT4 in the business workload, 3,778/6 for both profiles in the near-4K workload, and 108/256 for both profiles in the sustained-decode workload.\evidence{CL-17,CL-18,CL-19}
 
-Reported latency values are medians of the three accepted samples, not P95 estimates. Peak RSS means process resident memory observed in the disclosed benchmark, not total system RAM or a universal minimum-memory requirement.\evidence{CL-16,CL-17,CL-18,CL-19}
+Reported latency values are medians of the 20 completed measurements in each profile/workload cell, not P95 estimates. Peak RSS is the maximum after-unload process peak across the four physical blocks for each profile; it is neither total system RAM nor a universal minimum-memory requirement.\evidence{CL-16,CL-17,CL-18,CL-19}
+
+Token TTFT ends at the first output-token event, whereas visible TTFT ends at the first nonempty visible-text snapshot. Visible decode throughput excludes the first visible snapshot and the preceding latency; end-to-end visible throughput divides final visible tokens by total generation time.\evidence{CL-17,CL-18,CL-19}
 
 \section{Results}
 
@@ -201,7 +203,7 @@ The historical artifact completed four full six-case suites. Its final suite loa
 
 The trace contained 547 MPSGraph program intervals and 547 Apple Neural Engine Prediction intervals.\evidence{CL-09} The exact public rebuild separately passed all six cases in its recorded environment; it peaked at 2,766.4 MiB process RSS and produced the near-4K first token in 5.709 seconds.\evidence{CL-10}
 
-In the later compatibility diagnostic on iOS 27 build \artifact{24A5424a}, \artifact{A-W8-PUBLIC} failed at \artifact{ANECCompileOffline} in two load-only attempts. \artifact{A-W8-CURRENT-CANDIDATE} completed its single load in 41.932 seconds, reached 2,737.0 MiB peak process RSS, unloaded, and exited normally. This candidate result contains no generation or trace observation.\evidence{CL-28}
+In the compatibility diagnostic on iOS 27 build \artifact{24A5424a}, \artifact{A-W8-JULY-PUBLIC} failed at \artifact{ANECCompileOffline} in two load-only attempts. \artifact{A-W8-CURRENT} completed its single load in 41.932 seconds, reached 2,737.0 MiB peak process RSS, unloaded, and exited normally. Those observations are load-only; the later speed-v2 measurements are reported separately.\evidence{CL-28}
 
 \input{generated/tables/t4-w8-device-evidence.tex}
 
@@ -222,24 +224,24 @@ The observed Static-W8-minus-Dynamic-INT4 difference was +1.67 EM points with a 
 
 \subsection{Storage and process memory}
 
-The historical W8 compiled resource directory occupied 1,714.4 MiB, compared with 924.6 MiB for INT4; INT4 was 789.8 MiB smaller (46.1\%).\evidence{CL-15} Peak process RSS was 2,865.0 MiB for W8 and 1,995.3 MiB for INT4; INT4 used 869.7 MiB less (30.4\%) in the disclosed benchmark.\evidence{CL-16}
+The current public W8 compiled resource directory occupied 1,711.4 MiB, compared with 924.6 MiB for INT4; INT4 was 786.8 MiB smaller (46.0\%).\evidence{CL-15} Peak process RSS was 3,409.1 MiB for W8 and 1,978.0 MiB for INT4; INT4 used 1,431.2 MiB less (42.0\%) in the disclosed benchmark.\evidence{CL-16}
 
 \input{generated/tables/t6-size-rss.tex}
 
 \subsection{Workload-dependent latency}
 
-For the 161/60 workload, W8 produced the first token in 0.431 seconds versus 1.221 seconds for INT4, but INT4 finished sooner (2.592 versus 3.259 seconds) and decoded faster (43.162 versus 20.505 visible tokens/s).\evidence{CL-17}
+For the business workload, Static-W8 reached the first token in 0.242 seconds versus 1.643 seconds for Dynamic-INT4. Dynamic-INT4 decoded faster (45.841 versus 27.542 visible tokens/s). Its median total time was also slightly lower (2.099 versus 2.234 seconds), but the median response lengths differed substantially (22 versus 56 tokens), so total duration is not a fixed-output comparison.\evidence{CL-17}
 
-For the 3,790/10 workload, Static-W8 reduced TTFT from 13.522 to 5.647 seconds and total time from 13.717 to 6.116 seconds.\evidence{CL-18} Only nine visible decode tokens remained after excluding one reasoning token, so the decode-rate estimate is omitted.
+For the near-4K workload, both profiles produced a median of six tokens from 3,778 input tokens. Static-W8 reduced TTFT from 13.393 to 3.720 seconds and total time from 13.522 to 3.952 seconds.\evidence{CL-18} Because only five visible tokens follow the first visible token, TTFT and total time are more informative here than decode rate.
 
-For the 120/256 sustained-decode workload, INT4 reduced total time from 13.292 to 7.159 seconds and increased visible decode from 19.615 to 38.487 tokens/s.\evidence{CL-19} W8 retained the lower median TTFT, 0.404 versus 0.559 seconds.\evidence{CL-19}
+For the 108/256 sustained-decode workload, Dynamic-INT4 reduced total time from 9.675 to 6.454 seconds and increased visible decode from 26.931 to 42.210 tokens/s.\evidence{CL-19} Static-W8 retained the lower median TTFT, 0.205 versus 0.390 seconds.\evidence{CL-19}
 
 \input{generated/tables/t7-workload-performance.tex}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.90\textwidth]{f4-workload-latency.pdf}
-  \caption{TTFT and total generation time for the three workload groups. Bars show medians; circles show the three accepted samples collected after one warm-up. \evidence{CL-17,CL-18,CL-19,CL-20}}
+  \caption{TTFT and total generation time for the three workload groups. Bars show medians; circles show all 20 completed measurements in each profile/workload cell. \evidence{CL-17,CL-18,CL-19,CL-20}}
   \label{fig:latency}
 \end{figure}
 
@@ -256,7 +258,7 @@ Dynamic-INT4 used less storage and peak RSS and decoded faster in the sustained-
 
 \subsection{Workload-dependent trade-offs}
 
-The measurements show different advantages at different prompt and response lengths. Dynamic-INT4's higher decode rate offsets its slower first token on the compact structured task and is more pronounced during sustained generation, whereas Static-W8 is faster on the long-prefill, short-output workload.\evidence{CL-17,CL-18,CL-19,CL-20} These observations cover three workload shapes and do not define a general crossover point.
+The measurements show different advantages at different prompt and response lengths. Dynamic-INT4 has higher visible-decode medians in all three workloads and the advantage is most directly comparable in the 256-token workload. Static-W8 reaches the first token sooner in all three workloads and completes the long-prefill, short-output workload sooner. The business responses have different median lengths, so their total times do not establish a fixed-output advantage.\evidence{CL-17,CL-18,CL-19,CL-20} These observations cover three workload shapes and do not define a general crossover point.
 
 The profiles also change several factors together: weight representation, embedding treatment, graph shape, KV allocation, engine routing, artifact layout, and memory behavior.\evidence{CL-04,CL-11} The results therefore characterize the two complete profiles rather than the isolated effect of precision or compute unit.
 
@@ -270,18 +272,18 @@ Two non-identical artifacts produced by different compiler builds had different 
 
 \section{Reproducibility}
 
-The public W8 repository is fixed at commit \digest{46668db811559ce21b0006f07706a6d0bde08656}, and the paired-comparison repository at \digest{34a4c08a9282bd076b8b5fe154c5507e6a8b3774} \citep{massifW8Repository2026,massifComparison2026}.\evidence{CL-23} W8 empirical evidence uses Hub revision \digest{466ebe2e5cec125fa113ea71503add41bba581a8}. A later model-card revision, \digest{be6b5aad19e18bb71be3199eadceb27db7e69724}, removes a local device nickname without changing the model payload or validation file. The INT4 citation uses revision \digest{c32b6342c98e5e23363f692e614bccca37f24234}; the original comparison recorded its documentation-only predecessor \digest{cb25b3226ee679ee92d0e5af7467d579a6bff66a}. Their compiled payload hashes are identical.\citep{massifW8Artifact2026,massifINT4Artifact2026}\evidence{CL-22,CL-23}
+The public W8 repository is fixed at commit \digest{46668db811559ce21b0006f07706a6d0bde08656}, and the paired-comparison repository at \digest{34a4c08a9282bd076b8b5fe154c5507e6a8b3774} \citep{massifW8Repository2026,massifComparison2026}.\evidence{CL-23} The historical quality and device records bind source SHA-256 \digest{66325b4cc0657e1f89a7a0a92f37899d01ddc37d168295dbbad0d71bef7f75e3} and compiled-main SHA-256 \digest{0c2dfcfeaae195386f1e61c05e0cf2b4a1ce6ecda1c321803afc0019b1d886d7}. The July public six-case record uses Hub revision \digest{466ebe2e5cec125fa113ea71503add41bba581a8}; model-card revision \digest{be6b5aad19e18bb71be3199eadceb27db7e69724} removes a local device nickname without changing that payload or validation file. The current speed run uses W8 branch \artifact{xcode27-beta6-aot} at revision \digest{75bbe06906cb5d953e602e3e4fb6364187c81822} and INT4 revision \digest{c32b6342c98e5e23363f692e614bccca37f24234}. The historical quality comparison recorded the INT4 documentation-only predecessor \digest{cb25b3226ee679ee92d0e5af7467d579a6bff66a}, whose compiled payload hashes are unchanged.\citep{massifW8JulyArtifact2026,massifW8Artifact2026,massifINT4Artifact2026}\evidence{CL-22,CL-23}
 
-The W8 recipe SHA-256 is \digest{dab03ae1dd6c6290a7964e05ebcda7fe027c2bb240174fcf034e64a376be9d72}. The public W8 compiled \artifact{main-h16p.mlirb} SHA-256 is \digest{a7eefeef16708a324f9919890355eb92180ec85eef419ebd5822e8c8afd42f5f}; the INT4 compiled main and \artifact{resources.bin} hashes are \digest{ad953b6bc902accc1f1200a8870012c5dec6b488f0f4ec0f10a9916b16cb56ef} and \digest{37c7f2fcf85625abb32d83ca24e7a9facd33a37f79dbc3afec64d41eb900f8bc}.\evidence{CL-22,CL-23}
+The W8 recipe SHA-256 is \digest{dab03ae1dd6c6290a7964e05ebcda7fe027c2bb240174fcf034e64a376be9d72}. The July and current W8 compiled \artifact{main-h16p.mlirb} hashes are \digest{a7eefeef16708a324f9919890355eb92180ec85eef419ebd5822e8c8afd42f5f} and \digest{09f609775baa56b11ff3c91bfcb07b145930297289634fdc5514b2a5ab4dc7ca}, respectively; the accepted Run J download manifest is \digest{91c68e82e280a36d39aaeef9b8726ab1d59e52760b6f970db67c334a674d47b2}. The INT4 compiled main and \artifact{resources.bin} hashes are \digest{ad953b6bc902accc1f1200a8870012c5dec6b488f0f4ec0f10a9916b16cb56ef} and \digest{37c7f2fcf85625abb32d83ca24e7a9facd33a37f79dbc3afec64d41eb900f8bc}.\evidence{CL-22,CL-23}
 
-The repository separates evidence reconstruction from document compilation. Running \artifact{./analysis/run.sh} fetches the commits and remote objects listed in \artifact{analysis/source-lock.json}, verifies the corrected fidelity-v2 and compatibility summaries, reconstructs the CMRC reference sample, recomputes published CMRC quality, extracts per-run timing records, and regenerates Tables~\ref{tab:public-status}--\ref{tab:w8-compatibility} and Figures~\ref{fig:quality}--\ref{fig:size-rss}. It pins Python 3.11.15 and NLTK 3.10.0. Running \artifact{./manuscript/build.sh} then checks the committed generated outputs and compiles the paper with the documented Chrome and Tectonic versions. The reconstructed CMRC quality JSON is byte-identical to the published Python-3 result.\evidence{CL-07,CL-12,CL-13,CL-23,CL-28}
+The repository separates evidence reconstruction from document compilation. Running \artifact{./analysis/run.sh} fetches the commits and remote objects listed in \artifact{analysis/source-lock.json}, verifies the corrected fidelity-v2 and compatibility summaries, reconstructs the CMRC reference sample, recomputes published CMRC quality, validates the finalized speed-v2 public bundle and all 120 observations, and regenerates Tables~\ref{tab:public-status}--\ref{tab:w8-compatibility} and Figures~\ref{fig:quality}--\ref{fig:size-rss}. It pins Python 3.11.15 and NLTK 3.10.0. Running \artifact{./manuscript/build.sh} then checks the committed generated outputs and compiles the paper with the documented Chrome and Tectonic versions. The reconstructed CMRC quality JSON is byte-identical to the published Python-3 result.\evidence{CL-07,CL-12,CL-13,CL-23,CL-28}
 
 The dataset text is not redistributed by the paper pipeline. Instead, the official CMRC source commit and SHA-256, canonical-row SHA-256, and frozen-sample SHA-256 are checked before scoring.\evidence{CL-12,CL-27}
 
 \section{Limitations and Threats to Validity}
 
 \paragraph{Hardware and toolchain.}
-All device evidence is from one iPhone 15 Pro / A17 Pro / \artifact{h16p} class. The historical suites and paired comparison used their recorded iOS 27 and Xcode 27 prerelease environment.\evidence{CL-08,CL-10,CL-11} No other device class was evaluated.
+All device evidence is from one iPhone 15 Pro / A17 Pro / \artifact{h16p} class. The historical suites, paired CMRC2018 comparison, and current speed run each use their recorded iOS 27 and Xcode 27 prerelease environments.\evidence{CL-08,CL-10,CL-11} No other device class was evaluated.
 
 \paragraph{Coupled profiles.}
 The system profiles differ in precision, compression granularity, embedding treatment, graph shape, KV allocation, preferred compute, and artifact layout.\evidence{CL-04,CL-11} The evaluation therefore supports profile-level comparison, not causal attribution to ANE, GPU, W8, or INT4.
@@ -293,13 +295,13 @@ Only the sanitized historical trace summary is distributed. It records ANE parti
 The fidelity-v2 result covers ten frozen authoring-model inputs and does not measure logits from the compiled iPhone artifact.\evidence{CL-07} The paired quality run contains a length-balanced subset of 300 CMRC2018 examples rather than the full validation split or its natural length distribution.\evidence{CL-12,CL-13} Confidence intervals include zero, and no equivalence margin was specified.\evidence{CL-14} The initial 1.0-point EM heuristic failed.\evidence{CL-13,CL-14} Complete WikiText-2 perplexity and downstream task evaluations are unavailable.
 
 \paragraph{Timing scope.}
-Each workload reports three accepted measured samples after one warm-up, which is insufficient for tail-latency estimates.\evidence{CL-17,CL-18,CL-19} Load observations were cache-sensitive. The sustained-decode comparison is conditional on generation reaching 200 output tokens, and the near-4K case contains too few visible decode tokens for a stable rate estimate.\evidence{CL-18,CL-19}
+Each profile/workload cell reports 20 completed measurements across four physical blocks, but the protocol does not estimate tail latency or P95.\evidence{CL-17,CL-18,CL-19} The business responses differ in median output length, so their total times are not fixed-output comparisons. The near-4K response contains only six visible tokens, making its decode-rate estimate secondary to TTFT and total time.\evidence{CL-18,CL-19}
 
 \paragraph{Energy and lifecycle.}
 Energy, battery use, thermal endurance, background execution, and Jetsam behavior were outside the measurement protocol.
 
 \paragraph{Compatibility diagnostic.}
-The supplementary compatibility check used one device/runtime, two attempts with \artifact{A-W8-PUBLIC}, and one with \artifact{A-W8-CURRENT-CANDIDATE}. It included no generation or trace, and cache state was uncontrolled; its design therefore precludes causal attribution.\evidence{CL-22,CL-28} Two authoring exports made from the same pinned inputs and parameters but different output directories were not byte-identical. No semantic or numerical comparison was made between those exports.\evidence{CL-29}
+The supplementary compatibility check used one device/runtime, two attempts with \artifact{A-W8-JULY-PUBLIC}, and one with \artifact{A-W8-CURRENT}. It included no generation or trace, and cache state was uncontrolled; its design therefore precludes causal attribution.\evidence{CL-22,CL-28} Two authoring exports made from the same pinned inputs and parameters but different output directories were not byte-identical. No semantic or numerical comparison was made between those exports.\evidence{CL-29}
 
 \section{Conclusion}
 
@@ -307,7 +309,7 @@ We implemented a version-pinned static Apple Core AI path for Qwen3-1.7B, compil
 
 \section{Data and Code Availability}
 
-The implementation, experiment protocols, deterministic analysis, and manuscript sources are available in the public project repository \citep{massifW8Repository2026}. The W8 and INT4 model artifacts are available at the cited Hugging Face revisions \citep{massifW8Artifact2026,massifINT4Artifact2026}, and the paired predictions and benchmark materials are available in the comparison repository \citep{massifComparison2026}. Exact revisions and hashes are listed above. CMRC2018 text is not redistributed; the analysis reconstructs the sample from the official source revision. The supplementary compatibility observation is documented separately; the current-toolchain candidate is represented only by its sanitized evidence record and is not published as a model artifact.\evidence{CL-28}
+The implementation, experiment protocols, deterministic analysis, and manuscript sources are available in the public project repository \citep{massifW8Repository2026}. The July and current W8 revisions and the INT4 artifact are available from the cited Hugging Face repositories \citep{massifW8JulyArtifact2026,massifW8Artifact2026,massifINT4Artifact2026}; paired predictions and benchmark materials are available in the comparison repository \citep{massifComparison2026}. Exact revisions and hashes are listed above. CMRC2018 text is not redistributed; the analysis reconstructs the sample from the official source revision. The load-only compatibility observation remains documented separately from the later speed run.\evidence{CL-28}
 
 \section{Author Contributions}
 
@@ -338,13 +340,13 @@ Table~\ref{tab:w8-compatibility} records a descriptive, load-only diagnostic con
 \toprule
 Output & Identity type & SHA-256 \\
 \midrule
-\artifact{A-W8-CURRENT-CANDIDATE} & Authoring \artifact{main.mlirb} & \digest{13ba3f73fcb7e090cd6ba1ca14b6b8903516ab608d451e94b9cdd750cfceda2c} \\
-\artifact{A-W8-CURRENT-CANDIDATE} & Compiled main & \digest{09f609775baa56b11ff3c91bfcb07b145930297289634fdc5514b2a5ab4dc7ca} \\
-\artifact{A-W8-CURRENT-CANDIDATE} & \artifact{.aimodelc} file-list fingerprint & \digest{182336f4654bb735bcad35e45f7832756c34469931ad96d872532dca727ebd8d} \\
+\artifact{A-W8-CURRENT} & Authoring \artifact{main.mlirb} & \digest{13ba3f73fcb7e090cd6ba1ca14b6b8903516ab608d451e94b9cdd750cfceda2c} \\
+\artifact{A-W8-CURRENT} & Compiled main & \digest{09f609775baa56b11ff3c91bfcb07b145930297289634fdc5514b2a5ab4dc7ca} \\
+\artifact{A-W8-CURRENT} & \artifact{.aimodelc} file-list fingerprint & \digest{182336f4654bb735bcad35e45f7832756c34469931ad96d872532dca727ebd8d} \\
 Repeated authoring export & Authoring \artifact{main.mlirb} & \digest{12349a9ad32bf2a1d2f9a6f201ffec3125c28c027786fa9925dc34669d8bc946} \\
 \bottomrule
 \end{tabularx}
-\caption{Exact identities for the subsequent candidate and repeated authoring export. \evidence{CL-28,CL-29}}
+\caption{Exact identities for the current-toolchain W8 build and repeated authoring export. \evidence{CL-28,CL-29}}
 \label{tab:w8-candidate-identities}
 \end{table}
 

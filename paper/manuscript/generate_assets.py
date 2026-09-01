@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import html
 import json
+import os
 from pathlib import Path
 import re
 import shutil
@@ -19,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MANUSCRIPT = ROOT / "manuscript"
 EVIDENCE = ROOT / "analysis" / "generated"
 OUTPUT = MANUSCRIPT / "generated"
-EXPECTED_CHROME_VERSION = "Google Chrome 150.0.7871.115"
+EXPECTED_CHROME_VERSION = "151.0.7922.174"
 EXPECTED_GENERATED_FILES = {
     *(f"tables/t{i}-{name}.tex" for i, name in (
         (1, "public-status"),
@@ -296,7 +297,7 @@ def generate_tables() -> None:
     t6 = read_json(EVIDENCE / "tables" / "t6-size-rss.json")
     size_rows = []
     for key, label in (
-        ("compiledModelBundleMiB", "Compiled bundle"),
+        ("compiledModelBundleMiB", "Compiled-model storage"),
         ("peakProcessResidentMiB", "Peak process RSS"),
     ):
         values = t6["measurements"][key]
@@ -320,7 +321,9 @@ def generate_tables() -> None:
     write(
         out / "t6-size-rss.tex",
         table_document(
-            "Compiled resource-directory logical size and peak process resident memory in the disclosed benchmark.",
+            "Compiled-model storage is the median of four identical estimatedDiskBytes "
+            "observations converted to MiB; peak process RSS is the maximum after-unload "
+            "process peak across four physical blocks.",
             "tab:size-rss",
             "CL-15,CL-16",
             body,
@@ -328,27 +331,34 @@ def generate_tables() -> None:
     )
 
     t7 = read_json(EVIDENCE / "tables" / "t7-workload-performance.json")
-    labels = {
-        "business_161_60": "161 / 60",
-        "near_4k_3790_10": "3,790 / 10",
-        "decode_120_256": "120 / 256",
-    }
+    workload_order = ("business_medium", "near4k_prefill", "decode_256_cap")
     performance_rows = []
-    for workload_key in ("business_161_60", "near_4k_3790_10", "decode_120_256"):
+    for workload_key in workload_order:
         workload = t7["workloads"][workload_key]
         for profile_key, profile_label in (("W8_ANE", "Static-W8"), ("INT4_GPU", "Dynamic-INT4")):
-            medians = workload["medians"][profile_key]
-            decode = medians.get("visibleDecodeTokensPerSecond")
-            decode_text = "--" if decode is None else f"{decode:.3f}"
+            metrics = workload["profiles"][profile_key]["metrics"]
+            input_tokens = metrics["inputTokens"]["median"]
+            output_tokens = metrics["outputTokens"]["median"]
+            visible_ttft = metrics["visibleTTFTSeconds"]["median"]
+            decode = metrics["visibleDecodeTokensPerSecond"]["median"]
+            end_to_end = metrics["endToEndVisibleTokensPerSecond"]["median"]
+            row_label = f"{input_tokens:,.0f} / {output_tokens:,.0f}"
+            medians = {
+                "ttftSeconds": metrics["tokenTTFTSeconds"]["median"],
+                "totalSeconds": metrics["totalSeconds"]["median"],
+            }
+            decode_text = f"{decode:.3f} & {end_to_end:.3f}"
             performance_rows.append(
-                f'{labels[workload_key]} & {profile_label} & {medians["ttftSeconds"]:.3f} '
-                f'& {medians["totalSeconds"]:.3f} & {decode_text} \\\\'
+                f'{row_label} & {profile_label} & {medians["ttftSeconds"]:.3f} '
+                f'& {visible_ttft:.3f} & {medians["totalSeconds"]:.3f} '
+                f'& {decode_text} \\\\'
             )
     body = "\n".join(
         [
-            r"\begin{tabular}{@{}llrrr@{}}",
+            r"\setlength{\tabcolsep}{3pt}",
+            r"\begin{tabular}{@{}llrrrrr@{}}",
             r"\toprule",
-            r"Input / output & Profile & TTFT (s) & Total (s) & Visible decode (tok/s) \\",
+            r"Input / output & Profile & TTFT$_t$ (s) & TTFT$_v$ (s) & Total (s) & Decode & E2E \\",
             r"\midrule",
             *performance_rows,
             r"\bottomrule",
@@ -358,7 +368,12 @@ def generate_tables() -> None:
     write(
         out / "t7-workload-performance.tex",
         table_document(
-            "Workload medians after one warm-up and three accepted samples. Near-4K decode rate is omitted because only nine visible tokens remained.",
+            "Workload medians from 20 completed measurements per profile and workload "
+            "across four physical blocks. Input and output are median token counts. "
+            "TTFT$_t$ is token-event TTFT, TTFT$_v$ is visible-token TTFT, and Decode "
+            "and E2E are visible tokens per second; no P95 is reported. Static-W8 is "
+            "A-W8-CURRENT at Hub revision "
+            "\\digest{75bbe06906cb5d953e602e3e4fb6364187c81822}.",
             "tab:workload-performance",
             "CL-17,CL-18,CL-19,CL-20",
             body,
@@ -379,7 +394,7 @@ def generate_tables() -> None:
             ),
         ),
         (
-            "Current-toolchain candidate",
+            "Current W8",
             f'{current["producer"]}; {current["compiledMainSHA256"][:12]}...',
             str(current["attempts"]),
             (
@@ -407,7 +422,7 @@ def generate_tables() -> None:
         table_document(
             (
                 "Supplementary load-only compatibility observations on one iPhone 15 Pro "
-                "running iOS 27 build 24A5424a. The candidate result is not a cold-start "
+                "running iOS 27 build 24A5424a. The current-W8 result is not a cold-start "
                 "benchmark, generation test, or Instruments trace; cache state was "
                 "uncontrolled, and artifact bytes and compiler producer both changed."
             ),
@@ -507,6 +522,9 @@ def generate_architecture_figures() -> list[Path]:
 
 
 def find_chrome() -> Path | None:
+    override = os.environ.get("CHROME")
+    if override:
+        return Path(override)
     candidates = [
         Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"),
         Path("/Applications/Chromium.app/Contents/MacOS/Chromium"),
@@ -525,7 +543,8 @@ def verify_chrome(chrome: Path) -> None:
         stdout=subprocess.PIPE,
         text=True,
     ).stdout.strip()
-    if observed != EXPECTED_CHROME_VERSION:
+    observed_version = observed.rsplit(" ", 1)[-1]
+    if observed_version != EXPECTED_CHROME_VERSION:
         raise AssetError(
             f"Chrome version mismatch: expected {EXPECTED_CHROME_VERSION}, observed {observed}"
         )
@@ -557,6 +576,11 @@ def convert_svg_to_pdf(svg: Path, pdf: Path, chrome: Path) -> None:
             str(chrome),
             "--headless=new",
             "--disable-gpu",
+            "--disable-background-networking",
+            "--disable-component-update",
+            "--disable-sync",
+            "--no-first-run",
+            "--no-default-browser-check",
             "--hide-scrollbars",
             "--no-pdf-header-footer",
             f"--user-data-dir={profile}",

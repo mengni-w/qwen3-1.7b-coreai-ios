@@ -12,6 +12,15 @@
 - Device class: iPhone 15 Pro
 - OS: iOS 27
 
+Artifact labels are identity-specific: `A-W8-HISTORICAL` denotes compiled main
+`0c2dfcfeaae195386f1e61c05e0cf2b4a1ce6ecda1c321803afc0019b1d886d7`;
+`A-W8-JULY-PUBLIC` denotes Hub revision
+`466ebe2e5cec125fa113ea71503add41bba581a8` and compiled main
+`a7eefeef16708a324f9919890355eb92180ec85eef419ebd5822e8c8afd42f5f`;
+`A-W8-CURRENT` denotes Hub revision
+`75bbe06906cb5d953e602e3e4fb6364187c81822` and compiled main
+`09f609775baa56b11ff3c91bfcb07b145930297289634fdc5514b2a5ab4dc7ca`.
+
 ## Quality
 
 | Gate | Mean cosine | Min cosine | Top-1 agreement | Mean NLL delta | Result |
@@ -86,15 +95,38 @@ implements a production service.
 The supported conclusion is Neural Engine participation. Exclusive ANE
 execution is not claimed.
 
-## Supplementary load compatibility observation (A-W8-PUBLIC vs A-W8-CURRENT-CANDIDATE)
+## Supplementary load compatibility observation (A-W8-JULY-PUBLIC vs A-W8-CURRENT)
 
-On iOS 27 build `24A5424a`, `A-W8-PUBLIC` failed during
+On iOS 27 build `24A5424a`, `A-W8-JULY-PUBLIC` failed during
 `ANECCompileOffline` in both load-only attempts. The second followed a reboot
 request whose completion was not independently verified.
 
-`A-W8-CURRENT-CANDIDATE` completed one load in 41.932 seconds, reached 2,737.0
-MiB peak process RSS, unloaded, and exited normally. No generation or trace was
-performed, and a cold-cache state was not established. Because both the
-artifact bytes and compiler producer changed, these outcomes do not identify
-whether the OS/runtime, compiler, export, or memory state caused the failures.
-The machine-readable record is `results/w8-aot-compatibility-evidence.json`.
+`A-W8-CURRENT` completed one load in 41.932 seconds, reached 2,737.0 MiB peak
+process RSS, unloaded, and exited normally. This diagnostic performed no
+generation or trace, and a cold-cache state was not established. That boundary
+applies only to this diagnostic: Run J subsequently performed generation with
+the same `A-W8-CURRENT` compiled main. Because both the artifact bytes and
+compiler producer changed between the July and current builds, these outcomes
+do not identify whether the OS/runtime, compiler, export, or memory state
+caused the failures. The machine-readable record is
+`results/w8-aot-compatibility-evidence.json`.
+
+## Current Run J generation and speed evidence (A-W8-CURRENT)
+
+Run J (`speed-v2-20260831-j`) used the `A-W8-CURRENT` identity above and
+completed 120 generation measurements across the W8 and INT4 profiles: 20
+measurements per profile and workload, with no failed admitted sample.
+
+| Workload | Profile | Median input / output | Token TTFT | Visible TTFT | Total | Visible decode | End-to-end visible |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Medium business | Static-W8 | 150 / 56 | 0.242 s | 0.242 s | 2.234 s | 27.542 tok/s | 25.066 tok/s |
+| Medium business | Dynamic-INT4 | 150 / 22 | 1.643 s | 1.643 s | 2.099 s | 45.841 tok/s | 10.479 tok/s |
+| Near-4K prefill | Static-W8 | 3,778 / 6 | 3.720 s | 3.720 s | 3.952 s | 21.394 tok/s | 1.518 tok/s |
+| Near-4K prefill | Dynamic-INT4 | 3,778 / 6 | 13.393 s | 13.393 s | 13.522 s | 38.556 tok/s | 0.444 tok/s |
+| Sustained decode | Static-W8 | 108 / 256 | 0.205 s | 0.205 s | 9.675 s | 26.931 tok/s | 26.459 tok/s |
+| Sustained decode | Dynamic-INT4 | 108 / 256 | 0.390 s | 0.390 s | 6.454 s | 42.210 tok/s | 39.760 tok/s |
+
+Compiled-model storage was 1,711.4 MiB for W8 and 924.6 MiB for INT4. Maximum
+after-unload peak process RSS was 3,409.1 MiB for W8 and 1,978.0 MiB for INT4.
+These are Run J artifact and process measurements, not universal device
+requirements or evidence of exclusive Neural Engine execution.
